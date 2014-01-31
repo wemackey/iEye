@@ -1,8 +1,10 @@
 function [ fit ] = ii_calibrateto( chan, chan2, polynum )
 %II_CALIBRATETO Summary of this function goes here
 %   Detailed explanation goes here
-cursel = evalin('base', 'cursel');
-sel = evalin('base', 'sel');
+
+ii_cfg = evalin('base', 'ii_cfg');
+cursel = ii_cfg.cursel;
+sel = ii_cfg.sel;
 
 if length(cursel) < 1
     disp('No selections made for calibration');
