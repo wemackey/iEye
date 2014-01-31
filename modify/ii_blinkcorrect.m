@@ -1,0 +1,62 @@
+function ii_blinkcorrect(chan,pchan,pval, pri, fol)
+%II_BLINKCORRECT Summary of this function goes here
+%   Detailed explanation goes here
+if nargin ~= 5
+    prompt = {'Channel to Correct', 'Pupil Channel', 'Pupil Threshold', '# Prior Samples', '# Following Samples'};
+    dlg_title = 'Blink Correction';
+    num_lines = 1;
+    answer = inputdlg(prompt,dlg_title,num_lines);
+    
+    chan = str2num(answer{1});
+    pchan = str2num(answer{2});
+    pval = str2num(answer{3});
+    pri = str2num(answer{4});
+    fol = str2num(answer{5});
+end
+
+basevars = evalin('base','who');
+
+if ismember(chan,basevars)
+    pupil = evalin('base',pchan);
+    x = evalin('base',chan);
+    ii_cfg = evalin('base', 'ii_cfg');
+    sel = x*0;
+    
+    blink = find(pupil==pval);
+    if blink > 0
+        split1 = SplitVec(blink,'consecutive','firstval');
+        split2 = SplitVec(blink,'consecutive','lastval');
+        blinked(:,1) = split1 - pri;
+        blinked(:,2) = split2 + fol;
+        for z=1:(size(blinked,1))
+            sel(blinked(z,1):blinked(z,2)) = 1;
+        end
+        
+        x(sel==1) = 0;
+        
+        for o = 1:(length(x))
+            if x(o) == 0
+                x(o) = x(o - 1);
+            end
+        end
+        
+        figure('Name','Blink Correction','NumberTitle','off')
+        plot(x);
+        hold all;
+        %
+        ylims = get(gca,'YLim');
+        hold on
+        plot([blink blink], ylims, '-r')
+        
+        assignin('base',chan,x);
+        ii_cfg.blink = blink;
+        putvar(ii_cfg);
+        ii_replot;
+    else
+        disp('No blinks detected')
+    end
+else
+    disp('Channel to correct does not exist in worksapce');
+end
+end
+
