@@ -1,6 +1,7 @@
 function ii_findendpoints(x,y,t,l,c1,v1,c2,v2)
 %II_FINDENDPOINTS Summary of this function goes here
 %   Detailed explanation goes here
+%  ii_findendpoints('X','Y',.07,5,'XDAT',4,'XDAT',6)
 
 % ii_findsaccades
 ii_findsaccades(x,y,t,l);
@@ -18,9 +19,9 @@ if ismember(c1,basevars)
         cursel = [];
         tsel = sel*0;
         
-        nchan = ii_cfg.nchan;
-        lchan = textscan(ii_cfg.lchan,'%s','delimiter',',');
-        schan = str2num(ii_cfg.hz);
+%         nchan = ii_cfg.nchan;
+%         lchan = textscan(ii_cfg.lchan,'%s','delimiter',',');
+%         schan = str2num(ii_cfg.hz);
         
         swhere = find(thechan == v1);
         ewhere = find(thechan2 == v2);
