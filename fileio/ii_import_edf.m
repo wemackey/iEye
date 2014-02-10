@@ -151,20 +151,15 @@ else
     
     ii_cfg.cursel = [];
     ii_cfg.sel = x*0;
-    %     ii_cfg.sel = X*0;
     ii_cfg.cfg = cfg;
     ii_cfg.vis = vis;
     ii_cfg.nchan = nchan;
     ii_cfg.lchan = lchan;
     ii_cfg.hz = schan;
-    %     ii_cfg.nchan = 6;
-    %     ii_cfg.lchan = 'X,Y,Pupil,XDAT,TarX,TarY';
-    %     ii_cfg.hz = 1000;
     ii_cfg.blink = [];
     ii_cfg.velocity = [];
     ii_cfg.tcursel = [];
     ii_cfg.tsel = x*0;
-    %     ii_cfg.tsel = X*0;
     ii_cfg.tindex = 0;
     ii_cfg.saccades = [];
     ii_cfg.history{1} = ['EDF imported ', dt];
