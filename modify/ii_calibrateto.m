@@ -1,4 +1,4 @@
-function [ fit ] = ii_calibrateto( chan, chan2, polynum )
+function ii_calibrateto(chan, chan2, polynum)
 %II_CALIBRATETO Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -36,15 +36,16 @@ else
             disp('Calibration saved');
             assignin('base',chan,fit);
             ii_replot;
-            figure;
             
-            scatter(fit(sel==1),c2(sel==1));
-            axis equal
-            
-            figure;
-            
-            scatter(fit,c2);
-            axis equal
+%             % Plot fit at selections
+%             figure;            
+%             scatter(fit(sel==1),c2(sel==1));
+%             axis equal
+%             
+%             % Plot overall fit
+%             figure;            
+%             scatter(fit,c2);
+%             axis equal
             
         else
             disp('Channel to calibrate to does not exist in workspace');
