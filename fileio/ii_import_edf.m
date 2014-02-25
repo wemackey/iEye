@@ -13,7 +13,10 @@ function ii_import_edf()
 % i.e. x,y,pupil, message1, message2, message3
 % Message variables are CASE SENSITIVE
 
-% ADD TO PATH
+
+% *IMPORTANT* MAKE SURE EDF2ASC COMMAND IS IN ENV PATH
+% Add edf2asc command location to path if not already included. For
+% example, this adds "/usr/local/bin" to the env path.
 % path1 = getenv('PATH');
 % path1 = [path1 ':/usr/local/bin'];
 % setenv('PATH', path1);

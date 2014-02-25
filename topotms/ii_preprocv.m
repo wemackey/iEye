@@ -1,6 +1,5 @@
 function ii_preprocv()
-%II_PREPROCV Summary of this function goes here
-%   Detailed explanation goes here
+% Generic script for pre-processing visually-guided saccade data.
 
 starx = evalin('base','TarX');
 stary = evalin('base','TarY');

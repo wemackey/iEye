@@ -1,8 +1,8 @@
 function [vel] = ii_velocity(x,y)
-%II_VELOCITY Summary of this function goes here
-%   Detailed explanation goes here
+% Calculate eye-movement velocity using eye-tracker X and Y channels as input
+
 if nargin ~= 2
-    prompt = {'Channel 1', 'Channel 2'};
+    prompt = {'Channel 1 (X)', 'Channel 2 (Y)'};
     dlg_title = 'Velocity';
     num_lines = 1;
     answer = inputdlg(prompt,dlg_title,num_lines);

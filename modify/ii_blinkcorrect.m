@@ -5,6 +5,7 @@ function ii_blinkcorrect(chan, pchan, pval, pri, fol)
 % prior (4) and following (5) samples to that threshold value you want to
 % include in the correction around each blink
 
+% If not passed, get arguments
 if nargin ~= 5
     prompt = {'Channel to Correct', 'Pupil Channel', 'Pupil Threshold', '# Prior Samples', '# Following Samples'};
     dlg_title = 'Blink Correction';
