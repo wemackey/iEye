@@ -1,4 +1,4 @@
-function [ smoothd ] = ii_smooth(c, typ, degr)
+function ii_smooth(c, typ, degr)
 %II_SMOOTH Summary of this function goes here
 %   Detailed explanation goes here
 if nargin ~= 3

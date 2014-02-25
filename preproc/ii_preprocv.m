@@ -1,9 +1,5 @@
-function ii_preprocm()
-% Generic script for pre-processing memory-guided saccade data. This script
-% assumes the data is already imported in iEye. It addresses the following
-% issues: The Y channel is inverted to its correct orientation, the data is
-% then blink-corrected and slightly smoothed. Finally, the data is scaled
-% and re-calibrated.
+function ii_preprocv()
+% Generic script for pre-processing visually-guided saccade data.
 
 % Invert Y channel (the eye-tracker spits out flipped Y values)
 ii_invert('Y');
@@ -22,19 +18,12 @@ ii_smooth('Y','moving',10);
 ii_autoscale('X','TarX');
 ii_autoscale('Y','TarY');
 
-% Make initial selections for calibration (Corrective saccade)
-ii_selectbyvalue('TarX',2,0);
-ii_selectstretch(-400,0);
+% Calculate go times
+ii_getgo('TarX');
 
-% Hold these 
-ii_selecthold;
-
-% Select fixations
-ii_selectbyvalue('XDAT',1,1);
-ii_selectstretch(-250,-250);
-
-% Merge fixation selections with corrective saccades
-ii_selectmerge;
+% Make selections for calibration
+ii_selectbyvalue('t_go',4,1);
+ii_selectstretch(-500,750);
 
 % IMPORTANT!!
 % At this point it is vital to manually check that the selections are
@@ -47,5 +36,6 @@ ii_calibrateto('Y','TarY',3);
 
 % Get and store eye-movement velocity
 ii_velocity('X','Y');
+
 end
 

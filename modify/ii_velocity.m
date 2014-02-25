@@ -1,5 +1,6 @@
-function [vel] = ii_velocity(x,y)
-% Calculate eye-movement velocity using eye-tracker X and Y channels as input
+function ii_velocity(x,y)
+% Calculate eye-movement velocity using eye-tracker X and Y channels as
+% input. This vector is automatically saved to ii_cfg.velocity
 
 if nargin ~= 2
     prompt = {'Channel 1 (X)', 'Channel 2 (Y)'};
@@ -36,8 +37,9 @@ if ismember(x,basevars)
         ii_cfg.velocity = vel;
         putvar(ii_cfg);
         
-        figure('Name','Velocity Channel','NumberTitle','off');
-        plot(vel);
+%         % Plot results
+%         figure('Name','Velocity Channel','NumberTitle','off');
+%         plot(vel);
         
     else
         disp('Channel to does not exist in worksapce');

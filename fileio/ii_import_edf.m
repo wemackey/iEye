@@ -150,6 +150,7 @@ else
     
     iEye;
     
+    % CREATE II_CFG STRUCT    
     dt = datestr(now,'mmmm dd, yyyy HH:MM:SS.FFF AM');
     
     ii_cfg.cursel = [];
