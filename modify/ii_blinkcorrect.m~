@@ -45,10 +45,9 @@ if ismember(chan,basevars)
         end
         
         chk = find(blinked(:,2) > lx);
-        if ~isempty(chk)
-            blinked(chk,2) = lx;
-        end
-               
+        if ~isempty(ch
+        
+        
         for z=1:(size(blinked,1))
             sel(blinked(z,1):blinked(z,2)) = 1;
         end
@@ -61,13 +60,13 @@ if ismember(chan,basevars)
             end
         end
         
-%         % Plot blinks in new window
-%         figure('Name','Blink Correction','NumberTitle','off')
-%         plot(x);
-%         hold all;
-%         ylims = get(gca,'YLim');
-%         hold on
-%         plot([blink blink], ylims, '-r')
+        % Plot blinks
+        figure('Name','Blink Correction','NumberTitle','off')
+        plot(x);
+        hold all;
+        ylims = get(gca,'YLim');
+        hold on
+        plot([blink blink], ylims, '-r')
         
         assignin('base',chan,x);
         ii_cfg.blink = blink;
