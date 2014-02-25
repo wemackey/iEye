@@ -1,6 +1,10 @@
-function ii_blinkcorrect(chan,pchan,pval, pri, fol)
-%II_BLINKCORRECT Summary of this function goes here
-%   Detailed explanation goes here
+function ii_blinkcorrect(chan, pchan, pval, pri, fol)
+% Basic blink correction. This function takes 5 inputs: (1) The channel you
+% want to perform blink correction on; (2) the name of the Pupil channel;
+% (3) the Pupil threshold you want to use to define a blink; the # of
+% prior (4) and following (5) samples to that threshold value you want to
+% include in the correction around each blink
+
 if nargin ~= 5
     prompt = {'Channel to Correct', 'Pupil Channel', 'Pupil Threshold', '# Prior Samples', '# Following Samples'};
     dlg_title = 'Blink Correction';

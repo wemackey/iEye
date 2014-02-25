@@ -10,6 +10,7 @@ sel = old_sel + tmp_sel;
 ind = find(sel>0);
 sel(ind) = 1;
 
+ii_cfg.cursel = sortrows(ii_cfg.cursel);
 ii_cfg.sel = sel;
 putvar(ii_cfg);
 
