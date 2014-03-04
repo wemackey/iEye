@@ -29,10 +29,10 @@ if ismember(chan,basevars)
         assignin('base',chan,c1);
         ii_replot;
         
-        figure;
-        plot(c1);
-        hold all;
-        plot(c2);
+%         figure;
+%         plot(c1);
+%         hold all;
+%         plot(c2);
         
     else
         disp('Channel to autoscale to does not exist in workspace');
