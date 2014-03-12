@@ -1,6 +1,9 @@
 function ii_preprocv()
 % Generic script for pre-processing visually-guided saccade data.
 
+% Show only the channels we care about at the moment
+ii_view_channels('X,Y,TarX,TarY,XDAT');
+
 % Invert Y channel (the eye-tracker spits out flipped Y values)
 ii_invert('Y');
 
@@ -25,14 +28,20 @@ ii_getgo('TarX');
 ii_selectbyvalue('t_go',4,1);
 ii_selectstretch(-500,750);
 
-% IMPORTANT!!
+%%%%%%%%%%%%%%%
+% IMPORTANT!! %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
 % At this point it is vital to manually check that the selections are
 % correct before calibration. It is likely they are not 100% accurate due
 % to differences in individual subject behavior.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Once selections are finalized, we calibrate.
 ii_calibrateto('X','TarX',3);
 ii_calibrateto('Y','TarY',3);
+
+% Empty selections
+ii_selectempty;
 
 % Get and store eye-movement velocity
 ii_velocity('X','Y');

@@ -5,6 +5,9 @@ function ii_preprocm()
 % then blink-corrected and slightly smoothed. Finally, the data is scaled
 % and re-calibrated.
 
+% Show only the channels we care about at the moment
+ii_view_channels('X,Y,TarX,TarY,XDAT');
+
 % Invert Y channel (the eye-tracker spits out flipped Y values)
 ii_invert('Y');
 
@@ -36,16 +39,25 @@ ii_selectstretch(-250,-250);
 % Merge fixation selections with corrective saccades
 ii_selectmerge;
 
-% IMPORTANT!!
+%%%%%%%%%%%%%%%
+% IMPORTANT!! %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+%
 % At this point it is vital to manually check that the selections are
 % correct before calibration. It is likely they are not 100% accurate due
 % to differences in individual subject behavior.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Once selections are finalized, we calibrate.
 ii_calibrateto('X','TarX',3);
 ii_calibrateto('Y','TarY',3);
 
+% Empty selections
+ii_selectempty;
+
 % Get and store eye-movement velocity
 ii_velocity('X','Y');
+
+% Now save me!
 end
 
