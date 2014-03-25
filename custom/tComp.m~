@@ -82,7 +82,6 @@ ii_cfg = evalin('base','ii_cfg');
 ii_stats = evalin('base','ii_stats');
 trial_compliance = ii_stats.trial_compliance;
 trial_compliance(ii_cfg.tindex,1) = 0;
-ii_stats.trial_compliance = trial_compliance;
 putvar(ii_stats);
 
 
@@ -95,7 +94,6 @@ ii_cfg = evalin('base','ii_cfg');
 ii_stats = evalin('base','ii_stats');
 trial_compliance = ii_stats.trial_compliance;
 trial_compliance(ii_cfg.tindex,2) = 0;
-ii_stats.trial_compliance = trial_compliance;
 putvar(ii_stats);
 
 
@@ -108,5 +106,4 @@ ii_cfg = evalin('base','ii_cfg');
 ii_stats = evalin('base','ii_stats');
 trial_compliance = ii_stats.trial_compliance;
 trial_compliance(ii_cfg.tindex,3) = 0;
-ii_stats.trial_compliance = trial_compliance;
-putvar(ii_stats);
+putvar(trial_compliance);

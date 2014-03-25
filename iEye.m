@@ -572,7 +572,6 @@ if newt > 0
     ii_trialplot(newt);
     axis auto
     ii_showselections;
-    disp(['Currently at trial ' num2str(newt) ' out of ' num2str(numt)])
 else
     disp('Currently at first trial')
 end
@@ -595,7 +594,6 @@ if newt < numt
     ii_trialplot(newt);
     axis auto
     ii_showselections;
-    disp(['Currently at trial ' num2str(newt) ' out of ' num2str(numt)])
 else
     disp('Currently at last trial')
 end

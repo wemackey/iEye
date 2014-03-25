@@ -32,6 +32,9 @@ for i = 1:length(v{1})
     hold all
 end
 
+tl = sprintf('Timeseries mode');
+title(tl);
+
 % Define a context menu; it is not attached to anything
 hcmenu = uicontextmenu;
 % Define callbacks for context menu items that change linestyle

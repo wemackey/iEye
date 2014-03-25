@@ -1,9 +1,13 @@
-function ii_trialplot(tindex)
-%II_TRIALPLOT Summary of this function goes here
+function ii_trialinfo(tindex)
+%II_TRIALINFO Summary of this function goes here
 %   Detailed explanation goes here
+
+if nargin ~= 1
+    tindex = 1;
+end
+
 ii_cfg = evalin('base', 'ii_cfg');
 tcursel = ii_cfg.tcursel;
-numt = size(tcursel,1);
 cnames = {};
 
 vis = ii_cfg.vis;
@@ -14,9 +18,8 @@ rng = qq(2) - qq(1);
 selstrt = qq(1);
 selend = qq(2);
 
-hax = get(iEye,'CurrentAxes');
-axes(hax);
-cla;
+figure('Name','Trial Info','NumberTitle','off')
+
 
 for w = 1:rng
     sm{w,1} = selstrt;
@@ -29,6 +32,8 @@ p = [];
 
 col = lines(length(v{1}));
 
+% Plot timeseries
+
 for i = 1:length(v{1})
     c = v{1}{i};
     d = 1;
@@ -39,9 +44,14 @@ for i = 1:length(v{1})
         d = d + 1;
     end
     csel = p(:,i);
+    subplot(2,1,1);
+    tt = sprintf('Trial #: %s', num2str(tindex));
+    title(tt)
     plot(sm,csel,'color',col(i,:));
     hold all
 end
+
+% Plot blinks on timeseries if they exist
 
 blinks = ii_cfg.blink;
 
@@ -67,35 +77,35 @@ if ~isempty(blinks)
         d = d + 1;
     end
     
+    subplot(2,1,1);
     plot(sm,XBP,'k*');
     plot(sm,YBP,'k*');
 else
 end
 
-tl = sprintf('Trial #: %s out of %s', num2str(tindex),num2str(numt));
-title(tl);
+% Plot spatial information
 
+X = evalin('base','X');
+Y = evalin('base','Y');
+TarX = evalin('base','TarX');
+TarY = evalin('base','TarY');
 
-% Define a context menu; it is not attached to anything
-hcmenu = uicontextmenu;
-% Define callbacks for context menu items that change linestyle
-hcb1 = ['set(gco, ''Visible'', ''Off'')'];
-hcb2 = ['set(gco, ''LineStyle'', '':'')'];
-hcb3 = ['set(gco, ''LineStyle'', ''-'')'];
-% Define the context menu items and install their callbacks
-item1 = uimenu(hcmenu, 'Label', 'hide', 'Callback', hcb1);
-item2 = uimenu(hcmenu, 'Label', 'dotted', 'Callback', hcb2);
-item3 = uimenu(hcmenu, 'Label', 'solid',  'Callback', hcb3);
-% Locate line objects
-hlines = findall(hax,'Type','line');
-% Attach the context menu to each line
-for line = 1:length(hlines)
-    set(hlines(line),'uicontextmenu',hcmenu)
+d = 1;
+for w = qq(1)+1:qq(2)
+    x(d) = X(w);
+    y(d) = Y(w);
+    tx(d) = TarX(w);
+    ty(d) = TarY(w);
+    d = d + 1;
 end
-legend(cnames,'Location', 'NortheastOutside', 'Orientation', 'Vertical');
 
-ii_cfg.tindex = tindex;
-putvar(ii_cfg);
+subplot(2,1,2);
+plot(x,y,'LineStyle', ':');
+hold all
+plot(tx,ty,'LineStyle', '*');
+axis([-11 11 -11 11])
 
 end
+
+
 
