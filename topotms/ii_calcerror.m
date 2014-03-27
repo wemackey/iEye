@@ -21,9 +21,5 @@ eZ = sqrt(z); % z error
 gX = sx./tx;
 gY = sy./ty;
 gZ = sz./tz;
-
-% Calculate Theta and Rho
-[t_theta,t_rho] = cart2pol(tx,ty);
-[s_theta,s_rho] = cart2pol(sx,sy);
 end
 

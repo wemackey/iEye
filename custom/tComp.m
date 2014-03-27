@@ -158,15 +158,52 @@ if nsel(1) == 90
     [f_theta, f_rho] = cart2pol(fX,fY);
     [c_theta, c_rho] = cart2pol(cX,cY);
     
+    [p_eX,p_eY,p_eZ,p_gX,p_gY,p_gZ] = ii_calcerror(pX,cX,pY,cY);
+    [f_eX,f_eY,f_eZ,f_gX,f_gY,f_gZ] = ii_calcerror(fX,cX,fY,cY);
+    
+    p_eR = abs(c_rho - p_rho);
+    f_eR = abs(c_rho - f_rho);
+    p_eT = abs(c_theta - p_theta);
+    f_eT = abs(c_theta - f_theta);
+    
+    p_gR = p_rho./c_rho;
+    f_gR = f_rho./c_rho;    
+    p_gT = p_theta./c_theta;
+    f_gT = p_theta./c_theta;
+    
     ii_stats(r).primary_x = pX;
     ii_stats(r).primary_y = pY;
     ii_stats(r).primary_rho = p_theta;
     ii_stats(r).primary_theta = p_rho;
     
+    ii_stats(r).primary_err_x = p_eX;
+    ii_stats(r).primary_err_y = p_eY;
+    ii_stats(r).primary_err_z = p_eZ;
+    ii_stats(r).primary_err_rho = p_eR;
+    ii_stats(r).primary_err_theta = p_eT;
+    
+    ii_stats(r).primary_gain_x = p_gX;
+    ii_stats(r).primary_gain_y = p_gY;
+    ii_stats(r).primary_gain_z = p_gZ;
+    ii_stats(r).primary_gain_rho = p_gR;
+    ii_stats(r).primary_gain_theta = p_gT;
+    
     ii_stats(r).final_x = fX;
     ii_stats(r).final_y = fY;
     ii_stats(r).final_rho = f_theta;
     ii_stats(r).final_theta = f_rho;
+    
+    ii_stats(r).final_err_x = f_eX;
+    ii_stats(r).final_err_y = f_eY;
+    ii_stats(r).final_err_z = f_eZ;
+    ii_stats(r).final_err_rho = f_eR;
+    ii_stats(r).final_err_theta = f_eT;
+    
+    ii_stats(r).final_gain_x = f_gX;
+    ii_stats(r).final_gain_y = f_gY;
+    ii_stats(r).final_gain_z = f_gZ;
+    ii_stats(r).final_gain_rho = f_gR;
+    ii_stats(r).final_gain_theta = f_gT;
     
     ii_stats(r).corrective_x = cX;
     ii_stats(r).corrective_y = cY;

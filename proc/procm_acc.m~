@@ -19,21 +19,19 @@ switch choice
     case 'Yes'     
         
         % Get config
-        ii_cfg = evalin('base','ii_cfg');
-
-        
+        ii_cfg = evalin('base','ii_cfg');        
         e = exist('ii_stats','var');
         
         if e == 1
-        ii_stats = evalin('base','ii_stats');
+            ii_stats = evalin('base','ii_stats');
         end
+        
+        % Set up ii_stats file
+        % This will be a 1xn (n = # of runs) structure
         
         % Create trial compliance matrix
         ii_stats(r).trial_compliance = ones(30,3);
         ii_stats(r).trial_notes = {};
-        
-        % Set up ii_stats file
-        % This will be a 1xn (n = # of runs) structure
         
         % Raw saccade x,y selection values. (1x90 matrix)
         ii_stats(r).raw_x = [];
@@ -48,6 +46,8 @@ switch choice
         ii_stats(r).primary_err_x = [];
         ii_stats(r).primary_err_y = [];
         ii_stats(r).primary_err_z = [];
+        ii_stats(r).primary_err_rho = [];
+        ii_stats(r).primary_err_theta = [];
         
         ii_stats(r).primary_gain_x = [];
         ii_stats(r).primary_gain_y = [];

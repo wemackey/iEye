@@ -46,10 +46,14 @@ switch choice
         ii_stats(r).primary_err_x = [];
         ii_stats(r).primary_err_y = [];
         ii_stats(r).primary_err_z = [];
+        ii_stats(r).primary_err_rho = [];
+        ii_stats(r).primary_err_theta = [];
         
         ii_stats(r).primary_gain_x = [];
         ii_stats(r).primary_gain_y = [];
         ii_stats(r).primary_gain_z = [];
+        ii_stats(r).primary_gain_rho = [];
+        ii_stats(r).primary_gain_theta = [];
         
         % Final saccade x,y,z values. (1x30 matrix)
         ii_stats(r).final_x = [];
@@ -60,10 +64,14 @@ switch choice
         ii_stats(r).final_err_x = [];
         ii_stats(r).final_err_y = [];
         ii_stats(r).final_err_z = [];
+        ii_stats(r).final_err_rho = [];
+        ii_stats(r).final_err_theta = [];
         
         ii_stats(r).final_gain_x = [];
         ii_stats(r).final_gain_y = [];
         ii_stats(r).final_gain_z = [];
+        ii_stats(r).final_gain_rho = [];
+        ii_stats(r).final_gain_theta = [];
         
         % Corrective saccade x,y,z values. (1x30 matrix)
         ii_stats(r).corrective_x = [];
