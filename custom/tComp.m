@@ -22,7 +22,7 @@ function varargout = tComp(varargin)
 
 % Edit the above text to modify the response to help tComp
 
-% Last Modified by GUIDE v2.5 12-Mar-2014 11:14:46
+% Last Modified by GUIDE v2.5 27-Mar-2014 12:10:07
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -79,10 +79,11 @@ function pushbutton1_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 ii_cfg = evalin('base','ii_cfg');
+r = evalin('base','r');
 ii_stats = evalin('base','ii_stats');
-trial_compliance = ii_stats.trial_compliance;
+trial_compliance = ii_stats(r).trial_compliance;
 trial_compliance(ii_cfg.tindex,1) = 0;
-ii_stats.trial_compliance = trial_compliance;
+ii_stats(r).trial_compliance = trial_compliance;
 putvar(ii_stats);
 
 
@@ -92,10 +93,11 @@ function pushbutton2_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 ii_cfg = evalin('base','ii_cfg');
+r = evalin('base','r');
 ii_stats = evalin('base','ii_stats');
-trial_compliance = ii_stats.trial_compliance;
+trial_compliance = ii_stats(r).trial_compliance;
 trial_compliance(ii_cfg.tindex,2) = 0;
-ii_stats.trial_compliance = trial_compliance;
+ii_stats(r).trial_compliance = trial_compliance;
 putvar(ii_stats);
 
 
@@ -105,8 +107,157 @@ function pushbutton3_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 ii_cfg = evalin('base','ii_cfg');
+r = evalin('base','r');
 ii_stats = evalin('base','ii_stats');
-trial_compliance = ii_stats.trial_compliance;
+trial_compliance = ii_stats(r).trial_compliance;
 trial_compliance(ii_cfg.tindex,3) = 0;
-ii_stats.trial_compliance = trial_compliance;
+ii_stats(r).trial_compliance = trial_compliance;
+putvar(ii_stats);
+
+
+% --- Executes on button press in calcAcc.
+function calcAcc_Callback(hObject, eventdata, handles)
+% hObject    handle to calcAcc (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+ii_cfg = evalin('base','ii_cfg');
+ii_stats = evalin('base','ii_stats');
+r = evalin('base','r');
+x = evalin('base','X');
+y = evalin('base','Y');
+cursel = sort(ii_cfg.cursel);
+
+% Make sure there are 90 selections, then get raw x and y positions
+nsel = size(cursel);
+
+if nsel(1) == 90
+    raw_x = zeros(90,1);
+    raw_y = zeros(90,1);
+    for g = 1:nsel
+        sel = x*0;
+        qq = cursel(g,:);
+        rng = qq(2) - qq(1);
+        selstrt = qq(1);
+        selend = qq(2);
+        
+        for z=1:rng
+            sel(selstrt:selend) = 1;
+        end
+        
+        raw_x(g) = mean(x(sel==1));
+        raw_y(g) = mean(y(sel==1));
+        
+    end
+    
+    % Split our matrix into the appropriate saccades (i.e. primary, final,
+    % corrective)
+    
+    [pX,fX,cX,pY,fY,cY] = ii_splitacc(raw_x,raw_y);
+    [p_theta, p_rho] = cart2pol(pX,pY);
+    [f_theta, f_rho] = cart2pol(fX,fY);
+    [c_theta, c_rho] = cart2pol(cX,cY);
+    
+    ii_stats(r).primary_x = pX;
+    ii_stats(r).primary_y = pY;
+    ii_stats(r).primary_rho = p_theta;
+    ii_stats(r).primary_theta = p_rho;
+    
+    ii_stats(r).final_x = fX;
+    ii_stats(r).final_y = fY;
+    ii_stats(r).final_rho = f_theta;
+    ii_stats(r).final_theta = f_rho;
+    
+    ii_stats(r).corrective_x = cX;
+    ii_stats(r).corrective_y = cY;
+    ii_stats(r).corrective_rho = c_theta;
+    ii_stats(r).corrective_theta = c_rho;
+    
+    ii_stats(r).raw_x = raw_x;
+    ii_stats(r).raw_y = raw_y;
+    
+    ii_stats(r).acc_cursel = cursel;
+    ii_stats(r).acc_sel = ii_cfg.sel;
+    
+    putvar(ii_stats)
+    
+    disp('Calculation successful. Remember to save your data!');
+else
+    error('ERROR: Not enough selections!');
+end
+
+
+% --- Executes on button press in calcSRT.
+function calcSRT_Callback(hObject, eventdata, handles)
+% hObject    handle to calcSRT (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+ii_cfg = evalin('base','ii_cfg');
+ii_stats = evalin('base','ii_stats');
+r = evalin('base','r');
+cursel = sort(ii_cfg.cursel);
+sel = ii_cfg.sel;
+
+% Make sure there are 30 selections
+
+nsel = size(cursel);
+
+if nsel(1) == 30
+    cursel = ii_cfg.cursel;
+    nSRT = cursel(:,2) - cursel(:,1);
+    ii_stats(r).srt = nSRT;
+    ii_stats(r).srt_cursel = cursel;
+    ii_stats(r).srt_sel = sel;
+    putvar(ii_stats);
+    disp(nSRT);
+    disp('Calculation successful. Remember to save your data!');
+else
+    error('ERROR: Not enough selections!');
+end
+
+
+% --- Executes on button press in calcMS.
+function calcMS_Callback(hObject, eventdata, handles)
+% hObject    handle to calcMS (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+
+function txtNote_Callback(hObject, eventdata, handles)
+% hObject    handle to txtNote (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of txtNote as text
+%        str2double(get(hObject,'String')) returns contents of txtNote as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function txtNote_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to txtNote (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in addNote.
+function addNote_Callback(hObject, eventdata, handles)
+% hObject    handle to addNote (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+ii_cfg = evalin('base','ii_cfg');
+r = evalin('base','r');
+ii_stats = evalin('base','ii_stats');
+trial_notes = ii_stats(r).trial_notes;
+the_note = get(handles.txtNote,'String');
+trial_notes{ii_cfg.tindex} = the_note;
+ii_stats(r).trial_notes = trial_notes;
 putvar(ii_stats);

@@ -20,12 +20,6 @@ switch choice
         
         % Get config
         ii_cfg = evalin('base','ii_cfg');
-        e = exist('ii_stats','var');
-        
-        if e == 1
-            ii_stats = evalin('base','ii_stats');
-        end
-        
         vel = ii_cfg.velocity;
         putvar(vel);
         
@@ -41,8 +35,8 @@ switch choice
         % Make our best guess selections
         % IMPORTANT: Threshold can be manually updated in order to improve
         % accuracy
-        ii_selectempty;
-        
+                ii_selectempty;
+                
         ii_selectbyvalue('XDAT',1,4);
         ii_selectstretch(0,-750);
         ii_selectuntil('vel',4,2,.1);

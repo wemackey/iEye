@@ -589,7 +589,7 @@ tindex = ii_cfg.tindex;
 numt = size(tcursel,1);
 newt = tindex + 1;
 
-if newt < numt
+if newt <= numt
     axis manual
     ii_trialplot(newt);
     axis auto

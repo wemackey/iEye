@@ -1,0 +1,48 @@
+function [eX,eY,eZ,gX,gY,gZ,theta,rho] = ii_calcerror(sx,tx,sy,ty)
+%II_CALCERROR Summary of this function goes here
+%   sx = saccade x, tx = target x, sy = sccade y, ty = target y
+
+% Calculate Saccade Z
+cf = (sx.^2) + (sy.^2);
+sz = sqrt(cf);
+
+% Calculate Target Z
+cc = (tx.^2) + (ty.^2);
+tz = sqrt(cc);
+
+% Calculate Error (distance)
+eX = abs(tx - sx); % x error
+eY = abs(ty - sy); % y error
+eZ1 = abs(tz - sz);
+
+z = (eX.^2) + (eY.^2);
+eZ2 = sqrt(z); % z error
+
+% Calculate Gain
+
+% Calculate Theta and Rho
+
+
+
+
+% Calc gain
+gZ = sZ./tZ;
+
+% Calc theta
+zc = (tZ.^2) + (sZ.^2);
+zZ = sqrt(zc); % 3rd side of triangle
+
+% for i = 1:30
+%     for f = 1:10
+%     a(1:3,1) = [tx(f,i);ty(f,i),0];
+%     a(1:3,2) = [fx(f,i);fy(f,i),0];
+%     theta = ii_theta(a);
+%     end
+% end
+
+cA = ((tZ.^2) + (sZ.^2) - (zZ.^2))./(2.*tZ.*sZ);
+theta = cos(cA);
+theta = theta.^-1;
+putvar(cA);
+end
+

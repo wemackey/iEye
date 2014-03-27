@@ -33,8 +33,6 @@ for q = 1:y(2)
     end
 end
 
-% putvar(pX,fX,tX);
-
 % CREATE Y MATRICES
 pY = [];
 fY = [];
@@ -61,8 +59,6 @@ for q = 1:y(2)
         x = x + 3;
     end
 end
-
-% putvar(pY,fY,tY);
 
 end
 
