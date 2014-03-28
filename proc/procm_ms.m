@@ -30,7 +30,8 @@ switch choice
         
         % Create MS variables
         ii_stats(r).ms_duration = [];
-        ii_stats(r).ms_amplitude = [];
+        ii_stats(r).ms_peak_velocity = [];
+        ii_stats(r).ms_avg_velocity = [];
         
         % Create response time selections
         ii_stats(r).ms_cursel = [];

@@ -280,6 +280,7 @@ nsel = size(cursel);
 if nsel(1) == 30
 
     pvel = zeros(30,1);
+    avel = zeros(30,1);
     
     for g = 1:nsel
         sel =sel*0;
@@ -292,6 +293,7 @@ if nsel(1) == 30
             sel(selstrt:selend) = 1;
         end
         
+        avel(g) = mean(vel(sel==1));
         pvel(g) = max(vel(sel==1));
         
     end  
