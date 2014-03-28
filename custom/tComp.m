@@ -260,6 +260,53 @@ function calcMS_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+% This must be done after SRT has already been calculated because it uses
+% the saccade selections used in the SRT calculations to identify the
+% correct saccades to compute the main sequence. Basically, it takes the
+% end of the SRT selection (the beginning of the saccade we are interested
+% in) and makes that the beginning of the new selection.
+
+ii_cfg = evalin('base','ii_cfg');
+ii_stats = evalin('base','ii_stats');
+r = evalin('base','r');
+vel = evalin('base','vel');
+cursel = sort(ii_cfg.cursel);
+sel = ii_cfg.sel;
+
+% Make sure there are 30 selections
+
+nsel = size(cursel);
+
+if nsel(1) == 30
+
+    pvel = zeros(30,1);
+    
+    for g = 1:nsel
+        sel =sel*0;
+        qq = cursel(g,:);
+        rng = qq(2) - qq(1);
+        selstrt = qq(1);
+        selend = qq(2);
+        
+        for z=1:rng
+            sel(selstrt:selend) = 1;
+        end
+        
+        pvel(g) = max(vel(sel==1));
+        
+    end  
+
+    nDuration = cursel(:,2) - cursel(:,1);
+    ii_stats(r).ms_duration = nDuration;
+    ii_stats(r).ms_peak_velocity = pvel;
+    ii_stats(r).ms_cursel = cursel;
+    ii_stats(r).ms_sel = sel;
+    putvar(ii_stats);
+    disp('Calculation successful. Remember to save your data!');
+else
+    error('ERROR: Not enough selections!');
+end
+
 
 
 function txtNote_Callback(hObject, eventdata, handles)

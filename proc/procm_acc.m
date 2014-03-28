@@ -20,11 +20,8 @@ switch choice
         
         % Get config
         ii_cfg = evalin('base','ii_cfg');        
-        e = exist('ii_stats','var');
-        
-        if e == 1
-            ii_stats = evalin('base','ii_stats');
-        end
+
+        ii_stats = evalin('base','ii_stats');
         
         % Set up ii_stats file
         % This will be a 1xn (n = # of runs) structure

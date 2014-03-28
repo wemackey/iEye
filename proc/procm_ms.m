@@ -1,6 +1,7 @@
-function procm_srt(r)
-%PROCM_SRT Summary of this function goes here
+function procm_ms(r)
+%PROCM_MS Summary of this function goes here
 %   Detailed explanation goes here
+
 
 if nargin ~= 1
     prompt = {'Subject Run #'};
@@ -20,31 +21,37 @@ switch choice
         
         % Get config
         ii_cfg = evalin('base','ii_cfg');
-        
+
         ii_stats = evalin('base','ii_stats');
-        
+
         
         vel = ii_cfg.velocity;
         putvar(vel);
         
-        % Create SRT
-        ii_stats(r).srt = [];
+        % Create MS variables
+        ii_stats(r).ms_duration = [];
+        ii_stats(r).ms_amplitude = [];
         
         % Create response time selections
-        ii_stats(r).srt_cursel = [];
-        ii_stats(r).srt_sel = [];
+        ii_stats(r).ms_cursel = [];
+        ii_stats(r).ms_sel = [];
         
         putvar(ii_stats,r);
         
         % Make our best guess selections
         % IMPORTANT: Threshold can be manually updated in order to improve
-        % accuracy. Remember this threshold value if it works well, because
-        % it can be used to find main sequence
+        % accuracy.
         ii_selectempty;
         
-        ii_selectbyvalue('XDAT',1,4);
-        ii_selectstretch(0,-750);
-        ii_selectuntil('vel',4,2,.1);
+        cursel(:,1) = ii_stats(r).srt_cursel(:,2);
+        cursel(:,2) = ii_stats(r).srt_cursel(:,2)+1;
+        
+        ii_cfg.cursel = cursel;
+        ii_cfg.sel = ii_cfg.sel*0;
+        
+        putvar(ii_cfg);       
+        
+        ii_selectuntil('vel',4,2,.01);
         
         % Open trial companion window
         % Make sure you are in trial mode and you are good to go
