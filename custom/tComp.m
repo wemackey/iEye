@@ -132,7 +132,14 @@ ii_stats = evalin('base','ii_stats');
 r = evalin('base','r');
 x = evalin('base','X');
 y = evalin('base','Y');
-cursel = sort(ii_cfg.cursel);
+sel = ii_cfg.sel;
+
+b = find(sel==1);
+split1 = SplitVec(b,'consecutive','firstval');
+split2 = SplitVec(b,'consecutive','lastval');
+
+cursel(:,1) = split1;
+cursel(:,2) = split2;
 
 % Make sure there are 90 selections, then get raw x and y positions
 nsel = size(cursel);

@@ -108,6 +108,7 @@ handles.output = hObject;
 
 handles.Main = [];
 grid on;
+
 % Update handles structure
 guidata(hObject, handles);
 

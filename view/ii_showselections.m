@@ -41,5 +41,8 @@ for i=1:(size(cursel,1))
     set(p,'FaceAlpha',0.15);
 end
 
+ii_cfg.cursel = cursel;
+putvar(ii_cfg);
+
 end
 
