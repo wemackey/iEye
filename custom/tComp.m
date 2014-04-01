@@ -233,15 +233,20 @@ function calcSRT_Callback(hObject, eventdata, handles)
 ii_cfg = evalin('base','ii_cfg');
 ii_stats = evalin('base','ii_stats');
 r = evalin('base','r');
-cursel = sort(ii_cfg.cursel);
 sel = ii_cfg.sel;
+
+b = find(sel==1);
+split1 = SplitVec(b,'consecutive','firstval');
+split2 = SplitVec(b,'consecutive','lastval');
+
+cursel(:,1) = split1;
+cursel(:,2) = split2;
 
 % Make sure there are 30 selections
 
 nsel = size(cursel);
 
 if nsel(1) == 30
-    cursel = ii_cfg.cursel;
     nSRT = cursel(:,2) - cursel(:,1);
     ii_stats(r).srt = nSRT;
     ii_stats(r).srt_cursel = cursel;
@@ -270,8 +275,14 @@ ii_cfg = evalin('base','ii_cfg');
 ii_stats = evalin('base','ii_stats');
 r = evalin('base','r');
 vel = evalin('base','vel');
-cursel = sort(ii_cfg.cursel);
 sel = ii_cfg.sel;
+
+b = find(sel==1);
+split1 = SplitVec(b,'consecutive','firstval');
+split2 = SplitVec(b,'consecutive','lastval');
+
+cursel(:,1) = split1;
+cursel(:,2) = split2;
 
 % Make sure there are 30 selections
 
