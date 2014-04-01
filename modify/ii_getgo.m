@@ -17,8 +17,8 @@ if ismember(chan,basevars)
     getgo = diff(ichan);
     getgo = abs(getgo);
     assignin('base','t_go',getgo);
-    figure;
-    plot(getgo);
+%     figure;
+%     plot(getgo);
 else
     disp('Channel does not exist')
 end
