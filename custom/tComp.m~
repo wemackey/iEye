@@ -84,8 +84,7 @@ ii_stats = evalin('base','ii_stats');
 trial_compliance = ii_stats(r).trial_compliance;
 trial_compliance(ii_cfg.tindex,1) = 0;
 ii_stats(r).trial_compliance = trial_compliance;
-cmsg = sprintf('(Trial # %s) broke fixation', num2str(ii_cfg.tindex));
-disp(cmsg);
+disp('Broke fixation ', ii_cfg.tindex);
 putvar(ii_stats);
 
 
@@ -100,8 +99,7 @@ ii_stats = evalin('base','ii_stats');
 trial_compliance = ii_stats(r).trial_compliance;
 trial_compliance(ii_cfg.tindex,2) = 0;
 ii_stats(r).trial_compliance = trial_compliance;
-cmsg = sprintf('(Trial # %s) blinked during cue presentation', num2str(ii_cfg.tindex));
-disp(cmsg);
+disp('Blinked during cue presentation');
 putvar(ii_stats);
 
 
@@ -116,8 +114,7 @@ ii_stats = evalin('base','ii_stats');
 trial_compliance = ii_stats(r).trial_compliance;
 trial_compliance(ii_cfg.tindex,3) = 0;
 ii_stats(r).trial_compliance = trial_compliance;
-cmsg = sprintf('(Trial # %s) blinked during saccade', num2str(ii_cfg.tindex));
-disp(cmsg);
+disp('Blinked during saccade');
 putvar(ii_stats);
 
 
