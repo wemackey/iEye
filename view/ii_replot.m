@@ -15,7 +15,8 @@ cnames = {};
 
 ii_cfg = evalin('base', 'ii_cfg');
 vis = ii_cfg.vis;
-schan = ii_cfg.hz;
+% schan = ii_cfg.hz;
+schan = 1000; %fix later
 v = textscan(vis,'%s','delimiter',',');
 
 col = lines(length(v{1}));
