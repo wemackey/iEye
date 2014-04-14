@@ -1,6 +1,6 @@
 function ii_blinkfix()
 % s = # of samples to delete from the beginning of the file
-s = 1600;
+s = 200;
 
 % Delete those samples from our variables
 X(1:s) = [];
