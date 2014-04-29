@@ -8,8 +8,8 @@ ii_view_channels('X,Y,TarX,TarY');
 ii_invert('Y');
 
 % Correct for blinks
-ii_blinkcorrect('X','Pupil',0,10,10);
-ii_blinkcorrect('Y','Pupil',0,10,10);
+ii_blinkcorrect('X','Pupil',0,50,50);
+ii_blinkcorrect('Y','Pupil',0,50,50);
 
 % Smooth data
 ii_smooth('X','moving',10);
