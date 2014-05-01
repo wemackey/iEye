@@ -2,6 +2,14 @@ function procv_srt(r)
 %PROCV_SRT Summary of this function goes here
 %   Detailed explanation goes here
 
+%%%%%%%%%%%%%
+% IMPORTANT %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Make sure ii_stats_vgs exists in workspace when starting to score a new
+% participant.
+% ii_stats_vgs = [];
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 if nargin ~= 1
     prompt = {'Subject Run #'};
     dlg_title = 'Subject Run #';
