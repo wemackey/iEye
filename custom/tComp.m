@@ -325,6 +325,7 @@ if nsel(1) == 30
     nDuration = cursel(:,2) - cursel(:,1);
     ii_stats(r).ms_duration = nDuration;
     ii_stats(r).ms_peak_velocity = pvel;
+    ii_stats(r).ms_avg_velocity = avel;
     ii_stats(r).ms_cursel = cursel;
     ii_stats(r).ms_sel = sel;
     putvar(ii_stats);
