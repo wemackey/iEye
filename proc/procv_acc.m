@@ -97,7 +97,7 @@ switch choice
         
         % Open trial companion window
         % Make sure you are in trial mode and you are good to go
-        tComp;
+        tComp_vgs;
         
     case 'No'
         disp('Cancelled')

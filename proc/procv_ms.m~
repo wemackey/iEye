@@ -1,6 +1,7 @@
-function procv_srt(r)
-%PROCV_SRT Summary of this function goes here
+function procv_ms(r)
+%PROCV_MS Summary of this function goes here
 %   Detailed explanation goes here
+
 
 if nargin ~= 1
     prompt = {'Subject Run #'};
@@ -20,50 +21,38 @@ switch choice
         
         % Get config
         ii_cfg = evalin('base','ii_cfg');
-        
+
         ii_stats_vgs = evalin('base','ii_stats_vgs');
-                
+
+        
         vel = ii_cfg.velocity;
         putvar(vel);
         
-        % Create SRT
-        ii_stats_vgs(r).srt = [];
+        % Create MS variables
+        ii_stats_vgs(r).ms_duration = [];
+        ii_stats_vgs(r).ms_peak_velocity = [];
+        ii_stats_vgs(r).ms_avg_velocity = [];
         
         % Create response time selections
-        ii_stats_vgs(r).srt_cursel = [];
-        ii_stats_vgs(r).srt_sel = [];
+        ii_stats_vgs(r).ms_cursel = [];
+        ii_stats_vgs(r).ms_sel = [];
         
         putvar(ii_stats_vgs,r);
         
         % Make our best guess selections
         % IMPORTANT: Threshold can be manually updated in order to improve
-        % accuracy. Remember this threshold value if it works well, because
-        % it can be used to find main sequence
+        % accuracy.
         ii_selectempty;
         
-        tx = evalin('base','TarX');
-        ex = tx*0;
-        sel = tx*0;
-        sx = SplitVec(tx,'equal','first');
-        si = find(tx(sx)-0);
-        ex(sx(si)) = 1;
-        
-        f = find(ex==1);
-        
-        cursel(:,1) = f;
-        cursel(:,2) = cursel(:,1) + 5;
-        
-        for i=1:(size(cursel,1))
-            sel(cursel(i,1):cursel(i,2)) = 1;
-        end
+        cursel(:,1) = ii_stats_vgs(r).srt_cursel(:,2);
+        cursel(:,2) = ii_stats_vgs(r).srt_cursel(:,2)+1;
         
         ii_cfg.cursel = cursel;
-        ii_cfg.sel = sel;
+        ii_cfg.sel = ii_cfg.sel*0;
         
-        putvar(ii_cfg);
-        ii_replot;
+        putvar(ii_cfg);       
         
-        ii_selectuntil('vel',4,2,.1);
+        ii_selectuntil('vel',4,2,.01);
         
         % Open trial companion window
         % Make sure you are in trial mode and you are good to go
