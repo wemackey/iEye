@@ -28,7 +28,7 @@ if ismember(chan,basevars)
     ii_cfg = evalin('base', 'ii_cfg');
     sel = x*0;
     
-    blink = find(pupil==pval);
+    blink = find(pupil<=pval);
     if blink > 0
         split1 = SplitVec(blink,'consecutive','firstval');
         split2 = SplitVec(blink,'consecutive','lastval');
