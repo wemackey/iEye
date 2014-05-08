@@ -121,8 +121,8 @@ ii_stats_vgs = evalin('base','ii_stats_vgs');
 r = evalin('base','r');
 x = evalin('base','X');
 y = evalin('base','Y');
-tarx = evalin('base','TarX');
-tary = evalin('base','TarY');
+tx = evalin('base','TarX');
+ty = evalin('base','TarY');
 sel = ii_cfg.sel;
 
 b = find(sel==1);

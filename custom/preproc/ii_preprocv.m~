@@ -26,7 +26,7 @@ ii_getgo('TarX');
 
 % Make selections for calibration
 ii_selectbyvalue('t_go',4,1);
-ii_selectstretch(-250,375);
+ii_selectstretch(-500,750);
 
 %%%%%%%%%%%%%%%
 % IMPORTANT!! %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

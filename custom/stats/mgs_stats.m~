@@ -47,7 +47,7 @@ end
 for i = 1:num_runs
     ii_stats(i).left_mat = zeros(30,1);
     ii_stats(i).left_inds = find(ii_stats(i).corrective_x>=0);
-    ii_stats(i).left_mat(ii_stats(i).left_inds) = 1; 
+    ii_stats(i).left_mat(ii_stats(i).left_inds) = 1;
     ii_stats(i).num_left_trials = 30 - length(ii_stats(i).left_inds); 
 end
 
@@ -56,7 +56,7 @@ for i = 1:num_runs
     ii_stats(i).right_mat = zeros(30,1);
     ii_stats(i).right_inds = find(ii_stats(i).corrective_x<0);
     ii_stats(i).right_mat(ii_stats(i).right_inds) = 1; 
-    ii_stats(i).num_right_trials = 30 - length(ii_stats(i).right_inds); 
+    ii_stats(i).num_right_trials = 30 - length(ii_stats(i).right_inds);
 end
 
 % Create NO fixation break matrix
@@ -66,6 +66,8 @@ for i = 1:num_runs
     ii_stats(i).no_break_inds = find(ii_stats(i).break_mat==1);
     ii_stats(i).no_break_mat(ii_stats(i).no_break_inds) = 1;
     ii_stats(i).no_break_mat = ii_stats(i).no_break_mat .* ii_stats(i).nogo_mat;
+    ii_stats(i).no_break_left_mat = ii_stats(i).no_break_mat .* ii_stats(i).left_mat;
+    ii_stats(i).no_break_right_mat = ii_stats(i).no_break_mat .* ii_stats(i).right_mat;
 end
 
 % Create ONLY fixation break matrix
@@ -75,6 +77,8 @@ for i = 1:num_runs
     ii_stats(i).only_break_inds = find(ii_stats(i).break_mat==0);
     ii_stats(i).only_break_mat(ii_stats(i).only_break_inds) = 1;
     ii_stats(i).only_break_mat = ii_stats(i).only_break_mat .* ii_stats(i).nogo_mat;
+    ii_stats(i).only_break_left_mat = ii_stats(i).only_break_mat .* ii_stats(i).left_mat;
+    ii_stats(i).only_break_right_mat = ii_stats(i).only_break_mat .* ii_stats(i).right_mat;
 end
 
 %%%%%%%%%%%%%%%%%%%%
@@ -87,6 +91,7 @@ end
 % RAW STATS (NOGO ONLY) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
+% All trials
 for i = 1:num_runs
     ii_stats(i).good_inds = find(ii_stats(i).nogo_mat==1); % Get good trials
     
@@ -112,6 +117,59 @@ for i = 1:num_runs
     ii_stats(i).good_srt = ii_stats(i).srt(ii_stats(i).good_inds);
 end
 
+% Left trials
+for i = 1:num_runs
+    ii_stats(i).left_inds = find(ii_stats(i).left_mat==1); % Get good trials
+    
+    % Error
+    ii_stats(i).left_primary_err_x = ii_stats(i).primary_err_x(ii_stats(i).left_inds);
+    ii_stats(i).left_primary_err_y = ii_stats(i).primary_err_y(ii_stats(i).left_inds);
+    ii_stats(i).left_primary_err_z = ii_stats(i).primary_err_z(ii_stats(i).left_inds);
+    
+    ii_stats(i).left_final_err_x = ii_stats(i).final_err_x(ii_stats(i).left_inds);
+    ii_stats(i).left_final_err_y = ii_stats(i).final_err_y(ii_stats(i).left_inds);
+    ii_stats(i).left_final_err_z = ii_stats(i).final_err_z(ii_stats(i).left_inds);
+    
+    % Gain
+    ii_stats(i).left_primary_gain_x = ii_stats(i).primary_gain_x(ii_stats(i).left_inds);
+    ii_stats(i).left_primary_gain_y = ii_stats(i).primary_gain_y(ii_stats(i).left_inds);
+    ii_stats(i).left_primary_gain_z = ii_stats(i).primary_gain_z(ii_stats(i).left_inds);
+    
+    ii_stats(i).left_final_gain_x = ii_stats(i).final_gain_x(ii_stats(i).left_inds);
+    ii_stats(i).left_final_gain_y = ii_stats(i).final_gain_y(ii_stats(i).left_inds);
+    ii_stats(i).left_final_gain_z = ii_stats(i).final_gain_z(ii_stats(i).left_inds);
+    
+    % SRT
+    ii_stats(i).left_srt = ii_stats(i).srt(ii_stats(i).left_inds);
+end
+
+% Right trials
+for i = 1:num_runs
+    ii_stats(i).right_inds = find(ii_stats(i).right_mat==1); % Get good trials
+    
+    % Error
+    ii_stats(i).right_primary_err_x = ii_stats(i).primary_err_x(ii_stats(i).right_inds);
+    ii_stats(i).right_primary_err_y = ii_stats(i).primary_err_y(ii_stats(i).right_inds);
+    ii_stats(i).right_primary_err_z = ii_stats(i).primary_err_z(ii_stats(i).right_inds);
+    
+    ii_stats(i).right_final_err_x = ii_stats(i).final_err_x(ii_stats(i).right_inds);
+    ii_stats(i).right_final_err_y = ii_stats(i).final_err_y(ii_stats(i).right_inds);
+    ii_stats(i).right_final_err_z = ii_stats(i).final_err_z(ii_stats(i).right_inds);
+    
+    % Gain
+    ii_stats(i).right_primary_gain_x = ii_stats(i).primary_gain_x(ii_stats(i).right_inds);
+    ii_stats(i).right_primary_gain_y = ii_stats(i).primary_gain_y(ii_stats(i).right_inds);
+    ii_stats(i).right_primary_gain_z = ii_stats(i).primary_gain_z(ii_stats(i).right_inds);
+    
+    ii_stats(i).right_final_gain_x = ii_stats(i).final_gain_x(ii_stats(i).right_inds);
+    ii_stats(i).right_final_gain_y = ii_stats(i).final_gain_y(ii_stats(i).right_inds);
+    ii_stats(i).right_final_gain_z = ii_stats(i).final_gain_z(ii_stats(i).right_inds);
+    
+    % SRT
+    ii_stats(i).right_srt = ii_stats(i).srt(ii_stats(i).right_inds);
+end
+
+% All trials
 ii_results.all_primary_err_x = [];
 ii_results.all_primary_err_y = [];
 ii_results.all_primary_err_z = [];
@@ -130,6 +188,43 @@ ii_results.all_final_gain_z = [];
 
 ii_results.all_srt = [];
 
+% Left trials
+ii_results.all_left_primary_err_x = [];
+ii_results.all_left_primary_err_y = [];
+ii_results.all_left_primary_err_z = [];
+
+ii_results.all_left_final_err_x = [];
+ii_results.all_left_final_err_y = [];
+ii_results.all_left_final_err_z = [];
+
+ii_results.all_left_primary_gain_x = [];
+ii_results.all_left_primary_gain_y = [];
+ii_results.all_left_primary_gain_z = [];
+
+ii_results.all_left_final_gain_x = [];
+ii_results.all_left_final_gain_y = [];
+ii_results.all_left_final_gain_z = [];
+
+ii_results.all_left_srt = [];
+
+% Right trials
+ii_results.all_right_primary_err_x = [];
+ii_results.all_right_primary_err_y = [];
+ii_results.all_right_primary_err_z = [];
+
+ii_results.all_right_final_err_x = [];
+ii_results.all_right_final_err_y = [];
+ii_results.all_right_final_err_z = [];
+
+ii_results.all_right_primary_gain_x = [];
+ii_results.all_right_primary_gain_y = [];
+ii_results.all_right_primary_gain_z = [];
+
+ii_results.all_right_final_gain_x = [];
+ii_results.all_right_final_gain_y = [];
+ii_results.all_right_final_gain_z = [];
+
+% All trials
 for j = 1:num_runs
     % Error
     ii_results.all_primary_err_x = [ii_results.all_primary_err_x; ii_stats(j).good_primary_err_x];
@@ -154,6 +249,57 @@ for j = 1:num_runs
     ii_results.all_srt = [ii_results.all_srt; ii_stats(j).good_srt];
 end
 
+% Left trials
+for j = 1:num_runs
+    % Error
+    ii_results.all_left_primary_err_x = [ii_results.all_left_primary_err_x; ii_stats(j).left_primary_err_x];
+    ii_results.all_left_primary_err_y = [ii_results.all_left_primary_err_y; ii_stats(j).left_primary_err_y];
+    ii_results.all_left_primary_err_z = [ii_results.all_left_primary_err_z; ii_stats(j).left_primary_err_z];
+
+    ii_results.all_left_final_err_x = [ii_results.all_left_final_err_x; ii_stats(j).left_final_err_x];
+    ii_results.all_left_final_err_y = [ii_results.all_left_final_err_y; ii_stats(j).left_final_err_y];
+    ii_results.all_left_final_err_z = [ii_results.all_left_final_err_z; ii_stats(j).left_final_err_z];
+    
+    % Gain
+    ii_results.all_left_primary_gain_x = [ii_results.all_left_primary_gain_x; ii_stats(j).left_primary_gain_x];
+    ii_results.all_left_primary_gain_y = [ii_results.all_left_primary_gain_y; ii_stats(j).left_primary_gain_y];
+    ii_results.all_left_primary_gain_z = [ii_results.all_left_primary_gain_z; ii_stats(j).left_primary_gain_z];
+    
+    ii_results.all_left_final_gain_x = [ii_results.all_left_final_gain_x; ii_stats(j).left_final_gain_x];
+    ii_results.all_left_final_gain_y = [ii_results.all_left_final_gain_y; ii_stats(j).left_final_gain_y];
+    ii_results.all_left_final_gain_z = [ii_results.all_left_final_gain_z; ii_stats(j).left_final_gain_z];
+    
+    % SRT
+    
+    ii_results.all_left_srt = [ii_results.all_srt; ii_stats(j).left_srt];
+end
+
+% Right trials
+for j = 1:num_runs
+    % Error
+    ii_results.all_right_primary_err_x = [ii_results.all_right_primary_err_x; ii_stats(j).right_primary_err_x];
+    ii_results.all_right_primary_err_y = [ii_results.all_right_primary_err_y; ii_stats(j).right_primary_err_y];
+    ii_results.all_right_primary_err_z = [ii_results.all_right_primary_err_z; ii_stats(j).right_primary_err_z];
+
+    ii_results.all_right_final_err_x = [ii_results.all_right_final_err_x; ii_stats(j).right_final_err_x];
+    ii_results.all_right_final_err_y = [ii_results.all_right_final_err_y; ii_stats(j).right_final_err_y];
+    ii_results.all_right_final_err_z = [ii_results.all_right_final_err_z; ii_stats(j).right_final_err_z];
+    
+    % Gain
+    ii_results.all_right_primary_gain_x = [ii_results.all_right_primary_gain_x; ii_stats(j).right_primary_gain_x];
+    ii_results.all_right_primary_gain_y = [ii_results.all_right_primary_gain_y; ii_stats(j).right_primary_gain_y];
+    ii_results.all_right_primary_gain_z = [ii_results.all_right_primary_gain_z; ii_stats(j).right_primary_gain_z];
+    
+    ii_results.all_right_final_gain_x = [ii_results.all_right_final_gain_x; ii_stats(j).right_final_gain_x];
+    ii_results.all_right_final_gain_y = [ii_results.all_right_final_gain_y; ii_stats(j).right_final_gain_y];
+    ii_results.all_right_final_gain_z = [ii_results.all_right_final_gain_z; ii_stats(j).right_final_gain_z];
+    
+    % SRT
+    
+    ii_results.all_right_srt = [ii_results.all_srt; ii_stats(j).right_srt];
+end
+
+% All trials
 ii_results.mean_all_srt = mean(ii_results.all_srt);
 ii_results.mean_all_primary_err_z = mean(ii_results.all_primary_err_z);
 ii_results.mean_all_final_err_z = mean(ii_results.all_final_err_z);
@@ -166,10 +312,56 @@ ii_results.median_all_final_err_z = median(ii_results.all_final_err_z);
 ii_results.median_all_primary_gain_z = median(ii_results.all_primary_gain_z);
 ii_results.median_all_final_gain_z = median(ii_results.all_final_gain_z);
 
+ii_results.std_all_srt = std(ii_results.all_srt);
+ii_results.std_all_primary_err_z = std(ii_results.all_primary_err_z);
+ii_results.std_all_final_err_z = std(ii_results.all_final_err_z);
+ii_results.std_all_primary_gain_z = std(ii_results.all_primary_gain_z);
+ii_results.std_all_final_gain_z = std(ii_results.all_final_gain_z);
+
+% Left trials
+ii_results.mean_all_left_srt = mean(ii_results.all_left_srt);
+ii_results.mean_all_left_primary_err_z = mean(ii_results.all_left_primary_err_z);
+ii_results.mean_all_left_final_err_z = mean(ii_results.all_left_final_err_z);
+ii_results.mean_all_left_primary_gain_z = mean(ii_results.all_left_primary_gain_z);
+ii_results.mean_all_left_final_gain_z = mean(ii_results.all_left_final_gain_z);
+
+ii_results.median_all_left_srt = median(ii_results.all_left_srt);
+ii_results.median_all_left_primary_err_z = median(ii_results.all_left_primary_err_z);
+ii_results.median_all_left_final_err_z = median(ii_results.all_left_final_err_z);
+ii_results.median_all_left_primary_gain_z = median(ii_results.all_left_primary_gain_z);
+ii_results.median_all_left_final_gain_z = median(ii_results.all_left_final_gain_z);
+
+ii_results.std_all_left_srt = std(ii_results.all_left_srt);
+ii_results.std_all_left_primary_err_z = std(ii_results.all_left_primary_err_z);
+ii_results.std_all_left_final_err_z = std(ii_results.all_left_final_err_z);
+ii_results.std_all_left_primary_gain_z = std(ii_results.all_left_primary_gain_z);
+ii_results.std_all_left_final_gain_z = std(ii_results.all_left_final_gain_z);
+
+% Right trials
+ii_results.mean_all_right_srt = mean(ii_results.all_right_srt);
+ii_results.mean_all_right_primary_err_z = mean(ii_results.all_right_primary_err_z);
+ii_results.mean_all_right_final_err_z = mean(ii_results.all_right_final_err_z);
+ii_results.mean_all_right_primary_gain_z = mean(ii_results.all_right_primary_gain_z);
+ii_results.mean_all_right_final_gain_z = mean(ii_results.all_right_final_gain_z);
+
+ii_results.median_all_right_srt = median(ii_results.all_right_srt);
+ii_results.median_all_right_primary_err_z = median(ii_results.all_right_primary_err_z);
+ii_results.median_all_right_final_err_z = median(ii_results.all_right_final_err_z);
+ii_results.median_all_right_primary_gain_z = median(ii_results.all_right_primary_gain_z);
+ii_results.median_all_right_final_gain_z = median(ii_results.all_right_final_gain_z);
+
+ii_results.std_all_right_srt = std(ii_results.all_right_srt);
+ii_results.std_all_right_primary_err_z = std(ii_results.all_right_primary_err_z);
+ii_results.std_all_right_final_err_z = std(ii_results.all_right_final_err_z);
+ii_results.std_all_right_primary_gain_z = std(ii_results.all_right_primary_gain_z);
+ii_results.std_all_right_final_gain_z = std(ii_results.all_right_final_gain_z);
+
+
 %%%%%%%%%%%%%%%%%%%%%%
 % NO FIXATION BREAKS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%
 
+% All trials
 for i = 1:num_runs
     ii_stats(i).no_break_inds = find(ii_stats(i).no_break_mat==1); % Get good trials
     
@@ -195,6 +387,59 @@ for i = 1:num_runs
     ii_stats(i).no_break_srt = ii_stats(i).srt(ii_stats(i).no_break_inds);
 end
 
+% Left trials
+for i = 1:num_runs
+    ii_stats(i).no_break_left_inds = find(ii_stats(i).no_break_left_mat==1); % Get good trials
+    
+    % Error
+    ii_stats(i).no_break_left_primary_err_x = ii_stats(i).primary_err_x(ii_stats(i).no_break_left_inds);
+    ii_stats(i).no_break_left_primary_err_y = ii_stats(i).primary_err_y(ii_stats(i).no_break_left_inds);
+    ii_stats(i).no_break_left_primary_err_z = ii_stats(i).primary_err_z(ii_stats(i).no_break_left_inds);
+    
+    ii_stats(i).no_break_left_final_err_x = ii_stats(i).final_err_x(ii_stats(i).no_break_left_inds);
+    ii_stats(i).no_break_left_final_err_y = ii_stats(i).final_err_y(ii_stats(i).no_break_left_inds);
+    ii_stats(i).no_break_left_final_err_z = ii_stats(i).final_err_z(ii_stats(i).no_break_left_inds);
+    
+    % Gain
+    ii_stats(i).no_break_left_primary_gain_x = ii_stats(i).primary_gain_x(ii_stats(i).no_break_left_inds);
+    ii_stats(i).no_break_left_primary_gain_y = ii_stats(i).primary_gain_y(ii_stats(i).no_break_left_inds);
+    ii_stats(i).no_break_left_primary_gain_z = ii_stats(i).primary_gain_z(ii_stats(i).no_break_left_inds);
+    
+    ii_stats(i).no_break_left_final_gain_x = ii_stats(i).final_gain_x(ii_stats(i).no_break_left_inds);
+    ii_stats(i).no_break_left_final_gain_y = ii_stats(i).final_gain_y(ii_stats(i).no_break_left_inds);
+    ii_stats(i).no_break_left_final_gain_z = ii_stats(i).final_gain_z(ii_stats(i).no_break_left_inds);
+    
+    % SRT
+    ii_stats(i).no_break_left_srt = ii_stats(i).srt(ii_stats(i).no_break_left_inds);
+end
+
+% Right trials
+for i = 1:num_runs
+    ii_stats(i).no_break_right_inds = find(ii_stats(i).no_break_left_mat==1); % Get good trials
+    
+    % Error
+    ii_stats(i).no_break_right_primary_err_x = ii_stats(i).primary_err_x(ii_stats(i).no_break_right_inds);
+    ii_stats(i).no_break_right_primary_err_y = ii_stats(i).primary_err_y(ii_stats(i).no_break_right_inds);
+    ii_stats(i).no_break_right_primary_err_z = ii_stats(i).primary_err_z(ii_stats(i).no_break_right_inds);
+    
+    ii_stats(i).no_break_right_final_err_x = ii_stats(i).final_err_x(ii_stats(i).no_break_right_inds);
+    ii_stats(i).no_break_right_final_err_y = ii_stats(i).final_err_y(ii_stats(i).no_break_right_inds);
+    ii_stats(i).no_break_right_final_err_z = ii_stats(i).final_err_z(ii_stats(i).no_break_right_inds);
+    
+    % Gain
+    ii_stats(i).no_break_right_primary_gain_x = ii_stats(i).primary_gain_x(ii_stats(i).no_break_right_inds);
+    ii_stats(i).no_break_right_primary_gain_y = ii_stats(i).primary_gain_y(ii_stats(i).no_break_right_inds);
+    ii_stats(i).no_break_right_primary_gain_z = ii_stats(i).primary_gain_z(ii_stats(i).no_break_right_inds);
+    
+    ii_stats(i).no_break_right_final_gain_x = ii_stats(i).final_gain_x(ii_stats(i).no_break_right_inds);
+    ii_stats(i).no_break_right_final_gain_y = ii_stats(i).final_gain_y(ii_stats(i).no_break_right_inds);
+    ii_stats(i).no_break_right_final_gain_z = ii_stats(i).final_gain_z(ii_stats(i).no_break_right_inds);
+    
+    % SRT
+    ii_stats(i).no_break_right_srt = ii_stats(i).srt(ii_stats(i).no_break_right_inds);
+end
+
+% All trials
 ii_results.no_break_primary_err_x = [];
 ii_results.no_break_primary_err_y = [];
 ii_results.no_break_primary_err_z = [];
@@ -213,6 +458,45 @@ ii_results.no_break_final_gain_z = [];
 
 ii_results.no_break_srt = [];
 
+% Left trials
+ii_results.no_break_left_primary_err_x = [];
+ii_results.no_break_left_primary_err_y = [];
+ii_results.no_break_left_primary_err_z = [];
+
+ii_results.no_break_left_final_err_x = [];
+ii_results.no_break_left_final_err_y = [];
+ii_results.no_break_left_final_err_z = [];
+
+ii_results.no_break_left_primary_gain_x = [];
+ii_results.no_break_left_primary_gain_y = [];
+ii_results.no_break_left_primary_gain_z = [];
+
+ii_results.no_break_left_final_gain_x = [];
+ii_results.no_break_left_final_gain_y = [];
+ii_results.no_break_left_final_gain_z = [];
+
+ii_results.no_break_left_srt = [];
+
+% Right trials
+ii_results.no_break_right_primary_err_x = [];
+ii_results.no_break_right_primary_err_y = [];
+ii_results.no_break_right_primary_err_z = [];
+
+ii_results.no_break_right_final_err_x = [];
+ii_results.no_break_right_final_err_y = [];
+ii_results.no_break_right_final_err_z = [];
+
+ii_results.no_break_right_primary_gain_x = [];
+ii_results.no_break_right_primary_gain_y = [];
+ii_results.no_break_right_primary_gain_z = [];
+
+ii_results.no_break_right_final_gain_x = [];
+ii_results.no_break_right_final_gain_y = [];
+ii_results.no_break_right_final_gain_z = [];
+
+ii_results.no_break_right_srt = [];
+
+% All trials
 for j = 1:num_runs
     % Error
     ii_results.no_break_primary_err_x = [ii_results.no_break_primary_err_x; ii_stats(j).no_break_primary_err_x];
@@ -236,6 +520,55 @@ for j = 1:num_runs
     ii_results.no_break_srt = [ii_results.no_break_srt; ii_stats(j).no_break_srt];
 end
 
+% Left trials
+for j = 1:num_runs
+    % Error
+    ii_results.no_break_left_primary_err_x = [ii_results.no_break_left_primary_err_x; ii_stats(j).no_break_left_primary_err_x];
+    ii_results.no_break_left_primary_err_y = [ii_results.no_break_left_primary_err_y; ii_stats(j).no_break_left_primary_err_y];
+    ii_results.no_break_left_primary_err_z = [ii_results.no_break_left_primary_err_z; ii_stats(j).no_break_left_primary_err_z];
+
+    ii_results.no_break_left_final_err_x = [ii_results.no_break_left_final_err_x; ii_stats(j).no_break_left_final_err_x];
+    ii_results.no_break_left_final_err_y = [ii_results.no_break_left_final_err_y; ii_stats(j).no_break_left_final_err_y];
+    ii_results.no_break_left_final_err_z = [ii_results.no_break_left_final_err_z; ii_stats(j).no_break_left_final_err_z];
+    
+    % Gain
+    ii_results.no_break_left_primary_gain_x = [ii_results.no_break_left_primary_gain_x; ii_stats(j).no_break_left_primary_gain_x];
+    ii_results.no_break_left_primary_gain_y = [ii_results.no_break_left_primary_gain_y; ii_stats(j).no_break_left_primary_gain_y];
+    ii_results.no_break_left_primary_gain_z = [ii_results.no_break_left_primary_gain_z; ii_stats(j).no_break_left_primary_gain_z];
+    
+    ii_results.no_break_left_final_gain_x = [ii_results.no_break_left_final_gain_x; ii_stats(j).no_break_left_final_gain_x];
+    ii_results.no_break_left_final_gain_y = [ii_results.no_break_left_final_gain_y; ii_stats(j).no_break_left_final_gain_y];
+    ii_results.no_break_left_final_gain_z = [ii_results.no_break_left_final_gain_z; ii_stats(j).no_break_left_final_gain_z];
+    
+    % SRT    
+    ii_results.no_break_left_srt = [ii_results.no_break_left_srt; ii_stats(j).no_break_left_srt];
+end
+
+% Right trials
+for j = 1:num_runs
+    % Error
+    ii_results.no_break_right_primary_err_x = [ii_results.no_break_right_primary_err_x; ii_stats(j).no_break_right_primary_err_x];
+    ii_results.no_break_right_primary_err_y = [ii_results.no_break_right_primary_err_y; ii_stats(j).no_break_right_primary_err_y];
+    ii_results.no_break_right_primary_err_z = [ii_results.no_break_right_primary_err_z; ii_stats(j).no_break_right_primary_err_z];
+
+    ii_results.no_break_right_final_err_x = [ii_results.no_break_right_final_err_x; ii_stats(j).no_break_right_final_err_x];
+    ii_results.no_break_right_final_err_y = [ii_results.no_break_right_final_err_y; ii_stats(j).no_break_right_final_err_y];
+    ii_results.no_break_right_final_err_z = [ii_results.no_break_right_final_err_z; ii_stats(j).no_break_right_final_err_z];
+    
+    % Gain
+    ii_results.no_break_right_primary_gain_x = [ii_results.no_break_right_primary_gain_x; ii_stats(j).no_break_right_primary_gain_x];
+    ii_results.no_break_right_primary_gain_y = [ii_results.no_break_right_primary_gain_y; ii_stats(j).no_break_right_primary_gain_y];
+    ii_results.no_break_right_primary_gain_z = [ii_results.no_break_right_primary_gain_z; ii_stats(j).no_break_right_primary_gain_z];
+    
+    ii_results.no_break_right_final_gain_x = [ii_results.no_break_right_final_gain_x; ii_stats(j).no_break_right_final_gain_x];
+    ii_results.no_break_right_final_gain_y = [ii_results.no_break_right_final_gain_y; ii_stats(j).no_break_right_final_gain_y];
+    ii_results.no_break_right_final_gain_z = [ii_results.no_break_right_final_gain_z; ii_stats(j).no_break_right_final_gain_z];
+    
+    % SRT    
+    ii_results.no_break_right_srt = [ii_results.no_break_right_srt; ii_stats(j).no_break_right_srt];
+end
+
+% All trials
 ii_results.mean_no_break_srt = mean(ii_results.no_break_srt);
 ii_results.mean_no_break_primary_err_z = mean(ii_results.no_break_primary_err_z);
 ii_results.mean_no_break_final_err_z = mean(ii_results.no_break_final_err_z);
@@ -247,6 +580,50 @@ ii_results.median_no_break_primary_err_z = median(ii_results.no_break_primary_er
 ii_results.median_no_break_final_err_z = median(ii_results.no_break_final_err_z);
 ii_results.median_no_break_primary_gain_z = median(ii_results.no_break_primary_gain_z);
 ii_results.median_no_break_final_gain_z = median(ii_results.no_break_final_gain_z);
+
+ii_results.std_no_break_srt = std(ii_results.no_break_srt);
+ii_results.std_no_break_primary_err_z = std(ii_results.no_break_primary_err_z);
+ii_results.std_no_break_final_err_z = std(ii_results.no_break_final_err_z);
+ii_results.std_no_break_primary_gain_z = std(ii_results.no_break_primary_gain_z);
+ii_results.std_no_break_final_gain_z = std(ii_results.no_break_final_gain_z);
+
+% Left trials
+ii_results.mean_no_break_left_srt = mean(ii_results.no_break_left_srt);
+ii_results.mean_no_break_left_primary_err_z = mean(ii_results.no_break_left_primary_err_z);
+ii_results.mean_no_break_left_final_err_z = mean(ii_results.no_break_left_final_err_z);
+ii_results.mean_no_break_left_primary_gain_z = mean(ii_results.no_break_left_primary_gain_z);
+ii_results.mean_no_break_left_final_gain_z = mean(ii_results.no_break_left_final_gain_z);
+
+ii_results.median_no_break_left_srt = median(ii_results.no_break_left_srt);
+ii_results.median_no_break_left_primary_err_z = median(ii_results.no_break_left_primary_err_z);
+ii_results.median_no_break_left_final_err_z = median(ii_results.no_break_left_final_err_z);
+ii_results.median_no_break_left_primary_gain_z = median(ii_results.no_break_left_primary_gain_z);
+ii_results.median_no_break_left_final_gain_z = median(ii_results.no_break_left_final_gain_z);
+
+ii_results.std_no_break_left_srt = std(ii_results.no_break_left_srt);
+ii_results.std_no_break_left_primary_err_z = std(ii_results.no_break_left_primary_err_z);
+ii_results.std_no_break_left_final_err_z = std(ii_results.no_break_left_final_err_z);
+ii_results.std_no_break_left_primary_gain_z = std(ii_results.no_break_left_primary_gain_z);
+ii_results.std_no_break_left_final_gain_z = std(ii_results.no_break_left_final_gain_z);
+
+% Right trials
+ii_results.mean_no_break_right_srt = mean(ii_results.no_break_right_srt);
+ii_results.mean_no_break_right_sprimary_err_z = mean(ii_results.no_break_right_primary_err_z);
+ii_results.mean_no_break_right_sfinal_err_z = mean(ii_results.no_break_right_final_err_z);
+ii_results.mean_no_break_right_sprimary_gain_z = mean(ii_results.no_break_right_primary_gain_z);
+ii_results.mean_no_break_right_sfinal_gain_z = mean(ii_results.no_break_right_final_gain_z);
+
+ii_results.median_no_break_right_ssrt = median(ii_results.no_break_right_srt);
+ii_results.median_no_break_right_sprimary_err_z = median(ii_results.no_break_right_primary_err_z);
+ii_results.median_no_break_right_sfinal_err_z = median(ii_results.no_break_right_final_err_z);
+ii_results.median_no_break_right_sprimary_gain_z = median(ii_results.no_break_right_primary_gain_z);
+ii_results.median_no_break_right_sfinal_gain_z = median(ii_results.no_break_right_final_gain_z);
+
+ii_results.std_no_break_right_ssrt = std(ii_results.no_break_right_srt);
+ii_results.std_no_break_right_sprimary_err_z = std(ii_results.no_break_right_primary_err_z);
+ii_results.std_no_break_right_sfinal_err_z = std(ii_results.no_break_right_final_err_z);
+ii_results.std_no_break_right_sprimary_gain_z = std(ii_results.no_break_right_primary_gain_z);
+ii_results.std_no_break_right_sfinal_gain_z = std(ii_results.no_break_right_final_gain_z);
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 % FIXATION BREAKS ONLY %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -378,6 +755,27 @@ ii_results.median_only_break_final_gain_z = median(ii_results.only_break_final_g
 % [no_break_sigErr,no_break_pvalErr] = ttest2(controls.no_break_primary_err_z,ii_results.no_break_primary_err_z);
 % [no_break_sigGain,no_break_pvalGain] = ttest2(controls.no_break_primary_gain_z,ii_results.no_break_primary_gain_z);
 % [no_break_sigSRT,no_break_pvalSRT] = ttest2(controls.no_break_srt,ii_results.no_break_srt);
+
+vgs_acc = [ii_stats_vgs(1).final_err_z; ii_stats_vgs(2).final_err_z; ii_stats_vgs(3).primary_err_z];
+vgs_gain = [ii_stats_vgs(1).final_gain_z; ii_stats_vgs(2).primary_gain_z; ii_stats_vgs(3).primary_gain_z];
+
+%%%%%%%%%%%%
+% COHENS D %
+%%%%%%%%%%%%
+% Calc SD
+
+% mgs_num = (299)*(0.256^2);
+% vgs_num = (299)*(0.119^2);
+% snum = mgs_num+vgs_num;
+% sdem = (299)+(299);
+% efx = sqrt(snum/sdem);
+
+% Calc FX SIZE
+x1 = 0.723;
+x2 = 0.951;
+s = 0.199;
+d = (x1-x2)/s;
+
 
 %%%%%%%%%%%%%%%
 % STORE STUFF %
