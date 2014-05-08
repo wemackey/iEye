@@ -47,7 +47,7 @@ end
 for i = 1:num_runs
     ii_stats(i).left_mat = zeros(30,1);
     ii_stats(i).left_inds = find(ii_stats(i).corrective_x>=0);
-    ii_stats(i).left_mat(ii_stats(i).left_inds) = 1;
+    ii_stats(i).left_mat(ii_stats(i).left_inds) = 1; 
     ii_stats(i).num_left_trials = 30 - length(ii_stats(i).left_inds); 
 end
 
@@ -56,7 +56,7 @@ for i = 1:num_runs
     ii_stats(i).right_mat = zeros(30,1);
     ii_stats(i).right_inds = find(ii_stats(i).corrective_x<0);
     ii_stats(i).right_mat(ii_stats(i).right_inds) = 1; 
-    ii_stats(i).num_right_trials = 30 - length(ii_stats(i).right_inds);
+    ii_stats(i).num_right_trials = 30 - length(ii_stats(i).right_inds); 
 end
 
 % Create NO fixation break matrix
@@ -66,8 +66,6 @@ for i = 1:num_runs
     ii_stats(i).no_break_inds = find(ii_stats(i).break_mat==1);
     ii_stats(i).no_break_mat(ii_stats(i).no_break_inds) = 1;
     ii_stats(i).no_break_mat = ii_stats(i).no_break_mat .* ii_stats(i).nogo_mat;
-    ii_stats(i).no_break_left_mat = ii_stats(i).no_break_mat .* ii_stats(i).left_mat;
-    ii_stats(i).no_break_right_mat = ii_stats(i).no_break_mat .* ii_stats(i).right_mat;
 end
 
 % Create ONLY fixation break matrix
@@ -77,8 +75,6 @@ for i = 1:num_runs
     ii_stats(i).only_break_inds = find(ii_stats(i).break_mat==0);
     ii_stats(i).only_break_mat(ii_stats(i).only_break_inds) = 1;
     ii_stats(i).only_break_mat = ii_stats(i).only_break_mat .* ii_stats(i).nogo_mat;
-    ii_stats(i).only_break_left_mat = ii_stats(i).only_break_mat .* ii_stats(i).left_mat;
-    ii_stats(i).only_break_right_mat = ii_stats(i).only_break_mat .* ii_stats(i).right_mat;
 end
 
 %%%%%%%%%%%%%%%%%%%%
