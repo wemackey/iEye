@@ -762,19 +762,25 @@ ii_results.median_only_break_final_gain_z = median(ii_results.only_break_final_g
 %%%%%%%%%%%%
 % COHENS D %
 %%%%%%%%%%%%
-% Calc SD
-mgs_num = (299)*(2.469^2);
-vgs_num = (299)*(0.523^2);
-snum = mgs_num+vgs_num;
-sdem = (299)+(299);
-efx = sqrt(snum/sdem);
+% % Calc SD
+% mgs_num = (299)*(2.469^2);
+% vgs_num = (299)*(0.523^2);
+% snum = mgs_num+vgs_num;
+% sdem = (299)+(299);
+% efx = sqrt(snum/sdem);
+% 
+% % Calc FX SIZE
+% x1 = 0.723;
+% x2 = 0.951;
+% s = 0.199;
+% d = (x1-x2)/s;
 
-% Calc FX SIZE
-x1 = 0.723;
-x2 = 0.951;
-s = 0.199;
-d = (x1-x2)/s;
+raw_x = ii_stats.raw_x;
+raw_y = ii_stats.raw_y;
+[pX,fX,cX,pY,fY,cY] = ii_splitacc(raw_x,raw_y);
 
+[p_eX,p_eY,p_eZ,p_gX,p_gY,p_gZ] = ii_calcerror_noabs(pX,cX,pY,cY);
+[f_eX,f_eY,f_eZ,f_gX,f_gY,f_gZ] = ii_calcerror_noabs(fX,cX,fY,cY);
 
 %%%%%%%%%%%%%%%
 % STORE STUFF %
