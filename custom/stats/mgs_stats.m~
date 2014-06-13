@@ -741,27 +741,27 @@ legend(pie_labels);
 figure
 subplot(3,2,1);
 hist(ii_results.all_left_primary_err_z,50);
-title(['Left error: ', num2str(ii_results.median_all_left_primary_err_z), ', STD: ', num2str(ii_results.std_all_left_primary_err_z)],'FontSize',14)
+title(['Left error: ', num2str(ii_results.median_all_left_primary_err_z), ', STD: ', num2str(ii_results.std_all_left_primary_err_z)])
 
 subplot(3,2,2);
 hist(ii_results.all_right_primary_err_z,50);
-title(['Right error: ', num2str(ii_results.median_all_right_primary_err_z), ', STD: ', num2str(ii_results.std_all_right_primary_err_z)],'FontSize',14)
+title(['Right error: ', num2str(ii_results.median_all_right_primary_err_z)])
 
 subplot(3,2,3)
 hist(ii_results.all_left_primary_gain_z,50);
-title(['Left gain: ', num2str(ii_results.median_all_left_primary_gain_z), ', STD: ', num2str(ii_results.std_all_left_primary_gain_z)],'FontSize',14)
+title(['Left gain: ', num2str(ii_results.median_all_left_primary_gain_z)])
 
 subplot(3,2,4)
 hist(ii_results.all_right_primary_gain_z,50);
-title(['Right gain: ', num2str(ii_results.median_all_right_primary_gain_z), ', STD: ', num2str(ii_results.std_all_right_primary_gain_z)],'FontSize',14)
+title(['Right gain: ', num2str(ii_results.median_all_right_primary_gain_z)])
 
 subplot(3,2,5)
 hist(ii_results.all_left_srt,50);
-title(['Left SRT: ', num2str(ii_results.median_all_left_srt), ', STD: ', num2str(ii_results.std_all_left_srt)],'FontSize',14)
+title(['Left SRT: ', num2str(ii_results.median_all_left_srt)])
 
 subplot(3,2,6)
 hist(ii_results.all_right_srt,50);
-title(['Right SRT: ', num2str(ii_results.median_all_right_srt), ', STD: ', num2str(ii_results.std_all_right_srt)],'FontSize',14)
+title(['Right SRT: ', num2str(ii_results.median_all_right_srt)])
 
 
 % all_means = [ii_results.mean_all_primary_err_z ii_results.mean_all_primary_gain_z ii_results.mean_all_srt];
