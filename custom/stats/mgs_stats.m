@@ -224,6 +224,8 @@ ii_results.all_right_final_gain_x = [];
 ii_results.all_right_final_gain_y = [];
 ii_results.all_right_final_gain_z = [];
 
+ii_results.all_right_srt = [];
+
 % All trials
 for j = 1:num_runs
     % Error
@@ -271,7 +273,7 @@ for j = 1:num_runs
     
     % SRT
     
-    ii_results.all_left_srt = [ii_results.all_srt; ii_stats(j).left_srt];
+    ii_results.all_left_srt = [ii_results.all_left_srt; ii_stats(j).left_srt];
 end
 
 % Right trials
@@ -296,7 +298,7 @@ for j = 1:num_runs
     
     % SRT
     
-    ii_results.all_right_srt = [ii_results.all_srt; ii_stats(j).right_srt];
+    ii_results.all_right_srt = [ii_results.all_right_srt; ii_stats(j).right_srt];
 end
 
 % All trials
@@ -775,12 +777,21 @@ ii_results.median_only_break_final_gain_z = median(ii_results.only_break_final_g
 % s = 0.199;
 % d = (x1-x2)/s;
 
-raw_x = ii_stats.raw_x;
-raw_y = ii_stats.raw_y;
-[pX,fX,cX,pY,fY,cY] = ii_splitacc(raw_x,raw_y);
-
-[p_eX,p_eY,p_eZ,p_gX,p_gY,p_gZ] = ii_calcerror_noabs(pX,cX,pY,cY);
-[f_eX,f_eY,f_eZ,f_gX,f_gY,f_gZ] = ii_calcerror_noabs(fX,cX,fY,cY);
+% for i = 1:num_runs
+%     raw_x = ii_stats(i).raw_x;
+%     raw_y = ii_stats(i).raw_y;
+%     [pX,fX,cX,pY,fY,cY] = ii_splitacc(raw_x,raw_y);
+%     
+%     [p_eX(:,i),p_eY(:,i),p_eZ(:,i),p_gX(:,i),p_gY(:,i),p_gZ(:,i)] = ii_calcerror_noabs(pX,cX,pY,cY);
+%     [f_eX(:,i),f_eY(:,i),f_eZ(:,i),f_gX(:,i),f_gY(:,i),f_gZ(:,i)] = ii_calcerror_noabs(fX,cX,fY,cY);
+% end
+% 
+% for i = 1:num_runs
+%     l_mat(:,i) = ii_stats(i).left_mat .* ii_stats(i).nogo_mat;
+%     r_mat(:,i) = ii_stats(i).right_mat .* ii_stats(i).nogo_mat;
+% end
+% 
+% [l,r,l_all,r_all] = ii_splitbyhemi(p_eX,num_runs,l_mat,r_mat)
 
 %%%%%%%%%%%%%%%
 % STORE STUFF %
