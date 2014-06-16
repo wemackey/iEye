@@ -729,6 +729,7 @@ ii_results.median_only_break_final_gain_z = median(ii_results.only_break_final_g
 % SHIT I WANT TO SEE %
 %%%%%%%%%%%%%%%%%%%%%%
 
+% PIE CHART FOR TRIAL COMPLIANCE
 pie_nogo = 1+ii_results.num_trials - ii_results.num_nogo;
 pie_bfix = 1+ii_results.num_bfix;
 pie_else = 1+ii_results.num_trials - pie_bfix - pie_nogo;
@@ -738,6 +739,7 @@ figure;
 pie([pie_nogo, pie_bfix, pie_else]);
 legend(pie_labels);
 
+% DV DISTRIBUTIONS
 figure
 subplot(3,2,1);
 hist(ii_results.all_left_primary_err_z,50);
@@ -763,6 +765,135 @@ subplot(3,2,6)
 hist(ii_results.all_right_srt,50);
 title(['Right SRT: ', num2str(ii_results.median_all_right_srt), ', STD: ', num2str(ii_results.std_all_right_srt)],'FontSize',14)
 
+% ROSE PLOTS
+% Create bin matrices
+% Segment data into bins
+% Get parameter estimates
+% Plot by bin (polar(bin#,median))
+% bin 1: 3.14:2.355 (2.7475)
+% bin 2: 2.355:1.57 (1.9625)
+% bin 3: 1.57:0.785 (1.1775)
+% bin 4: 0.785:0 (0.3925)
+% bin 5: 0:-0.785
+% bin 6: -0.785:-1.57
+% bin 7: -1.57:-2.355
+% bin 8: -2.355:-3.14
+
+for i = 1:num_runs
+    
+    ii_stats(i).b1_inds = find(ii_stats(i).corrective_rho > 2.355 & ii_stats(i).corrective_rho <= 3.14);
+    ii_stats(i).b2_inds = find(ii_stats(i).corrective_rho > 1.57 & ii_stats(i).corrective_rho <= 2.355);
+    ii_stats(i).b3_inds = find(ii_stats(i).corrective_rho > 0.785 & ii_stats(i).corrective_rho <= 1.57);
+    ii_stats(i).b4_inds = find(ii_stats(i).corrective_rho > 0 & ii_stats(i).corrective_rho <= 0.785);
+    ii_stats(i).b5_inds = find(ii_stats(i).corrective_rho > -0.785 & ii_stats(i).corrective_rho <= 0);
+    ii_stats(i).b6_inds = find(ii_stats(i).corrective_rho > -1.57 & ii_stats(i).corrective_rho <= -0.785);
+    ii_stats(i).b7_inds = find(ii_stats(i).corrective_rho > -2.355 & ii_stats(i).corrective_rho <= -1.57);
+    ii_stats(i).b8_inds = find(ii_stats(i).corrective_rho > -3.14 & ii_stats(i).corrective_rho <= -2.355);
+    
+    % PRIMARY ERROR
+    ii_stats(i).b1_primary_err_z = ii_stats(i).primary_err_z(ii_stats(i).b1_inds);
+    ii_stats(i).b2_primary_err_z = ii_stats(i).primary_err_z(ii_stats(i).b2_inds);
+    ii_stats(i).b3_primary_err_z = ii_stats(i).primary_err_z(ii_stats(i).b3_inds);
+    ii_stats(i).b4_primary_err_z = ii_stats(i).primary_err_z(ii_stats(i).b4_inds);
+    ii_stats(i).b5_primary_err_z = ii_stats(i).primary_err_z(ii_stats(i).b5_inds);
+    ii_stats(i).b6_primary_err_z = ii_stats(i).primary_err_z(ii_stats(i).b6_inds);
+    ii_stats(i).b7_primary_err_z = ii_stats(i).primary_err_z(ii_stats(i).b7_inds);
+    ii_stats(i).b8_primary_err_z = ii_stats(i).primary_err_z(ii_stats(i).b8_inds);
+    
+    % PRIMARY GAIN
+    ii_stats(i).b1_primary_gain_z = ii_stats(i).primary_gain_z(ii_stats(i).b1_inds);
+    ii_stats(i).b2_primary_gain_z = ii_stats(i).primary_gain_z(ii_stats(i).b2_inds);
+    ii_stats(i).b3_primary_gain_z = ii_stats(i).primary_gain_z(ii_stats(i).b3_inds);
+    ii_stats(i).b4_primary_gain_z = ii_stats(i).primary_gain_z(ii_stats(i).b4_inds);
+    ii_stats(i).b5_primary_gain_z = ii_stats(i).primary_gain_z(ii_stats(i).b5_inds);
+    ii_stats(i).b6_primary_gain_z = ii_stats(i).primary_gain_z(ii_stats(i).b6_inds);
+    ii_stats(i).b7_primary_gain_z = ii_stats(i).primary_gain_z(ii_stats(i).b7_inds);
+    ii_stats(i).b8_primary_gain_z = ii_stats(i).primary_gain_z(ii_stats(i).b8_inds);
+    
+    % SRT
+    ii_stats(i).b1_srt = ii_stats(i).srt(ii_stats(i).b1_inds);
+    ii_stats(i).b2_srt = ii_stats(i).srt(ii_stats(i).b2_inds);
+    ii_stats(i).b3_srt = ii_stats(i).srt(ii_stats(i).b3_inds);
+    ii_stats(i).b4_srt = ii_stats(i).srt(ii_stats(i).b4_inds);
+    ii_stats(i).b5_srt = ii_stats(i).srt(ii_stats(i).b5_inds);
+    ii_stats(i).b6_srt = ii_stats(i).srt(ii_stats(i).b6_inds);
+    ii_stats(i).b7_srt = ii_stats(i).srt(ii_stats(i).b7_inds);
+    ii_stats(i).b8_srt = ii_stats(i).srt(ii_stats(i).b8_inds);
+    
+end
+
+ii_results.b1_all_primary_err_z = [];
+ii_results.b2_all_primary_err_z = [];
+ii_results.b3_all_primary_err_z = [];
+ii_results.b4_all_primary_err_z = [];
+ii_results.b5_all_primary_err_z = [];
+ii_results.b6_all_primary_err_z = [];
+ii_results.b7_all_primary_err_z = [];
+ii_results.b8_all_primary_err_z = [];
+
+ii_results.b1_all_primary_gain_z = [];
+ii_results.b2_all_primary_gain_z = [];
+ii_results.b3_all_primary_gain_z = [];
+ii_results.b4_all_primary_gain_z = [];
+ii_results.b5_all_primary_gain_z = [];
+ii_results.b6_all_primary_gain_z = [];
+ii_results.b7_all_primary_gain_z = [];
+ii_results.b8_all_primary_gain_z = [];
+
+ii_results.b1_all_srt = [];
+ii_results.b2_all_srt = [];
+ii_results.b3_all_srt = [];
+ii_results.b4_all_srt = [];
+ii_results.b5_all_srt = [];
+ii_results.b6_all_srt = [];
+ii_results.b7_all_srt = [];
+ii_results.b8_all_srt = [];
+
+for j = 1:num_runs
+    % Error
+    ii_results.b1_all_primary_err_z = [ii_results.b1_all_primary_err_z; ii_stats(j).b1_primary_err_z];
+    ii_results.b2_all_primary_err_z = [ii_results.b2_all_primary_err_z; ii_stats(j).b2_primary_err_z];
+    ii_results.b3_all_primary_err_z = [ii_results.b3_all_primary_err_z; ii_stats(j).b3_primary_err_z];
+    ii_results.b4_all_primary_err_z = [ii_results.b4_all_primary_err_z; ii_stats(j).b4_primary_err_z];
+    ii_results.b5_all_primary_err_z = [ii_results.b5_all_primary_err_z; ii_stats(j).b5_primary_err_z];
+    ii_results.b6_all_primary_err_z = [ii_results.b6_all_primary_err_z; ii_stats(j).b6_primary_err_z];
+    ii_results.b7_all_primary_err_z = [ii_results.b7_all_primary_err_z; ii_stats(j).b7_primary_err_z];
+    ii_results.b8_all_primary_err_z = [ii_results.b8_all_primary_err_z; ii_stats(j).b8_primary_err_z];
+    
+    % Gain
+    ii_results.b1_all_primary_gain_z = [ii_results.b1_all_primary_gain_z; ii_stats(j).b1_primary_gain_z];
+    ii_results.b2_all_primary_gain_z = [ii_results.b2_all_primary_gain_z; ii_stats(j).b2_primary_gain_z];
+    ii_results.b3_all_primary_gain_z = [ii_results.b3_all_primary_gain_z; ii_stats(j).b3_primary_gain_z];
+    ii_results.b4_all_primary_gain_z = [ii_results.b4_all_primary_gain_z; ii_stats(j).b4_primary_gain_z];
+    ii_results.b5_all_primary_gain_z = [ii_results.b5_all_primary_gain_z; ii_stats(j).b5_primary_gain_z];
+    ii_results.b6_all_primary_gain_z = [ii_results.b6_all_primary_gain_z; ii_stats(j).b6_primary_gain_z];
+    ii_results.b7_all_primary_gain_z = [ii_results.b7_all_primary_gain_z; ii_stats(j).b7_primary_gain_z];
+    ii_results.b8_all_primary_gain_z = [ii_results.b8_all_primary_gain_z; ii_stats(j).b8_primary_gain_z];
+    
+    % SRT    
+    ii_results.b1_all_srt = [ii_results.b1_all_srt; ii_stats(j).b1_srt];
+    ii_results.b2_all_srt = [ii_results.b2_all_srt; ii_stats(j).b2_srt];
+    ii_results.b3_all_srt = [ii_results.b3_all_srt; ii_stats(j).b3_srt];
+    ii_results.b4_all_srt = [ii_results.b4_all_srt; ii_stats(j).b4_srt];
+    ii_results.b5_all_srt = [ii_results.b5_all_srt; ii_stats(j).b5_srt];
+    ii_results.b6_all_srt = [ii_results.b6_all_srt; ii_stats(j).b6_srt];
+    ii_results.b7_all_srt = [ii_results.b7_all_srt; ii_stats(j).b7_srt];
+    ii_results.b8_all_srt = [ii_results.b8_all_srt; ii_stats(j).b8_srt];
+end
+
+bins = [2.7475; 1.9625; 1.1775; 0.3925; -0.3925; -1.1775; -1.9625; -2.7475];
+dt_err = [median(ii_results.b1_all_primary_err_z); median(ii_results.b2_all_primary_err_z); median(ii_results.b3_all_primary_err_z); median(ii_results.b4_all_primary_err_z); median(ii_results.b5_all_primary_err_z); median(ii_results.b6_all_primary_err_z); median(ii_results.b7_all_primary_err_z); median(ii_results.b8_all_primary_err_z)];
+dt_gain = [median(ii_results.b1_all_primary_gain_z); median(ii_results.b2_all_primary_gain_z); median(ii_results.b3_all_primary_gain_z); median(ii_results.b4_all_primary_gain_z); median(ii_results.b5_all_primary_gain_z); median(ii_results.b6_all_primary_gain_z); median(ii_results.b7_all_primary_gain_z); median(ii_results.b8_all_primary_gain_z)];
+dt_srt = [median(ii_results.b1_all_srt); median(ii_results.b2_all_srt); median(ii_results.b3_all_srt); median(ii_results.b4_all_srt); median(ii_results.b5_all_srt); median(ii_results.b6_all_srt); median(ii_results.b7_all_srt); median(ii_results.b8_all_srt)];
+
+figure;
+polar(bins,dt_err,'*');
+
+figure;
+polar(bins,dt_gain,'*');
+
+figure;
+polar(bins,dt_srt,'*');
 
 % all_means = [ii_results.mean_all_primary_err_z ii_results.mean_all_primary_gain_z ii_results.mean_all_srt];
 % no_break_means = [ii_results.mean_no_break_primary_err_z ii_results.mean_no_break_primary_gain_z ii_results.mean_no_break_srt];
