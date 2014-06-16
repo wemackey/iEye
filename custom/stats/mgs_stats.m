@@ -619,7 +619,7 @@ ii_results.mean_no_break_right_final_err_z = mean(ii_results.no_break_right_fina
 ii_results.mean_no_break_right_primary_gain_z = mean(ii_results.no_break_right_primary_gain_z);
 ii_results.mean_no_break_right_final_gain_z = mean(ii_results.no_break_right_final_gain_z);
 
-ii_results.median_no_break_right_ssrt = median(ii_results.no_break_right_srt);
+ii_results.median_no_break_right_srt = median(ii_results.no_break_right_srt);
 ii_results.median_no_break_right_primary_err_z = median(ii_results.no_break_right_primary_err_z);
 ii_results.median_no_break_right_final_err_z = median(ii_results.no_break_right_final_err_z);
 ii_results.median_no_break_right_primary_gain_z = median(ii_results.no_break_right_primary_gain_z);
@@ -739,8 +739,8 @@ figure;
 pie([pie_nogo, pie_bfix, pie_else]);
 legend(pie_labels);
 
-% DV DISTRIBUTIONS
-figure
+% DV DISTRIBUTIONS ALL
+figure('Name','All Trials','NumberTitle','off')
 subplot(3,2,1);
 hist(ii_results.all_left_primary_err_z,50);
 title(['Left error: ', num2str(ii_results.median_all_left_primary_err_z), ', STD: ', num2str(ii_results.std_all_left_primary_err_z)],'FontSize',14)
@@ -764,6 +764,33 @@ title(['Left SRT: ', num2str(ii_results.median_all_left_srt), ', STD: ', num2str
 subplot(3,2,6)
 hist(ii_results.all_right_srt,50);
 title(['Right SRT: ', num2str(ii_results.median_all_right_srt), ', STD: ', num2str(ii_results.std_all_right_srt)],'FontSize',14)
+
+% DV DISTRIBUTIONS NO BREAK
+figure('Name','No break trials','NumberTitle','off')
+subplot(3,2,1);
+hist(ii_results.no_break_left_primary_err_z,50);
+title(['Left error: ', num2str(ii_results.median_no_break_left_primary_err_z), ', STD: ', num2str(ii_results.std_no_break_left_primary_err_z)],'FontSize',14)
+
+subplot(3,2,2);
+hist(ii_results.no_break_right_primary_err_z,50);
+title(['Right error: ', num2str(ii_results.median_no_break_right_primary_err_z), ', STD: ', num2str(ii_results.std_no_break_right_primary_err_z)],'FontSize',14)
+
+subplot(3,2,3)
+hist(ii_results.no_break_left_primary_gain_z,50);
+title(['Left gain: ', num2str(ii_results.median_no_break_left_primary_gain_z), ', STD: ', num2str(ii_results.std_no_break_left_primary_gain_z)],'FontSize',14)
+
+subplot(3,2,4)
+hist(ii_results.no_break_right_primary_gain_z,50);
+title(['Right gain: ', num2str(ii_results.median_no_break_right_primary_gain_z), ', STD: ', num2str(ii_results.std_no_break_right_primary_gain_z)],'FontSize',14)
+
+subplot(3,2,5)
+hist(ii_results.no_break_left_srt,50);
+title(['Left SRT: ', num2str(ii_results.median_no_break_left_srt), ', STD: ', num2str(ii_results.std_no_break_left_srt)],'FontSize',14)
+
+subplot(3,2,6)
+hist(ii_results.no_break_right_srt,50);
+title(['Right SRT: ', num2str(ii_results.median_no_break_right_srt), ', STD: ', num2str(ii_results.std_no_break_right_srt)],'FontSize',14)
+
 
 % ROSE PLOTS
 % Create bin matrices
