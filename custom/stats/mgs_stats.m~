@@ -1192,9 +1192,9 @@ polar(bins,dt_srt,'*');
 % STORE STUFF %
 %%%%%%%%%%%%%%%
 
-% disp(ii_results.std_no_break_primary_err_z)
-% disp(ii_results.std_no_break_primary_gain_z)
-% disp(ii_results.std_no_break_srt)
+disp(ii_results.std_no_break_primary_err_z)
+disp(ii_results.std_no_break_primary_gain_z)
+disp(ii_results.std_no_break_srt)
 putvar(ii_stats,ii_results);
 end
 
