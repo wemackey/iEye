@@ -1145,6 +1145,7 @@ polar(bins,dt_srt,'*');
 % [l,r,l_all,r_all] = ii_splitbyhemi(p_eX,num_runs,l_mat,r_mat)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 % COMPARISON PLOTS
 % PRIMARY ERROR
 % 
@@ -1256,6 +1257,8 @@ plot(col2,p6,'k')
 plot(col2,p7,'g')
 plot(col2,p8,'b')
 axis([.5,2.5,.5,1.1]) 
+=======
+>>>>>>> FETCH_HEAD
 =======
 >>>>>>> FETCH_HEAD
 
