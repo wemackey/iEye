@@ -142,7 +142,12 @@ pfefc = ranksum(cont,fefc)
 figure('Name','Primary error','NumberTitle','off')
 gp = [1 1 1 1 1 1 1 1 1 2 2 2 2 4 2 2 4 3 3 3 3 5 3 3 5];
 boxplot(valz,gp,'whisker',5,'plotstyle','compact');
-ylim([0 4.5])
+
+color = ['k', 'r', 'c', 'c'];
+h = findobj(gca,'Tag','Box');
+ for j=1:length(h)
+    patch(get(h(j),'XData'),get(h(j),'YData'),color(j),'FaceAlpha',.5);
+ end
 
 % % PRIMARY GAIN
 
@@ -163,7 +168,6 @@ pfefc = ranksum(cont,fefc)
 figure('Name','Primary gain','NumberTitle','off')
 gp = [1 1 1 1 1 1 1 1 1 2 2 2 2 4 2 2 4 3 3 3 3 5 3 3 5];
 boxplot(valz,gp,'whisker',5,'plotstyle','compact');
-ylim([.5 1.1])
 
 % % FINAL ERROR
 % 
@@ -175,7 +179,6 @@ p = kruskalwallis(valz,grp)
 figure('Name','Final error','NumberTitle','off')
 gp = [1 1 1 1 1 1 1 1 1 2 2 2 2 4 2 2 4 3 3 3 3 5 3 3 5];
 boxplot(valz,gp,'whisker',5,'plotstyle','compact');
-ylim([0 4.5])
 
 % % Final GAIN
 
@@ -187,7 +190,6 @@ p = kruskalwallis(valz,grp)
 figure('Name','Final gain','NumberTitle','off')
 gp = [1 1 1 1 1 1 1 1 1 2 2 2 2 4 2 2 4 3 3 3 3 5 3 3 5];
 boxplot(valz,gp,'whisker',5,'plotstyle','compact');
-ylim([.5 1.1])
 
 end
 
