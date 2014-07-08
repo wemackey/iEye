@@ -114,6 +114,62 @@ plot(col2,p7,'g')
 plot(col2,p8,'b')
 axis([.5,2.5,.5,1.1]) 
 
+% % SRT
+
+colz = [1 1 1 1 1 1 1 1 1 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 2 2 2 2 2 2 2 2];
+valz = [219 277 263 261 304 227 279 314 290 396 305 324 233 383 291 288 281 392 294 316 234 416 295 309 327];
+
+p1 = [396 392];
+p2 = [305 294];
+p3 = [324 316];
+p4 = [233 234];
+p5 = [383 416];
+p6 = [291 295];
+p7 = [288 309];
+p8 = [281 327];
+col2 = [1.5 2];
+
+figure('Name','No break trials SRT','NumberTitle','off')
+plot(colz,valz,'.k','MarkerSize',25);
+hold all
+plot(col2,p1,'k')
+plot(col2,p2,'k')
+plot(col2,p3,'k')
+plot(col2,p4,'k')
+plot(col2,p5,'r')
+plot(col2,p6,'k')
+plot(col2,p7,'g')
+plot(col2,p8,'b')
+axis([.5,2.5,0,500]) 
+
+% % PRIMARY GAIN VARIABILITY
+
+colz = [1 1 1 1 1 1 1 1 1 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 2 2 2 2 2 2 2 2];
+valz = [0.163 0.200 0.170 0.105 0.159 0.111 0.151 0.232 0.135 0.274 0.144 0.204 0.124 0.235 0.137 0.174 0.262 0.170 0.084 0.230 0.167 0.254 0.125 0.203 0.242];
+
+p1 = [0.170 0.274];
+p2 = [0.144	0.084];
+p3 = [0.204 0.230];
+p4 = [0.124	0.167];
+p5 = [0.235	0.254];
+p6 = [0.137	0.125];
+p7 = [0.174	0.203];
+p8 = [0.262	0.242];
+col2 = [1.5 2];
+
+figure('Name','No break trials gain variability','NumberTitle','off')
+plot(colz,valz,'.k','MarkerSize',25);
+hold all
+plot(col2,p1,'k')
+plot(col2,p2,'k')
+plot(col2,p3,'k')
+plot(col2,p4,'k')
+plot(col2,p5,'r')
+plot(col2,p6,'k')
+plot(col2,p7,'g')
+plot(col2,p8,'b')
+axis([.5,2.5,0,0.6]) 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % SIGNIFANCE TESTING AND PLOTS %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -141,7 +197,7 @@ pfefc = ranksum(cont,fefc)
 
 figure('Name','Primary error','NumberTitle','off')
 gp = [1 1 1 1 1 1 1 1 1 2 2 2 2 4 2 2 4 3 3 3 3 5 3 3 5];
-boxplot(valz,gp,'whisker',5,'plotstyle','compact');
+boxplot(valz,gp,'whisker',0,'symbol','r','plotstyle','compact');
 ylim([0 4.5])
 
 % % PRIMARY GAIN
@@ -162,7 +218,7 @@ pfefc = ranksum(cont,fefc)
 
 figure('Name','Primary gain','NumberTitle','off')
 gp = [1 1 1 1 1 1 1 1 1 2 2 2 2 4 2 2 4 3 3 3 3 5 3 3 5];
-boxplot(valz,gp,'whisker',5,'plotstyle','compact');
+boxplot(valz,gp,'whisker',0,'symbol','r','plotstyle','compact');
 ylim([.5 1.1])
 
 % % FINAL ERROR
@@ -174,7 +230,7 @@ p = kruskalwallis(valz,grp)
 
 figure('Name','Final error','NumberTitle','off')
 gp = [1 1 1 1 1 1 1 1 1 2 2 2 2 4 2 2 4 3 3 3 3 5 3 3 5];
-boxplot(valz,gp,'whisker',5,'plotstyle','compact');
+boxplot(valz,gp,'whisker',0,'symbol','r','plotstyle','compact');
 ylim([0 4.5])
 
 % % Final GAIN
@@ -186,8 +242,78 @@ p = kruskalwallis(valz,grp)
 
 figure('Name','Final gain','NumberTitle','off')
 gp = [1 1 1 1 1 1 1 1 1 2 2 2 2 4 2 2 4 3 3 3 3 5 3 3 5];
-boxplot(valz,gp,'whisker',5,'plotstyle','compact');
+boxplot(valz,gp,'whisker',0,'symbol','r','plotstyle','compact');
 ylim([.5 1.1])
+
+% % SRT
+
+grp = {'control' 'control' 'control' 'control' 'control' 'control' 'control' 'control' 'control' 'dlpfcc' 'dlpfcc' 'dlpfcc' 'dlpfcc' 'fefc' 'dlpfcc' 'dlpfcc' 'fefc' 'dlpfci' 'dlpfci' 'dlpfci' 'dlpfci' 'fefi' 'dlpfci' 'dlpfci' 'fefi'};
+valz = [219 277 263 261 304 227 279 314 290 396 305 324 233 383 291 288 281 392 294 316 234 416 295 309 327];
+
+p = kruskalwallis(valz,grp)
+
+figure('Name','SRT','NumberTitle','off')
+gp = [1 1 1 1 1 1 1 1 1 2 2 2 2 4 2 2 4 3 3 3 3 5 3 3 5];
+boxplot(valz,gp,'whisker',0,'symbol','r','plotstyle','compact');
+ylim([0 500])
+
+% % GAIN VARIABILITY
+
+grp = {'control' 'control' 'control' 'control' 'control' 'control' 'control' 'control' 'control' 'dlpfcc' 'dlpfcc' 'dlpfcc' 'dlpfcc' 'fefc' 'dlpfcc' 'dlpfcc' 'fefc' 'dlpfci' 'dlpfci' 'dlpfci' 'dlpfci' 'fefi' 'dlpfci' 'dlpfci' 'fefi'};
+valz = [0.163 0.200 0.170 0.105 0.159 0.111 0.151 0.232 0.135 0.274 0.144 0.204 0.124 0.235 0.137 0.174 0.262 0.170 0.084 0.230 0.167 0.254 0.125 0.203 0.242];
+
+p = kruskalwallis(valz,grp)
+
+figure('Name','Gain variability','NumberTitle','off')
+gp = [1 1 1 1 1 1 1 1 1 2 2 2 2 4 2 2 4 3 3 3 3 5 3 3 5];
+boxplot(valz,gp,'whisker',0,'symbol','r','plotstyle','compact');
+ylim([0 .6])
+
+% % CONTROLS L V R ERROR
+le = [1.182 1.238 1.565 1.188 1.669 0.988 1.462 1.322 1.076];
+ri = [1.077 1.475 1.717 1.120 1.447 0.842 1.375 1.283 1.105];
+
+error_lr = ranksum(le,ri)
+
+% % CONTROLS L V R GAIN
+
+le = [0.966 0.980 0.907 0.949 0.922 0.986 0.922 0.976 0.986];
+ri = [0.974 0.959 0.902 0.937 0.997 0.990 0.920 0.932 0.993];
+
+gain_lr = ranksum(le,ri)
+
+% % CONTROLS L V R SRT
+
+le = [221 278 261 255 323 236 273 320 282];
+ri = [219 276 265 265 291 218 285 308 300];
+
+srt_lr = ranksum(le,ri)
+
+% for i=1:7
+%     ys(i) = dt_err(i) * (sin(bins(i)));
+%     xs(i) = dt_err(i) * (cos(bins(i)));
+% end
+% 
+% xm = mean(xs);
+% ym = mean(ys);
+% 
+% [th,r] = cart2pol(xm,ym);
+% compass(th,r);
+
+amp = mean(dt_err_f);
+origrho=dt_err_f;
+origtheta= bins;
+[X,Y] = pol2cart(origtheta,origrho);
+for i=1:8,am(i)=X(i)*origrho(i);bm(i)=Y(i)*origrho(i);end
+Cmx=sum(am)/sum(origrho(1:8));
+Cmy=sum(bm)/sum(origrho(1:8));
+Cmvr=sqrt(Cmx.^2 + Cmy.^2);%length
+Cmvtheta=atan2(Cmy,Cmx);%angle of average vector
+Cmvrnormorig=Cmvr/mean(origrho(1:8));
+polar(origtheta,origrho)
+hold on
+polar(Cmvtheta,amp,'*r')
+compass(Cmvtheta,amp);
 
 end
 

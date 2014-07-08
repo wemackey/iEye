@@ -914,7 +914,27 @@ for i = 1:num_runs
     ii_stats(i).no_break_b6_srt = ii_stats(i).srt(ii_stats(i).no_break_b6_inds);
     ii_stats(i).no_break_b7_srt = ii_stats(i).srt(ii_stats(i).no_break_b7_inds);
     ii_stats(i).no_break_b8_srt = ii_stats(i).srt(ii_stats(i).no_break_b8_inds);
+
+    % FINAL ERROR
+    ii_stats(i).no_break_b1_final_err_z = ii_stats(i).final_err_z(ii_stats(i).no_break_b1_inds);
+    ii_stats(i).no_break_b2_final_err_z = ii_stats(i).final_err_z(ii_stats(i).no_break_b2_inds);
+    ii_stats(i).no_break_b3_final_err_z = ii_stats(i).final_err_z(ii_stats(i).no_break_b3_inds);
+    ii_stats(i).no_break_b4_final_err_z = ii_stats(i).final_err_z(ii_stats(i).no_break_b4_inds);
+    ii_stats(i).no_break_b5_final_err_z = ii_stats(i).final_err_z(ii_stats(i).no_break_b5_inds);
+    ii_stats(i).no_break_b6_final_err_z = ii_stats(i).final_err_z(ii_stats(i).no_break_b6_inds);
+    ii_stats(i).no_break_b7_final_err_z = ii_stats(i).final_err_z(ii_stats(i).no_break_b7_inds);
+    ii_stats(i).no_break_b8_final_err_z = ii_stats(i).final_err_z(ii_stats(i).no_break_b8_inds);
     
+    % FINAL GAIN
+    ii_stats(i).no_break_b1_final_gain_z = ii_stats(i).final_gain_z(ii_stats(i).no_break_b1_inds);
+    ii_stats(i).no_break_b2_final_gain_z = ii_stats(i).final_gain_z(ii_stats(i).no_break_b2_inds);
+    ii_stats(i).no_break_b3_final_gain_z = ii_stats(i).final_gain_z(ii_stats(i).no_break_b3_inds);
+    ii_stats(i).no_break_b4_final_gain_z = ii_stats(i).final_gain_z(ii_stats(i).no_break_b4_inds);
+    ii_stats(i).no_break_b5_final_gain_z = ii_stats(i).final_gain_z(ii_stats(i).no_break_b5_inds);
+    ii_stats(i).no_break_b6_final_gain_z = ii_stats(i).final_gain_z(ii_stats(i).no_break_b6_inds);
+    ii_stats(i).no_break_b7_final_gain_z = ii_stats(i).final_gain_z(ii_stats(i).no_break_b7_inds);
+    ii_stats(i).no_break_b8_final_gain_z = ii_stats(i).final_gain_z(ii_stats(i).no_break_b8_inds);
+ 
 %     % PRIMARY ERROR
 %     ii_stats(i).b1_primary_err_z = ii_stats(i).primary_err_z(ii_stats(i).b1_inds);
 %     ii_stats(i).b2_primary_err_z = ii_stats(i).primary_err_z(ii_stats(i).b2_inds);
@@ -1001,6 +1021,24 @@ ii_results.b6_no_break_srt = [];
 ii_results.b7_no_break_srt = [];
 ii_results.b8_no_break_srt = [];
 
+ii_results.b1_no_break_final_err_z = [];
+ii_results.b2_no_break_primary_err_z = [];
+ii_results.b3_no_break_primary_err_z = [];
+ii_results.b4_no_break_primary_err_z = [];
+ii_results.b5_no_break_primary_err_z = [];
+ii_results.b6_no_break_primary_err_z = [];
+ii_results.b7_no_break_primary_err_z = [];
+ii_results.b8_no_break_primary_err_z = [];
+
+ii_results.b1_no_break_primary_gain_z = [];
+ii_results.b2_no_break_primary_gain_z = [];
+ii_results.b3_no_break_primary_gain_z = [];
+ii_results.b4_no_break_primary_gain_z = [];
+ii_results.b5_no_break_primary_gain_z = [];
+ii_results.b6_no_break_primary_gain_z = [];
+ii_results.b7_no_break_primary_gain_z = [];
+ii_results.b8_no_break_primary_gain_z = [];
+
 for j = 1:num_runs
     % Error
 %     ii_results.b1_all_primary_err_z = [ii_results.b1_all_primary_err_z; ii_stats(j).b1_primary_err_z];
@@ -1063,24 +1101,39 @@ for j = 1:num_runs
 
 end
 
-bins = [2.7475; 1.9625; 1.1775; 0.3925; -0.3925; -1.1775; -1.9625; -2.7475];
+bins = [2.7475; 1.9625; 1.1775; 0.3925; -0.3925; -1.1775; -1.9625; -2.7475;2.7475];
 % dt_err = [median(ii_results.b1_all_primary_err_z); median(ii_results.b2_all_primary_err_z); median(ii_results.b3_all_primary_err_z); median(ii_results.b4_all_primary_err_z); median(ii_results.b5_all_primary_err_z); median(ii_results.b6_all_primary_err_z); median(ii_results.b7_all_primary_err_z); median(ii_results.b8_all_primary_err_z)];
 % dt_gain = [median(ii_results.b1_all_primary_gain_z); median(ii_results.b2_all_primary_gain_z); median(ii_results.b3_all_primary_gain_z); median(ii_results.b4_all_primary_gain_z); median(ii_results.b5_all_primary_gain_z); median(ii_results.b6_all_primary_gain_z); median(ii_results.b7_all_primary_gain_z); median(ii_results.b8_all_primary_gain_z)];
 % dt_srt = [median(ii_results.b1_all_srt); median(ii_results.b2_all_srt); median(ii_results.b3_all_srt); median(ii_results.b4_all_srt); median(ii_results.b5_all_srt); median(ii_results.b6_all_srt); median(ii_results.b7_all_srt); median(ii_results.b8_all_srt)];
 
-dt_err = [median(ii_results.b1_no_break_primary_err_z); median(ii_results.b2_no_break_primary_err_z); median(ii_results.b3_no_break_primary_err_z); median(ii_results.b4_no_break_primary_err_z); median(ii_results.b5_no_break_primary_err_z); median(ii_results.b6_no_break_primary_err_z); median(ii_results.b7_no_break_primary_err_z); median(ii_results.b8_no_break_primary_err_z)];
-dt_gain = [median(ii_results.b1_no_break_primary_gain_z); median(ii_results.b2_no_break_primary_gain_z); median(ii_results.b3_no_break_primary_gain_z); median(ii_results.b4_no_break_primary_gain_z); median(ii_results.b5_no_break_primary_gain_z); median(ii_results.b6_no_break_primary_gain_z); median(ii_results.b7_no_break_primary_gain_z); median(ii_results.b8_no_break_primary_gain_z)];
-dt_srt = [median(ii_results.b1_no_break_srt); median(ii_results.b2_no_break_srt); median(ii_results.b3_no_break_srt); median(ii_results.b4_no_break_srt); median(ii_results.b5_no_break_srt); median(ii_results.b6_no_break_srt); median(ii_results.b7_no_break_srt); median(ii_results.b8_no_break_srt)];
+dt_err = [median(ii_results.b1_no_break_primary_err_z); median(ii_results.b2_no_break_primary_err_z); median(ii_results.b3_no_break_primary_err_z); median(ii_results.b4_no_break_primary_err_z); median(ii_results.b5_no_break_primary_err_z); median(ii_results.b6_no_break_primary_err_z); median(ii_results.b7_no_break_primary_err_z); median(ii_results.b8_no_break_primary_err_z);median(ii_results.b1_no_break_primary_err_z)];
+dt_gain = [median(ii_results.b1_no_break_primary_gain_z); median(ii_results.b2_no_break_primary_gain_z); median(ii_results.b3_no_break_primary_gain_z); median(ii_results.b4_no_break_primary_gain_z); median(ii_results.b5_no_break_primary_gain_z); median(ii_results.b6_no_break_primary_gain_z); median(ii_results.b7_no_break_primary_gain_z); median(ii_results.b8_no_break_primary_gain_z);median(ii_results.b1_no_break_primary_gain_z)];
+dt_srt = [median(ii_results.b1_no_break_srt); median(ii_results.b2_no_break_srt); median(ii_results.b3_no_break_srt); median(ii_results.b4_no_break_srt); median(ii_results.b5_no_break_srt); median(ii_results.b6_no_break_srt); median(ii_results.b7_no_break_srt); median(ii_results.b8_no_break_srt);median(ii_results.b1_no_break_srt)];
+
+dt_err_f = [median(ii_results.b1_no_break_final_err_z); median(ii_results.b2_no_break_final_err_z); median(ii_results.b3_no_break_final_err_z); median(ii_results.b4_no_break_final_err_z); median(ii_results.b5_no_break_final_err_z); median(ii_results.b6_no_break_final_err_z); median(ii_results.b7_no_break_final_err_z); median(ii_results.b8_no_break_final_err_z);median(ii_results.b1_no_break_final_err_z)];
+dt_gain_f = [median(ii_results.b1_no_break_final_gain_z); median(ii_results.b2_no_break_final_gain_z); median(ii_results.b3_no_break_final_gain_z); median(ii_results.b4_no_break_final_gain_z); median(ii_results.b5_no_break_final_gain_z); median(ii_results.b6_no_break_final_gain_z); median(ii_results.b7_no_break_final_gain_z); median(ii_results.b8_no_break_final_gain_z);median(ii_results.b1_no_break_final_gain_z)];
 
 
+% figure('Name','No break trials primary error','NumberTitle','off')
+% polar(bins,dt_err,'*');
 figure('Name','No break trials primary error','NumberTitle','off')
-polar(bins,dt_err,'*');
+p = mmpolar(bins,dt_err,'-ko','RLimit',[0 5],'TTickDelta',45);
 
 figure('Name','No break trials primary gain','NumberTitle','off')
-polar(bins,dt_gain,'*');
+%polar(bins,dt_gain,'*');
+p = mmpolar(bins,dt_gain,'-ko','RLimit',[0 1.2],'TTickDelta',45);
 
 figure('Name','No break trials SRT','NumberTitle','off')
-polar(bins,dt_srt,'*');
+%polar(bins,dt_srt,'*');
+p = mmpolar(bins,dt_srt,'-ko','RLimit',[0 500],'TTickDelta',45);
+
+figure('Name','No break trials final error','NumberTitle','off')
+p = mmpolar(bins,dt_err_f,'-ko','RLimit',[0 5],'TTickDelta',45);
+
+figure('Name','No break trials final gain','NumberTitle','off')
+%polar(bins,dt_gain,'*');
+p = mmpolar(bins,dt_gain_f,'-ko','RLimit',[0 1.2],'TTickDelta',45);
+
 
 % all_means = [ii_results.mean_all_primary_err_z ii_results.mean_all_primary_gain_z ii_results.mean_all_srt];
 % no_break_means = [ii_results.mean_no_break_primary_err_z ii_results.mean_no_break_primary_gain_z ii_results.mean_no_break_srt];
