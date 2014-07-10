@@ -1157,6 +1157,43 @@ p = mmpolar(bins,dt_gain_f,'-ko','RLimit',[0 1.2],'TTickDelta',45);
 
 putvar(bins,dt_err,dt_err_f);
 
+for i = 1:num_runs
+    ii_stats(i).mstep_inds = find(ii_stats(i).mstep==1);
+    
+    ii_stats(i).mstep_theta = ii_stats(i).primary_theta(ii_stats(i).mstep_inds);
+    ii_stats(i).mstep_rho = ii_stats(i).primary_rho(ii_stats(i).mstep_inds);
+    ii_stats(i).mstep_x = ii_stats(i).primary_x(ii_stats(i).mstep_inds);
+    ii_stats(i).mstep_y = ii_stats(i).primary_y(ii_stats(i).mstep_inds);
+end
+
+ii_results.mstep_theta = [];
+ii_results.mstep_rho = [];
+ii_results.mstep_x = [];
+ii_results.mstep_y = [];
+
+for i = 1:num_runs
+    
+    %ii_results.mstep_theta = [ii_results.mstep_theta; ii_stats(i).mstep_theta];
+    ii_results.mstep_rho = [ii_results.mstep_rho; ii_stats(i).mstep_rho];
+    ii_results.mstep_x = [ii_results.mstep_x; ii_stats(i).mstep_x];
+    ii_results.mstep_y = [ii_results.mstep_y; ii_stats(i).mstep_y];
+end
+
+[t,r] = cart2pol(ii_results.mstep_x,ii_results.mstep_y);
+
+%figure;
+%rose(ii_results.mstep_theta);
+
+% figure;
+% rose(t);
+
+nx = find(ii_results.mstep_x>0);
+nx_sum = length(nx)
+x_sum = length(ii_results.mstep_x)
+
+figure;
+rose(ii_results.mstep_rho,20);
+
 
 % all_means = [ii_results.mean_all_primary_err_z ii_results.mean_all_primary_gain_z ii_results.mean_all_srt];
 % no_break_means = [ii_results.mean_no_break_primary_err_z ii_results.mean_no_break_primary_gain_z ii_results.mean_no_break_srt];

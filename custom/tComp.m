@@ -186,8 +186,8 @@ if nsel(1) == 90
     
     ii_stats(r).primary_x = pX;
     ii_stats(r).primary_y = pY;
-    ii_stats(r).primary_rho = p_theta;
-    ii_stats(r).primary_theta = p_rho;
+    ii_stats(r).primary_rho = p_rho;
+    ii_stats(r).primary_theta = p_theta;
     
     ii_stats(r).primary_err_x = p_eX;
     ii_stats(r).primary_err_y = p_eY;

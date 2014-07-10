@@ -300,20 +300,23 @@ srt_lr = ranksum(le,ri)
 % [th,r] = cart2pol(xm,ym);
 % compass(th,r);
 
-amp = mean(dt_err_f);
-origrho=dt_err_f;
-origtheta= bins;
-[X,Y] = pol2cart(origtheta,origrho);
-for i=1:8,am(i)=X(i)*origrho(i);bm(i)=Y(i)*origrho(i);end
-Cmx=sum(am)/sum(origrho(1:8));
-Cmy=sum(bm)/sum(origrho(1:8));
-Cmvr=sqrt(Cmx.^2 + Cmy.^2);%length
-Cmvtheta=atan2(Cmy,Cmx);%angle of average vector
-Cmvrnormorig=Cmvr/mean(origrho(1:8));
-polar(origtheta,origrho)
-hold on
-polar(Cmvtheta,amp,'*r')
-compass(Cmvtheta,amp);
+% COMPASS PLOTS
+% MEAN DIRECTION
+
+% amp = mean(dt_err_f);
+% origrho=dt_err_f;
+% origtheta= bins;
+% [X,Y] = pol2cart(origtheta,origrho);
+% for i=1:8,am(i)=X(i)*origrho(i);bm(i)=Y(i)*origrho(i);end
+% Cmx=sum(am)/sum(origrho(1:8));
+% Cmy=sum(bm)/sum(origrho(1:8));
+% Cmvr=sqrt(Cmx.^2 + Cmy.^2);%length
+% Cmvtheta=atan2(Cmy,Cmx);%angle of average vector
+% Cmvrnormorig=Cmvr/mean(origrho(1:8));
+% polar(origtheta,origrho)
+% hold on
+% polar(Cmvtheta,amp,'*r')
+% compass(Cmvtheta,amp);
 
 end
 
