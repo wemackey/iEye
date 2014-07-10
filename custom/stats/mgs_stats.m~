@@ -1157,6 +1157,10 @@ p = mmpolar(bins,dt_gain_f,'-ko','RLimit',[0 1.2],'TTickDelta',45);
 
 putvar(bins,dt_err,dt_err_f);
 
+%%%%%%%%%%%%%%%%%%%%%%
+% MULTISTEP SACCADES %
+%%%%%%%%%%%%%%%%%%%%%%
+
 for i = 1:num_runs
     ii_stats(i).mstep_inds = find(ii_stats(i).mstep==1);
     
@@ -1164,12 +1168,14 @@ for i = 1:num_runs
     ii_stats(i).mstep_rho = ii_stats(i).primary_rho(ii_stats(i).mstep_inds);
     ii_stats(i).mstep_x = ii_stats(i).primary_x(ii_stats(i).mstep_inds);
     ii_stats(i).mstep_y = ii_stats(i).primary_y(ii_stats(i).mstep_inds);
+    ii_stats(i).mstep_primary_err_z = ii_stats(i).primary_err_z(ii_stats(i).mstep_inds);    
 end
 
 ii_results.mstep_theta = [];
 ii_results.mstep_rho = [];
 ii_results.mstep_x = [];
 ii_results.mstep_y = [];
+ii_results.mstep_primary_err_z = [];
 
 for i = 1:num_runs
     
@@ -1177,22 +1183,112 @@ for i = 1:num_runs
     ii_results.mstep_rho = [ii_results.mstep_rho; ii_stats(i).mstep_rho];
     ii_results.mstep_x = [ii_results.mstep_x; ii_stats(i).mstep_x];
     ii_results.mstep_y = [ii_results.mstep_y; ii_stats(i).mstep_y];
+    ii_results.mstep_primary_err_z = [ii_results.mstep_primary_err_z; ii_stats(i).mstep_primary_err_z];
 end
 
-[t,r] = cart2pol(ii_results.mstep_x,ii_results.mstep_y);
+% [t,r] = cart2pol(ii_results.mstep_x,ii_results.mstep_y);
 
-%figure;
-%rose(ii_results.mstep_theta);
+% figure;
+% rose(ii_results.mstep_theta);
 
 % figure;
 % rose(t);
 
-nx = find(ii_results.mstep_x>0);
-nx_sum = length(nx)
-x_sum
+% nx = find(ii_results.mstep_x>0);
+% nx_sum = length(nx);
+% x_sum = length(ii_results.mstep_x);
+% ii_results.num_nogo;
+% 
+% rx = x_sum - nx_sum;
+% lx = nx_sum;
+% 
+% plx = lx/ii_results.num_nogo;
+% prx = rx/ii_results.num_nogo;
+% 
+% figure;
+% rose(ii_results.mstep_rho,20);
 
-figure;
-rose(ii_results.mstep_rho,12);
+for i = 1:num_runs
+    ii_stats(i).no_break_mstep_mat = ii_stats(i).no_break_mat .* ii_stats(i).mstep_inds;
+    ii_stats(i).no_break_mstep_left_mat = ii_stats(i).no_break_left_mat .* ii_stats(i).mstep_inds;
+    ii_stats(i).no_break_mstep_right_mat = ii_stats(i).no_break_right_mat .* ii_stats(i).mstep_inds;
+end
+
+for i = 1:num_runs
+    ii_stats(i).no_break_mstep_inds = find(ii_stats(i).no_break_mstep_mat==1);
+    ii_stats(i).no_break_left_mstep_inds = find(ii_stats(i).no_break_left_mstep_mat==1);
+    ii_stats(i).no_break_right_mstep_inds = find(ii_stats(i).no_break_right_mstep_mat==1);
+
+    ii_stats(i).no_break_mstep_primary_err_z = ii_stats(i).primary_err_z(ii_stats(i).no_break_mstep_inds);    
+    ii_stats(i).no_break_left_mstep_primary_err_z = ii_stats(i).primary_err_z(ii_stats(i).no_break_left_mstep_inds);    
+    ii_stats(i).no_break_right_mstep_primary_err_z = ii_stats(i).primary_err_z(ii_stats(i).no_break_right_mstep_inds);    
+
+    ii_stats(i).no_break_mstep_primary_gain = ii_stats(i).primary_gain(ii_stats(i).no_break_mstep_inds);    
+    ii_stats(i).no_break_left_mstep_primary_gain = ii_stats(i).primary_gain(ii_stats(i).no_break_left_mstep_inds);    
+    ii_stats(i).no_break_right_mstep_primary_gain = ii_stats(i).primary_gain(ii_stats(i).no_break_right_mstep_inds);    
+end
+
+ii_results.no_break_mstep_primary_err_z = [];
+ii_results.no_break_left_mstep_primary_err_z = [];
+ii_results.no_break_right_mstep_primary_err_z = [];
+
+ii_results.no_break_mstep_primary_gain = [];
+ii_results.no_break_left_mstep_primary_gain = [];
+ii_results.no_break_right_mstep_primary_gain = [];
+
+for i = 1:num_runs
+    ii_results.no_break_mstep_primary_err_z = [ii_results.no_break_mstep_primary_err_z; ii_stats(i).no_break_mstep_primary_err_z];
+    ii_results.no_break_left_mstep_primary_err_z = [ii_results.no_break_left_mstep_primary_err_z; ii_stats(i).no_break_left_mstep_primary_err_z];
+    ii_results.no_break_right_mstep_primary_err_z = [ii_results.no_break_right_mstep_primary_err_z; ii_stats(i).no_break_right_mstep_primary_err_z];
+
+    ii_results.no_break_mstep_primary_gain = [ii_results.no_break_mstep_primary_gain; ii_stats(i).no_break_mstep_primary_gain];
+    ii_results.no_break_left_mstep_primary_gain = [ii_results.no_break_left_mstep_primary_gain; ii_stats(i).no_break_left_mstep_primary_gain];
+    ii_results.no_break_right_mstep_primary_gain = [ii_results.no_break_right_mstep_primary_gain; ii_stats(i).no_break_right_mstep_primary_gain];
+end
+
+%%%%%%%%%%%%%%%
+
+for i = 1:num_runs
+    ii_stats(i).nonmstep_inds = find(ii_stats(i).mstep==0);
+    ii_stats(i).nonmstep_mat = zeros(30,1);
+    ii_stats(i).nonmstep_mat(ii_stats(i).nonmstep_inds) = 1;
+    
+    ii_stats(i).no_break_nonmstep_mat = ii_stats(i).no_break_mat .* ii_stats(i).nonmstep_mat;
+    ii_stats(i).no_break_nonmstep_left_mat = ii_stats(i).no_break_left_mat .* ii_stats(i).nonmstep_mat;
+    ii_stats(i).no_break_nonmstep_right_mat = ii_stats(i).no_break_right_mat .* ii_stats(i).nonmstep_mat;
+end
+
+for i = 1:num_runs
+    ii_stats(i).no_break_nonmstep_inds = find(ii_stats(i).no_break_nonmstep_mat==1);
+    ii_stats(i).no_break_left_nonmstep_inds = find(ii_stats(i).no_break_left_nonmstep_mat==1);
+    ii_stats(i).no_break_right_nonmstep_inds = find(ii_stats(i).no_break_right_nonmstep_mat==1);
+
+    ii_stats(i).no_break_nonmstep_primary_err_z = ii_stats(i).primary_err_z(ii_stats(i).no_break_nonmstep_inds);    
+    ii_stats(i).no_break_left_nonmstep_primary_err_z = ii_stats(i).primary_err_z(ii_stats(i).no_break_left_nonmstep_inds);    
+    ii_stats(i).no_break_right_nonmstep_primary_err_z = ii_stats(i).primary_err_z(ii_stats(i).no_break_right_nonmstep_inds);    
+
+    ii_stats(i).no_break_nonmstep_primary_gain = ii_stats(i).primary_gain(ii_stats(i).no_break_nonmstep_inds);    
+    ii_stats(i).no_break_left_nonmstep_primary_gain = ii_stats(i).primary_gain(ii_stats(i).no_break_left_nonmstep_inds);    
+    ii_stats(i).no_break_right_nonmstep_primary_gain = ii_stats(i).primary_gain(ii_stats(i).no_break_right_nonmstep_inds);    
+end
+
+ii_results.no_break_nonmstep_primary_err_z = [];
+ii_results.no_break_left_nonmstep_primary_err_z = [];
+ii_results.no_break_right_nonmstep_primary_err_z = [];
+
+ii_results.no_break_nonmstep_primary_gain = [];
+ii_results.no_break_left_nonmstep_primary_gain = [];
+ii_results.no_break_right_nonmstep_primary_gain = [];
+
+for i = 1:num_runs
+    ii_results.no_break_nonmstep_primary_err_z = [ii_results.no_break_nonmstep_primary_err_z; ii_stats(i).no_break_nonmstep_primary_err_z];
+    ii_results.no_break_left_nonmstep_primary_err_z = [ii_results.no_break_left_nonmstep_primary_err_z; ii_stats(i).no_break_left_nonmstep_primary_err_z];
+    ii_results.no_break_right_nonmstep_primary_err_z = [ii_results.no_break_right_nonmstep_primary_err_z; ii_stats(i).no_break_right_nonmstep_primary_err_z];
+
+    ii_results.no_break_nonmstep_primary_gain = [ii_results.no_break_nonmstep_primary_gain; ii_stats(i).no_break_nonmstep_primary_gain];
+    ii_results.no_break_left_nonmstep_primary_gain = [ii_results.no_break_left_nonmstep_primary_gain; ii_stats(i).no_break_left_nonmstep_primary_gain];
+    ii_results.no_break_right_nonmstep_primary_gain = [ii_results.no_break_right_nonmstep_primary_gain; ii_stats(i).no_break_right_nonmstep_primary_gain];
+end
 
 
 % all_means = [ii_results.mean_all_primary_err_z ii_results.mean_all_primary_gain_z ii_results.mean_all_srt];

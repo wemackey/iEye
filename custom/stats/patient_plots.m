@@ -318,5 +318,28 @@ srt_lr = ranksum(le,ri)
 % polar(Cmvtheta,amp,'*r')
 % compass(Cmvtheta,amp);
 
+% MULTISTEP SACCADES
+
+cont = [0.070 0.058 0.080 0.058 0.025 0.008 0.089 0.004 0.045];
+dlpfci = [0.024 0.037 0.035 0.008 0.006 0.060];
+fefi = [0.108 0.087];
+dlpfcc = [0.014 0.013 0.059 0.033 0.010 0.053];
+fefc = [0.167 0.178];
+
+figure('Name','Multisteps','NumberTitle','off')
+meds = [median(cont); median(dlpfci); median(dlpfcc); median(fefi); median(fefc)];
+errs = [iqr(cont); iqr(dlpfci); iqr(dlpfcc); iqr(fefi); iqr(fefc)];
+h = barwitherr(errs,meds);
+
+grp = {'control' 'control' 'control' 'control' 'control' 'control' 'control' 'control' 'control' 'dlpfcc' 'dlpfcc' 'dlpfcc' 'dlpfcc' 'fefc' 'dlpfcc' 'dlpfcc' 'fefc' 'dlpfci' 'dlpfci' 'dlpfci' 'dlpfci' 'fefi' 'dlpfci' 'dlpfci' 'fefi'};
+valz = [0.070 0.058 0.080 0.058 0.025 0.008 0.089 0.004 0.045 0.014 0.013 0.059 0.033 0.167 0.010 0.053 0.178 0.024 0.037 0.035 0.008 0.108 0.006 0.060 0.087];
+
+p = kruskalwallis(valz,grp)
+
+pdlpfci = ranksum(cont,dlpfci)
+pdlpfcc = ranksum(cont,dlpfcc)
+pfefi = ranksum(cont,fefi)
+pfefc = ranksum(cont,fefc)
+
 end
 
