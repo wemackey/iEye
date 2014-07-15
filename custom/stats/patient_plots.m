@@ -341,5 +341,9 @@ pdlpfcc = ranksum(cont,dlpfcc)
 pfefi = ranksum(cont,fefi)
 pfefc = ranksum(cont,fefc)
 
+% CONTROL AGES
+
+% [27 45 35 32 20 20 29 gal ala]
+
 end
 
