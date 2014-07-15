@@ -321,14 +321,30 @@ srt_lr = ranksum(le,ri)
 % MULTISTEP SACCADES
 
 cont = [0.070 0.058 0.080 0.058 0.025 0.008 0.089 0.004 0.045];
+cl = [0.040 0.028 0.024 0.027 0 0 0.051 0 0.024 0.022];
+cr = [0.029 0.028 0.055 0.030 0.004 0.008 0.038 0.003 0.013 0.023];
 dlpfci = [0.024 0.037 0.035 0.008 0.006 0.060];
 fefi = [0.108 0.087];
 dlpfcc = [0.014 0.013 0.059 0.033 0.010 0.053];
 fefc = [0.167 0.178];
 
+c = [0.070 0.058 0.080 0.058 0.025 0.008 0.089 0.004 0.045];
+d = [0.039 0.051 0.095 0.042 0.017 0.114];
+f = [0.276 0.265];
+
 figure('Name','Multisteps','NumberTitle','off')
 meds = [median(cont); median(dlpfci); median(dlpfcc); median(fefi); median(fefc)];
 errs = [iqr(cont); iqr(dlpfci); iqr(dlpfcc); iqr(fefi); iqr(fefc)];
+h = barwitherr(errs,meds);
+
+figure('Name','Multisteps','NumberTitle','off')
+meds = [median(cl); median(cr); median(dlpfcc); median(dlpfci); median(fefc); median(fefi)];
+errs = [iqr(cl); iqr(cr); iqr(dlpfcc); iqr(dlpfci); iqr(fefc); iqr(fefi)];
+h = barwitherr(errs,meds);
+
+figure('Name','Multisteps','NumberTitle','off')
+meds = [median(c); median(d); median(f)];
+errs = [iqr(c); iqr(d); iqr(f)];
 h = barwitherr(errs,meds);
 
 grp = {'control' 'control' 'control' 'control' 'control' 'control' 'control' 'control' 'control' 'dlpfcc' 'dlpfcc' 'dlpfcc' 'dlpfcc' 'fefc' 'dlpfcc' 'dlpfcc' 'fefc' 'dlpfci' 'dlpfci' 'dlpfci' 'dlpfci' 'fefi' 'dlpfci' 'dlpfci' 'fefi'};

@@ -1290,6 +1290,8 @@ for i = 1:num_runs
     ii_results.no_break_right_nonmstep_primary_gain_z = [ii_results.no_break_right_nonmstep_primary_gain_z; ii_stats(i).no_break_right_nonmstep_primary_gain_z];
 end
 
+median(ii_results.no_break_mstep_primary_err_z)
+median(ii_results.no_break_nonmstep_primary_err_z)
 
 % all_means = [ii_results.mean_all_primary_err_z ii_results.mean_all_primary_gain_z ii_results.mean_all_srt];
 % no_break_means = [ii_results.mean_no_break_primary_err_z ii_results.mean_no_break_primary_gain_z ii_results.mean_no_break_srt];
