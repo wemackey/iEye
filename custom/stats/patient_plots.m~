@@ -251,9 +251,9 @@ grp = {'control' 'control' 'control' 'control' 'control' 'control' 'control' 'co
 valz = [219 277 263 261 304 227 279 314 290 396 305 324 233 383 291 288 281 392 294 316 234 416 295 309 327];
 cont = [219 277 263 261 304 227 279 314 290];
 dlpfci = [396 305 324 233 288 281];
-fefi = [383 281];
-dlpfcc = [392 294 316 234 295 309];
-fefc = [416 327];
+fefi = [383 392];
+dlpfcc = [0.170 0.084 0.230 0.167];
+fefc = [0.254 0.242];
 
 p = kruskalwallis(valz,grp)
 
