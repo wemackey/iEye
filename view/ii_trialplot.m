@@ -43,6 +43,22 @@ for i = 1:length(v{1})
     hold all
 end
 
+% hax = figure;
+% 
+% for i = 1:length(v{1})
+%     c = v{1}{i};
+%     d = 1;
+%     chan = evalin('base', c);
+%     cnames{end+1} = c;
+%     for w = qq(1)+1:qq(2)
+%         p(d,i) = chan(w);
+%         d = d + 1;
+%     end
+%     csel = p(:,i);
+%     plot(sm,csel,'color',col(i,:));
+%     hold all
+% end
+
 blinks = ii_cfg.blink;
 
 if ~isempty(blinks)
