@@ -103,12 +103,26 @@ else
         ci = 1;
         cv = 0;
         M(:,(i+1)) = 0;
+
+        % OLD, 1000 HZ ONLY
+%         for h = 1:length(MV)
+%             ci = find(M(:,1)==MV(h,1));  
+%             M((ci:length(M)),(i+1)) = MV(h,2);
+%             li = ci;
+%         end   
         
         for h = 1:length(MV)
-            ci = find(M(:,1)==MV(h,1));            
-            M((ci:length(M)),(i+1)) = MV(h,2);
-            li = ci;
-        end       
+            ci = find(M(:,1)==MV(h,1));
+            if isempty(ci) == 0
+                M((ci:length(M)),(i+1)) = MV(h,2);
+                li = ci;
+            else
+                MV(h,1) = MV(h,1) - 1;
+                ci = find(M(:,1)==MV(h,1));
+                M((ci:length(M)),(i+1)) = MV(h,2);
+                li = ci;
+            end
+        end
     end
     
      delete(fullfile(pathname,asc_evnt_file));
