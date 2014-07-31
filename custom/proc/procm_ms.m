@@ -52,7 +52,7 @@ switch choice
         
         putvar(ii_cfg);       
         
-        ii_selectuntil('vel',4,2,.01);
+        ii_selectuntil('vel',3,2,.01);
         
         % Open trial companion window
         % Make sure you are in trial mode and you are good to go
