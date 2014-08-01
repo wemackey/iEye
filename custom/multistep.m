@@ -22,7 +22,7 @@ function varargout = multistep(varargin)
 
 % Edit the above text to modify the response to help multistep
 
-% Last Modified by GUIDE v2.5 08-Jul-2014 15:11:21
+% Last Modified by GUIDE v2.5 31-Jul-2014 14:32:05
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -88,3 +88,124 @@ ii_stats(r).mstep = mstep;
 cmsg = sprintf('(Trial # %s) is multistep', num2str(ii_cfg.tindex));
 disp(cmsg);
 putvar(ii_stats);
+
+
+% --- Executes on button press in b1.
+function b1_Callback(hObject, eventdata, handles)
+% hObject    handle to b1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+ii_cfg = evalin('base','ii_cfg');
+r = evalin('base','r');
+ii_stats = evalin('base','ii_stats');
+numstep = ii_stats(r).numstep;
+numstep(ii_cfg.tindex,1) = 1;
+ii_stats(r).numstep = numstep;
+cmsg = sprintf('(Trial # %s) is multistep', num2str(ii_cfg.tindex));
+disp(cmsg);
+putvar(ii_stats);
+
+% --- Executes on button press in b2.
+function b2_Callback(hObject, eventdata, handles)
+% hObject    handle to b2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+ii_cfg = evalin('base','ii_cfg');
+r = evalin('base','r');
+ii_stats = evalin('base','ii_stats');
+numstep = ii_stats(r).numstep;
+numstep(ii_cfg.tindex,1) = 2;
+ii_stats(r).numstep = numstep;
+cmsg = sprintf('(Trial # %s) is multistep', num2str(ii_cfg.tindex));
+disp(cmsg);
+putvar(ii_stats);
+
+% --- Executes on button press in b3.
+function b3_Callback(hObject, eventdata, handles)
+% hObject    handle to b3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+ii_cfg = evalin('base','ii_cfg');
+r = evalin('base','r');
+ii_stats = evalin('base','ii_stats');
+numstep = ii_stats(r).numstep;
+numstep(ii_cfg.tindex,1) = 3;
+ii_stats(r).numstep = numstep;
+cmsg = sprintf('(Trial # %s) is multistep', num2str(ii_cfg.tindex));
+disp(cmsg);
+putvar(ii_stats);
+
+% --- Executes on button press in b4.
+function b4_Callback(hObject, eventdata, handles)
+% hObject    handle to b4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+ii_cfg = evalin('base','ii_cfg');
+r = evalin('base','r');
+ii_stats = evalin('base','ii_stats');
+numstep = ii_stats(r).numstep;
+numstep(ii_cfg.tindex,1) = 4;
+ii_stats(r).numstep = numstep;
+cmsg = sprintf('(Trial # %s) is multistep', num2str(ii_cfg.tindex));
+disp(cmsg);
+putvar(ii_stats);
+
+% --- Executes on button press in b5.
+function b5_Callback(hObject, eventdata, handles)
+% hObject    handle to b5 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+ii_cfg = evalin('base','ii_cfg');
+r = evalin('base','r');
+ii_stats = evalin('base','ii_stats');
+numstep = ii_stats(r).numstep;
+numstep(ii_cfg.tindex,1) = 5;
+ii_stats(r).numstep = numstep;
+cmsg = sprintf('(Trial # %s) is multistep', num2str(ii_cfg.tindex));
+disp(cmsg);
+putvar(ii_stats);
+
+% --- Executes on button press in b6.
+function b6_Callback(hObject, eventdata, handles)
+% hObject    handle to b6 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+ii_cfg = evalin('base','ii_cfg');
+r = evalin('base','r');
+ii_stats = evalin('base','ii_stats');
+numstep = ii_stats(r).numstep;
+numstep(ii_cfg.tindex,1) = 6;
+ii_stats(r).numstep = numstep;
+cmsg = sprintf('(Trial # %s) is multistep', num2str(ii_cfg.tindex));
+disp(cmsg);
+putvar(ii_stats);
+
+
+% --- Executes on button press in corsac.
+function corsac_Callback(hObject, eventdata, handles)
+% hObject    handle to corsac (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+ii_cfg = evalin('base','ii_cfg');
+ii_stats = evalin('base','ii_stats');
+r = evalin('base','r');
+sel = ii_cfg.sel;
+
+b = find(sel==1);
+split1 = SplitVec(b,'consecutive','firstval');
+split2 = SplitVec(b,'consecutive','lastval');
+
+cursel(:,1) = split1;
+cursel(:,2) = split2;
+
+ii_stats(r).corsac_cursel = cursel;
+ii_stats(r).corsac_sel = sel;
+putvar(ii_stats);
+disp('Calculation successful. Remember to save your data!');
