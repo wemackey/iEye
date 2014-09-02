@@ -4,7 +4,7 @@ function ii_findendpoints(x,y,t,l,c1,v1,c2,v2)
 %  ii_findendpoints('X','Y',.07,5,'XDAT',4,'XDAT',6)
 
 % ii_findsaccades
-ii_findsaccades(x,y,t,l);
+ii_findsaccades(x,y,t,l,c1,v1,c2,v2);
 
 % get trial window we care about
 basevars = evalin('base','who');
