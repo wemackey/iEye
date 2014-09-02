@@ -1,11 +1,12 @@
+r = 3;
+
 ii_stats = evalin('base','ii_stats');
 
 ii_definetrial('XDAT',1,'XDAT',6); % create trialvec
-ii_blinkcorrect('X','Pupil',0,10,10); % create blinkvec
 ii_findsaccades('X','Y',.05,10,'XDAT',4,'XDAT',5); % find saccades
 
 %%%%%%%%%%%%%%%%%%
-% CHECK SACCADES %
+% CHECK SACCADES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%
 
 numsacs = zeros(30,1);
@@ -23,6 +24,7 @@ for i = 1:30
     numsacs(i) = length(sacs);
 end
 
-ii_stats.numsacs = numsacs;
-ii_stats.all_saccades = ii_cfg.cursel;
+ii_stats(r).numsacs = numsacs;
+ii_stats(r).saccades_go = ii_cfg.cursel;
 putvar(ii_stats);
+
