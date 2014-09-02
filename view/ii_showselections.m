@@ -36,7 +36,7 @@ for i=1:(size(cursel,1))
     % h = h;
     % w = w * (schan./1000);
     
-    rectangle('Position', [x y w h], 'LineWidth', 2, 'Curvature', [0], 'EdgeColor', 'r', 'LineStyle', '-');
+    %rectangle('Position', [x y w h], 'LineWidth', 2, 'Curvature', [0], 'EdgeColor', 'r', 'LineStyle', '-');
     p = patch([x x+w x+w x x],[y y y+h y+h y],'r','linewidth',1); % draw box around selected region
     set(p,'FaceAlpha',0.15);
 end

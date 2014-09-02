@@ -8,7 +8,7 @@ axes(hax);
 cla;
 set(gca, 'XColor', [0.3 0.3 0.3]);
 set(gca, 'YColor', [0.3 0.3 0.3]);
-xlabel('Time (in milliseconds)','FontSize',10);
+xlabel('Sample','FontSize',10);
 ylabel('Value','FontSize',10);
 grid on;
 cnames = {};
