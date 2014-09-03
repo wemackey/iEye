@@ -1,4 +1,4 @@
-function ii_findsaccades(x,y,t,l,c1,v1,c2,v2)
+function ii_findsaccades(x,y,t,t2,l,c1,v1,c2,v2)
 %II_FINDSACCADES Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -105,7 +105,6 @@ if ismember(x,basevars)
                 cursel(:,2) = SplitVec(cwhere,'consecutive','lastval');
                 cursel(:,2) = cursel(:,2)+2;
                 
-                ii_cfg.saccades = 
                 ii_cfg.cursel = cursel;
                 ii_cfg.sel = csel;
                 putvar(ii_cfg);

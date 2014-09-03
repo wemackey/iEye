@@ -1,11 +1,15 @@
-r = 3;
+r = 2;
 
 ii_stats = evalin('base','ii_stats');
 
 ii_definetrial('XDAT',1,'XDAT',6); % create trialvec
-ii_findsaccades('X','Y',.05,10,'XDAT',4,'XDAT',6); % find saccades
+ii_findsaccades('X','Y',.05,10,'XDAT',4,'XDAT',5); % find saccades
 
-ii_stats(r).saccades_go = ii_cfg.cursel;
+%%%%%%%%%%%%%%%%%%
+% CHECK SACCADES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%
+
+ii_stats(r).saccades_45 = ii_cfg.cursel;
 putvar(ii_stats);
 
 %%%%%%%%%%%%%%%%%%
