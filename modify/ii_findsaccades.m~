@@ -1,4 +1,4 @@
-function ii_findsaccades(x,y,t,l,c1,v1,c2,v2)
+function ii_findsaccades(x,y,t,t2,l,c1,v1,c2,v2)
 %II_FINDSACCADES Summary of this function goes here
 %   Detailed explanation goes here
 

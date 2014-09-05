@@ -31,10 +31,7 @@ if ismember(x,basevars)
         
         xvel = diff(xv);
         yvel = diff(yv);
-        
-        xvel = abs(xvel);
-        yvel = abs(yvel);
-        
+              
         xvel = xvel.^2;
         yvel = yvel.^2;
         
