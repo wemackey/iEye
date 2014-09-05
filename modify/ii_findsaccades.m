@@ -14,6 +14,8 @@ function ii_findsaccades(x,y,t,l,c1,v1,c2,v2)
 %     l = str2num(answer{4});
 % end
 
+%%%%%%%%%% ADD DISTANCE BETWEEN!!!!
+
 basevars = evalin('base','who');
 ii_cfg = evalin('base', 'ii_cfg');
 
@@ -46,6 +48,19 @@ if ismember(x,basevars)
         % FIND SACCADES >= T
         
         ii_selectbyvalue('vel',6,t);
+%         ii_cfg = evalin('base', 'ii_cfg');
+%         cursel = ii_cfg.cursel;      
+%         cursel(:,2) = cursel(:,1)+2;
+%         sel = ii_cfg.sel * 0;
+%         
+%         ii_cfg.cursel = cursel;
+%         ii_cfg.sel = sel;
+%         for i=1:(size(cursel,1))
+%             sel(cursel(i,1):cursel(i,2)) = 1;
+%         end
+%         putvar(ii_cfg);
+%         
+%         ii_selectuntil('vel',3,2,t2);
         
         % IGNORE SACCADES < L
         
