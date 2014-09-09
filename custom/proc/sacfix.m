@@ -78,3 +78,29 @@ putvar(ii_stats);
 % d_vec = [0 length(d_1)/length(d_avgsacs) length(d_2)/length(d_avgsacs) length(d_3)/length(d_avgsacs) length(d_4)/length(d_avgsacs) length(d_5)/length(d_avgsacs) 0];
 % c_vec = [0 length(c_1)/length(c_avgsacs) length(c_2)/length(c_avgsacs) length(c_3)/length(c_avgsacs) length(c_4)/length(c_avgsacs) length(c_5)/length(c_avgsacs) 0];
 % f_vec = [0 length(f_1)/length(f_avgsacs) length(f_2)/length(f_avgsacs) length(f_3)/length(f_avgsacs) length(f_4)/length(f_avgsacs) length(f_5)/length(f_avgsacs) 0];
+
+%%%%%%%%%%%%
+% CALC ISI %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%
+
+ii_definetrial('XDAT',1,'XDAT',6); % create trialvec
+ii_cfg.cursel = ii_stats(r).saccades_45;
+
+% sync saccades with trial numbers
+sacmat = ii_cfg.cursel;
+
+for i = 1:length(sacmat)
+    sacmat(i,3) = median(ii_cfg.trialvec(sacmat(i,1):sacmat(i,2)));
+end
+
+for i = 2:length(ii_cfg.cursel)
+    sacmat(i-1,4) = sacmat(i,1) - sacmat(i-1,2);
+end
+
+rid = sacmat(:,3);
+isi = sacmat(:,4);
+
+k = SplitVec(rid,'equal','last');
+isi(k) = [];
+
+ii_stats(r).isi = isi;
