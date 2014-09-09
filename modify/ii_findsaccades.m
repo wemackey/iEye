@@ -82,7 +82,7 @@ if ismember(x,basevars)
         
         % SHOW SELECTIONS
         
-        ii_showselections;
+        % ii_showselections;
         
         if ismember(c1,basevars)
             if ismember(c2,basevars)
@@ -121,7 +121,7 @@ if ismember(x,basevars)
                 ii_cfg.sel = csel;
                 putvar(ii_cfg);
                 
-                ii_showselections;
+                % ii_showselections;
                 
                 % select 50 samples after the saccade as endpoint
                 

@@ -55,7 +55,7 @@ if ismember(c,basevars)
     ii_cfg.sel = sel;
     putvar(ii_cfg);
     
-    ii_showselections;
+    %ii_showselections;
     
 else
     disp('Channel does not exist')
