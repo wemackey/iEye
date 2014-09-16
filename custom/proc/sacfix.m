@@ -68,11 +68,36 @@ ii_stats(r).numsacs = numsacs;
 ii_stats(r).saccades_45 = ii_cfg.cursel;
 putvar(ii_stats);
 
-% avgsacs=[];
-% 
-% for i=1:length(ii_stats)
-%     avgsacs = [avgsacs; ii_stats(i).numsacs];
-% end
+%%%%%%%%
+
+avgsacs=[];
+
+for i=1:length(ii_stats)
+    avgsacs = [avgsacs; ii_stats(i).numsacs];
+end
+
+ki = find(avgsacs==0);
+
+avgsacs(ki) = [];
+
+mean(avgsacs)
+
+s1 = find(avgsacs==1);
+s2 = find(avgsacs==2);
+s3 = find(avgsacs==3);
+s4 = find(avgsacs==4);
+s5 = find(avgsacs==5);
+s6 = find(avgsacs==6);
+
+s1p = length(s1)/length(avgsacs);
+s2p = length(s2)/length(avgsacs);
+s3p = length(s3)/length(avgsacs);
+s4p = length(s4)/length(avgsacs);
+s5p = length(s5)/length(avgsacs);
+s6p = length(s6)/length(avgsacs);
+
+%%%%%%%%
+
 % 
 % x_vec = [0 1 2 3 4 5 6];
 % d_vec = [0 length(d_1)/length(d_avgsacs) length(d_2)/length(d_avgsacs) length(d_3)/length(d_avgsacs) length(d_4)/length(d_avgsacs) length(d_5)/length(d_avgsacs) 0];
