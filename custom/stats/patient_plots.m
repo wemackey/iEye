@@ -367,6 +367,70 @@ pdlpfcc = ranksum(cont,dlpfcc)
 pfefi = ranksum(cont,fefi)
 pfefc = ranksum(cont,fefc)
 
+% SACCADE COUNT
+
+grp = {'control' 'control' 'control' 'control' 'control' 'control' 'control' 'control' 'control' 'dlpfc' 'dlpfc' 'dlpfc' 'dlpfc' 'dlpfc' 'dlpfc' 'fef' 'fef'};
+valz = [1.589 1.543 1.893 1.457 1.502 1.410 1.611 1.192 1.576 1.411 1.367 1.647 1.437 1.315 1.633 2.253 2.255];
+cont = [1.589 1.543 1.893 1.457 1.502 1.410 1.611 1.192 1.576];
+dlpfc = [1.411 1.367 1.647 1.437 1.315 1.633];
+fef = [2.253 2.255];
+
+p = kruskalwallis(valz,grp)
+
+figure('Name','Saccades per trial','NumberTitle','off')
+gp = [1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 3 3];
+boxplot(valz,gp,'whisker',0,'symbol','r','plotstyle','compact');
+ylim([1 2.5])
+
+c1 = [0.511 0.507 0.266 0.564 0.866 0.608 0.488 0.815 0.490];
+c2 = [0.389 0.446 0.574 0.375 0.124 0.375 0.417 0.177 0.444];
+c3 = [0.100 0.043 0.159 0.058 0.010 0.017 0.092 0.008 0.066];
+c4 = [0 0.003 0 0.003 0 0 0.003 0 0 0.001];
+c5 = [0 0 0 0 0 0 0 0 0];
+c6 = [0 0 0 0 0 0 0 0 0];
+
+d1 = [0.637 0.691 0.483 0.618 0.718 0.448];
+d2 = [0.316 0.252 0.395 0.328 0.248 0.473];
+d3 = [0.048 0.058 0.115 0.055 0.034 0.075];
+d4 = [0 0 0.007 0 0 0.004];
+d5 = [0 0 0 0 0 0];
+d6 = [0 0 0 0 0 0];
+
+f1 = [0.157 0.222];
+f2 = [0.510 0.412];
+f3 = [0.270 0.267];
+f4 = [0.050 0.082];
+f5 = [0.013 0.014];
+f6 = [0 0];
+
+cvec = [mean(c1) mean(c2) mean(c3) mean(c4) mean(c5) mean(c6)];
+dvec = [mean(d1) mean(d2) mean(d3) mean(d4) mean(d5) mean(d6)];
+fvec = [mean(f1) mean(f2) mean(f3) mean(f4) mean(f5) mean(f6)];
+
+cerr = [std(c1)/sqrt(length(c1)) std(c2)/sqrt(length(c2)) std(c3)/sqrt(length(c3)) std(c4)/sqrt(length(c4)) std(c5)/sqrt(length(c5)) std(c6)/sqrt(length(c6))];
+derr = [std(d1)/sqrt(length(d1)) std(d2)/sqrt(length(d2)) std(d3)/sqrt(length(d3)) std(d4)/sqrt(length(d4)) std(d5)/sqrt(length(d5)) std(d6)/sqrt(length(d6))];
+ferr = [std(f1)/sqrt(length(f1)) std(f2)/sqrt(length(f2)) std(f3)/sqrt(length(f3)) std(f4)/sqrt(length(f4)) std(f5)/sqrt(length(f5)) std(f6)/sqrt(length(f6))];
+
+x=[1 2 3 4 5 6];
+figure;
+hold on
+H(1) = shadedErrorBar(x,cvec,cerr,'g',0);
+H(2) = shadedErrorBar(x,dvec,derr,'b',0);
+H(3) = shadedErrorBar(x,fvec,ferr,'r',0);
+
+x=[1 2 3 4 5 6];
+figure;
+errorbar(x,cvec,cerr,'-o');
+hold all
+errorbar(x-.1,dvec,derr,'-o');
+errorbar(x+.1,fvec,ferr,'-o');
+
+figure('Name','Saccades per trial','NumberTitle','off')
+plot(cvec,'-o');
+hold all
+plot(dvec,'-o');
+plot(fvec,'-o');
+
 % CONTROL AGES
 
 % [27 45 35 32 20 20 29 gal ala]
