@@ -1,6 +1,8 @@
 function ii_calibrateto(chan, chan2, polynum)
-%II_CALIBRATETO Summary of this function goes here
-%   Detailed explanation goes here
+%Calibrate one channel to another
+%   This function will calibrate the values of one channel to the values of
+%   another. It takes the channel to calibrate as the first argument,
+%   followed by the channel to calibrate to, and a polynomial degree.
 
 ii_cfg = evalin('base', 'ii_cfg');
 cursel = ii_cfg.cursel;

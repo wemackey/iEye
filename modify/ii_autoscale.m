@@ -1,6 +1,7 @@
 function ii_autoscale(chan,chan2)
-%II_AUTOSCALE Summary of this function goes here
-%   Detailed explanation goes here
+%Scale values of one channel to another
+%   This function will scale the values of one channel to the min/max of
+%   another channel
 
 if nargin ~= 2
     prompt = {'Enter channel to autoscale:', 'Enter channel to autoscale to:'};
@@ -29,17 +30,11 @@ if ismember(chan,basevars)
         assignin('base',chan,c1);
         ii_replot;
         
-%         figure;
-%         plot(c1);
-%         hold all;
-%         plot(c2);
-        
     else
         disp('Channel to autoscale to does not exist in workspace');
     end
 else
     disp('Channel to autoscale does not exist in worksapce');
 end
-
 end
 

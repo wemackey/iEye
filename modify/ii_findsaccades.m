@@ -1,6 +1,7 @@
 function ii_findsaccades(x,y,t,l,c1,v1,c2,v2)
-%II_FINDSACCADES Summary of this function goes here
-%   Detailed explanation goes here
+%Saccade detection
+%   This function will detect and select saccades based on a particular set
+%   of criteria (velocity and sample/time length).
 
 % if nargin ~= 4
 %     prompt = {'X Channel', 'Y Channel', 'Velocity Threshold', 'Length Threshold'};
@@ -31,7 +32,7 @@ if ismember(x,basevars)
         
         xvel = diff(xv);
         yvel = diff(yv);
-              
+        
         xvel = xvel.^2;
         yvel = yvel.^2;
         
@@ -45,19 +46,19 @@ if ismember(x,basevars)
         % FIND SACCADES >= T
         
         ii_selectbyvalue('vel',6,t);
-%         ii_cfg = evalin('base', 'ii_cfg');
-%         cursel = ii_cfg.cursel;      
-%         cursel(:,2) = cursel(:,1)+2;
-%         sel = ii_cfg.sel * 0;
-%         
-%         ii_cfg.cursel = cursel;
-%         ii_cfg.sel = sel;
-%         for i=1:(size(cursel,1))
-%             sel(cursel(i,1):cursel(i,2)) = 1;
-%         end
-%         putvar(ii_cfg);
-%         
-%         ii_selectuntil('vel',3,2,t2);
+        %         ii_cfg = evalin('base', 'ii_cfg');
+        %         cursel = ii_cfg.cursel;
+        %         cursel(:,2) = cursel(:,1)+2;
+        %         sel = ii_cfg.sel * 0;
+        %
+        %         ii_cfg.cursel = cursel;
+        %         ii_cfg.sel = sel;
+        %         for i=1:(size(cursel,1))
+        %             sel(cursel(i,1):cursel(i,2)) = 1;
+        %         end
+        %         putvar(ii_cfg);
+        %
+        %         ii_selectuntil('vel',3,2,t2);
         
         % IGNORE SACCADES < L
         

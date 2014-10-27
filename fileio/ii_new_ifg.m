@@ -1,6 +1,8 @@
 function ii_new_ifg()
-%II_NEW_IFG Create new configuration file
-%   Detailed explanation goes here
+%Create new configuration file
+%   Opens a GUI to create a new *.ifg configuration file. This
+%   configuration file is used when importing eyetracker files (i.e. *.edf)
+%   into iEye/MATLAB
 
 prompt = {'# of Channels', 'Channel Names', 'Sampling rate in Hz'};
 dlg_title = 'Configuration File';

@@ -1,6 +1,6 @@
-function [ difd ] = ii_diff( chan )
-%II_DIFF Summary of this function goes here
-%   Detailed explanation goes here
+function [difd] = ii_diff(chan)
+%Differentiate channel
+%   Differentiate channel
 
 if nargin ~= 1
     prompt = {'Enter channel:'};
@@ -20,6 +20,5 @@ if ismember(chan,basevars)
 else
     disp('Channel does not exist')
 end
-
 end
 

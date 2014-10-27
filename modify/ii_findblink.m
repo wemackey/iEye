@@ -1,6 +1,7 @@
 function ii_findblink(tmin,tmax)
-%II_FINDBLINK Summary of this function goes here
-%   Detailed explanation goes here
+%Blink detection
+%   This function will find blinks across a timeseries. Blinks are defined
+%   by a min and max threshold value.
 
 if nargin ~= 2
     prompt = {'Min:','Max:'};

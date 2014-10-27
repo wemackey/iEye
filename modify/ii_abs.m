@@ -1,6 +1,6 @@
-function [ abso ] = ii_abs( chan )
-%II_ABS Summary of this function goes here
-%   Detailed explanation goes here
+function [abso] = ii_abs(chan)
+%Absolute value
+%   Take the absolute value of a channel
 if nargin ~= 1
     prompt = {'Enter channel:'};
     dlg_title = 'Absolute Value';
@@ -19,6 +19,5 @@ if ismember(chan,basevars)
 else
     disp('Channel does not exist')
 end
-
 end
 

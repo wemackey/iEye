@@ -1,6 +1,7 @@
-function [ idiv ] = ii_divide( c1,c2 )
-%II_DIVIDE Summary of this function goes here
-%   Detailed explanation goes here
+function [idiv] = ii_divide(c1,c2)
+%Divide channels
+%   This function will modify one channel by dividing it by the values from
+%   another channel.
 
 if nargin ~= 2
     prompt = {'Modify Channel:', 'By Adding Channel:'};

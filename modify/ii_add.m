@@ -1,6 +1,6 @@
-function [ iadd ] = ii_add( c1, c2 )
-%II_ADD Summary of this function goes here
-%   Detailed explanation goes here
+function [iadd] = ii_add(c1,c2)
+%Add two channels together
+%   This function will modify one channel by adding another channel to it
 
 if nargin ~= 2
     prompt = {'Modify Channel:', 'By Adding Channel:'};

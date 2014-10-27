@@ -1,6 +1,8 @@
 function [nchan,lchan,schan,cfg] = ii_openifg(fil)
-%II_OPENIFG Summary of this function goes here
-%   Detailed explanation goes here
+%Load configuration file
+%   This function is used to load the contents of an iEye configuration
+%   file (*.ifg).
+
 if nargin ~= 1
     [filename, pathname] = uigetfile('*.ifg', 'Select *.ifg file');
     
@@ -19,6 +21,5 @@ C = textscan(str,'%s');
 nchan = C{1}{1};
 lchan = C{1}{2};
 schan = C{1}{3};
-
 end
 
