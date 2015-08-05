@@ -56,12 +56,24 @@ if ismember(chan,basevars)
         end
         
         x(sel==1) = 0;
+        blink = find(x==0);
         
+        % Set new value to value of last non-blink sample
         for o = 1:(length(x))
             if x(o) == 0
                 x(o) = x(o - 1);
             end
         end
+%         inds = find(x==0);
+%         
+%         % Interpolate
+%         split1 = SplitVec(inds,'consecutive','first');
+%         split2 = SplitVec(inds,'consecutive','last');
+%         
+%         for o = 1:length(split1)
+%             x(split1(o):split2(o)) = linspace(x(split1(o)),x(split2(o)),split2(o)-split1(o)+1)';
+%         end
+        
         
 %         % Plot blinks in new window
 %         figure('Name','Blink Correction','NumberTitle','off')
@@ -76,6 +88,9 @@ if ismember(chan,basevars)
         assignin('base',chan,x);
         ii_cfg.blink = blink;
         ii_cfg.blinkvec = blinkvec;
+        
+        dt = datestr(now,'mmmm dd, yyyy HH:MM:SS.FFF AM');
+        ii_cfg.history{end+1,1} = sprintf('Blink corrected %s with pupil threshold of %d (%d/%d) on %s ', chan, pval, pri,fol, dt);
         putvar(ii_cfg);
         ii_replot;
     else

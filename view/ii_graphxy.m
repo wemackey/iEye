@@ -9,7 +9,7 @@ tary = evalin('base', 'TarY');
 figure;
 plot(x,y,'LineStyle', ':');
 hold all
-plot(tarx,tary,'LineStyle', '*');
+plot(tarx,tary, '*');
 
 legend({'XY','TarXY'},'Location', 'Southeast', 'Orientation', 'Horizontal');
 end

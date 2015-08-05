@@ -16,6 +16,11 @@ if ismember(chan,basevars)
     abso = abs(ichan);
     assignin('base',chan,abso);
     ii_replot;
+    
+    dt = datestr(now,'mmmm dd, yyyy HH:MM:SS.FFF AM');
+    ii_cfg = evalin('base','ii_cfg');
+    ii_cfg.history{end+1,1} = sprintf('Took absolute value of %s on %s', chan, dt);
+    putvar(ii_cfg);
 else
     disp('Channel does not exist')
 end

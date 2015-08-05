@@ -14,6 +14,20 @@ rng = qq(2) - qq(1);
 selstrt = qq(1);
 selend = qq(2);
 
+% Spatial plot
+i2 = findobj('type','figure','name','i2d');
+if ~isempty(i2)    
+    d = 1;
+    X = evalin('base', 'X');
+    Y = evalin('base', 'Y');
+    for w = qq(1)+1:qq(2)
+        x(d) = X(w);
+        y(d) = Y(w);
+        d = d + 1;
+    end
+    ii_i2d_update(x,y);
+end
+
 hax = get(iEye,'CurrentAxes');
 axes(hax);
 cla;
@@ -109,6 +123,7 @@ for line = 1:length(hlines)
     set(hlines(line),'uicontextmenu',hcmenu)
 end
 legend(cnames,'Location', 'NortheastOutside', 'Orientation', 'Vertical');
+
 
 ii_cfg.tindex = tindex;
 putvar(ii_cfg);

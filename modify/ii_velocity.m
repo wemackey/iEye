@@ -35,6 +35,8 @@ if ismember(x,basevars)
         vel = [0; vel];
         
         ii_cfg.velocity = vel;
+        dt = datestr(now,'mmmm dd, yyyy HH:MM:SS.FFF AM');
+        ii_cfg.history{end+1,1} = sprintf('Calculated velocity (%s,%s) on %s ', x, y, dt);
         putvar(ii_cfg);
         
 %         % Plot results

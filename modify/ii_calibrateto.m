@@ -48,6 +48,11 @@ else
 %             figure;            
 %             scatter(fit,c2);
 %             axis equal
+
+        dt = datestr(now,'mmmm dd, yyyy HH:MM:SS.FFF AM');
+        ii_cfg = evalin('base','ii_cfg');
+        ii_cfg.history{end+1,1} = sprintf('Calibrated %s to %s with polyum %d on %s ', chan, chan2,polynum, dt);
+        putvar(ii_cfg);
             
         else
             disp('Channel to calibrate to does not exist in workspace');

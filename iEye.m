@@ -190,7 +190,7 @@ function mnuOpen_Callback(hObject, eventdata, handles)
 % hObject    handle to mnuOpen (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-ii_openiye;
+ii_opendata;
 
 
 % --------------------------------------------------------------------
@@ -198,16 +198,18 @@ function mnuClose_Callback(hObject, eventdata, handles)
 % hObject    handle to mnuClose (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-clear all;
-axes(handles.axes1);
+hax = get(iEye,'CurrentAxes');
+axes(hax);
 cla;
+evalin('base','clear all');
+clc
 
 % --------------------------------------------------------------------
 function mnuSaveAs_Callback(hObject, eventdata, handles)
 % hObject    handle to mnuSaveAs (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-ii_saveiye;
+ii_writedata;
 
 % --------------------------------------------------------------------
 function mnuImport_Callback(hObject, eventdata, handles)

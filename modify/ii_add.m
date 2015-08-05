@@ -24,6 +24,11 @@ if ismember(c1,basevars)
         assignin('base',c1,iadd);
         ii_replot;
         
+        dt = datestr(now,'mmmm dd, yyyy HH:MM:SS.FFF AM');
+        ii_cfg = evalin('base','ii_cfg');
+        ii_cfg.history{end+1,1} = sprintf('Added %s to %s on %s ', c1, c2, dt);
+        putvar(ii_cfg);
+        
     else
         disp('Channel does not exist in workspace');
     end

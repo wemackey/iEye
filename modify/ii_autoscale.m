@@ -30,6 +30,11 @@ if ismember(chan,basevars)
         assignin('base',chan,c1);
         ii_replot;
         
+        dt = datestr(now,'mmmm dd, yyyy HH:MM:SS.FFF AM');
+        ii_cfg = evalin('base','ii_cfg');
+        ii_cfg.history{end+1,1} = sprintf('Autoscaled %s to %s on %s ', chan, chan2, dt);
+        putvar(ii_cfg);
+        
     else
         disp('Channel to autoscale to does not exist in workspace');
     end

@@ -1,4 +1,4 @@
-function ii_import_edf()
+function ii_import_edf(edf_file,ifg_file,data_file)
 %IMPORT EYELINK EDF FILES
 %   This function will import Eyelink EDF files but requires 'edf2asc'
 %   command (from Eyelink) be installed in MATLAB's path. A config (*.ifg)
@@ -24,13 +24,21 @@ function ii_import_edf()
 
 % SETUP FILE
 
-[filename, pathname] = uigetfile('*.edf', 'Select EDF file');
+if isempty(edf_file)
+    [filename, pathname] = uigetfile('*.edf', 'Select EDF file');
+    edf_file = fullfile(pathname, filename);
+end
+
+if isempty(ifg_file)
+    [filename_ifg, pathname] = uigetfile('*.ifg', 'Select IFG file');
+    ifg_file = fullfile(pathname, filename_ifg);
+end
 
 if isequal(filename,0)
     disp('User selected Cancel');
-else
+else    
     % GET CONFIG
-    [nchan,lchan,schan,cfg] = ii_openifg();
+    [nchan,lchan,schan,cfg] = ii_openifg(ifg_file);
     nchan = str2num(nchan);
     schan = str2num(schan);
     vis = lchan;
@@ -39,12 +47,16 @@ else
     echan = nchan - 3;
     
     % EXTRACT SAMPLES
-    [status,result] = system(['edf2asc -t -c -s -miss 0 ' fullfile(pathname, filename)]);
+    if strcomp(computer(),'MACI64')
+        [status,result] = system(['edf2asc_x86_64 -t -c -s -miss 0 ' edf_file]);
+    else
+        [status,result] = system(['edf2asc -t -c -s -miss 0 ' edf_file]);
+    end
     disp(status);
     disp(result);
-    asc_samp_file = strrep(filename, 'edf', 'asc');
+    asc_samp_file = strrep(edf_file, '.edf', '.asc');
     
-    fid = fopen(fullfile(pathname, asc_samp_file),'r');
+    fid = fopen(asc_samp_file,'r');
     M = textscan(fid,'%f %f %f %f %*s');
     M = cell2mat(M);
     s_num = M(:,1);
@@ -52,15 +64,19 @@ else
     y = M(:,3);
     pupil = M(:,4);
     
-    delete (fullfile(pathname, asc_samp_file));
+    delete (asc_samp_file);
     
     % EXTRACT EVENTS
-    [status,result] = system(['edf2asc -t -c -e -miss 0 ' fullfile(pathname, filename)]);
+    if strcomp(computer(),'MACI64')
+        [status,result] = system(['edf2asc_x86_64 -t -c -e -miss 0 ' edf_file]);
+    else
+        [status,result] = system(['edf2asc -t -c -e -miss 0 ' edf_file]);
+    end
     disp(status);
     disp(result);
-    asc_evnt_file = strrep(filename, 'edf', 'asc');
+    asc_evnt_file = strrep(edf_file, '.edf', '.asc');
     
-    fid = fopen(fullfile(pathname, asc_evnt_file),'r');
+    fid = fopen(asc_evnt_file,'r');
     E = textscan(fid,'%s', 'delimiter','\n');
     E = E{1};
     mline = 1;
@@ -104,13 +120,6 @@ else
         cv = 0;
         M(:,(i+1)) = 0;
         
-        % OLD, 1000 HZ ONLY
-        %         for h = 1:length(MV)
-        %             ci = find(M(:,1)==MV(h,1));
-        %             M((ci:length(M)),(i+1)) = MV(h,2);
-        %             li = ci;
-        %         end
-        
         for h = 1:length(MV)
             ci = find(M(:,1)==MV(h,1));
             if isempty(ci) == 0
@@ -125,11 +134,10 @@ else
         end
     end
     
-    delete(fullfile(pathname,asc_evnt_file));
+    delete(asc_evnt_file);
     
     % CREATE FILE MATRIX
-    iye_file = strrep(filename, 'edf', 'iye');
-    fil = fullfile(pathname, iye_file);
+    iye_file = strrep(filename, '.edf', '.mat');
     M(:,1) = [];
     
     % SAVE AND PLOT
@@ -165,6 +173,13 @@ else
     ii_cfg.history{1} = ['EDF imported ', dt];
     putvar(ii_cfg);
     ii_replot;
+    
+    % SAVE FILE
+    if isempty(data_file)
+        [filename, pathname] = uiputfile(iye_file, 'Create data file');
+        data_file = fullfile(pathname, filename);
+    end
+    save(data_file);
     
 end
 end
