@@ -34,8 +34,8 @@ if ismember(chan,basevars)
         split1 = SplitVec(blink,'consecutive','firstval');
         split2 = SplitVec(blink,'consecutive','lastval');
         
-        if split1-pri < 0
-            blinked(:,1) = 0;
+        if split1-pri < 1
+            blinked(:,1) = 1;
         else
             blinked(:,1) = split1 - pri;
         end

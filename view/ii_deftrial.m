@@ -26,13 +26,13 @@ if ismember(c1,basevars)
         ewhere = find(thechan2 == v2);
         
         tcursel(:,1) = SplitVec(swhere,'consecutive','firstval');
-        tcursel(:,2) = SplitVec(ewhere,'consecutive','firstval');
+        tcursel(:,2) = SplitVec(ewhere,'consecutive','lastval');
         
         for i=1:(size(tcursel,1))
             tsel(tcursel(i,1):tcursel(i,2)) = 1;
         end
         
-        trialnums = zeros(length(thechan));
+        trialnum = zeros(length(thechan),1);
         
         for i = 1:length(tcursel)
             trialnum(tcursel(i,1):tcursel(i,2)) = i;

@@ -21,4 +21,3 @@ else
     disp('Channel does not exist')
 end
 end
-
