@@ -52,6 +52,9 @@ if ismember(chan,basevars)
         end
                
         for z=1:(size(blinked,1))
+            if blinked(z,1)<1
+                blinked(z,1) = 1
+            end
             sel(blinked(z,1):blinked(z,2)) = 1;
         end
         
@@ -59,7 +62,7 @@ if ismember(chan,basevars)
         blink = find(x==0);
         
         % Set new value to value of last non-blink sample
-        for o = 1:(length(x))
+        for o = 2:(length(x))
             if x(o) == 0
                 x(o) = x(o - 1);
             end
