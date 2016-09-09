@@ -47,7 +47,7 @@ else
     echan = nchan - 3;
     
     % EXTRACT SAMPLES
-    if strcomp(computer(),'MACI64')
+    if strcmpi(computer(),'MACI64')
         [status,result] = system(['edf2asc_x86_64 -t -c -s -miss 0 ' edf_file]);
     else
         [status,result] = system(['edf2asc -t -c -s -miss 0 ' edf_file]);
@@ -67,7 +67,7 @@ else
     delete (asc_samp_file);
     
     % EXTRACT EVENTS
-    if strcomp(computer(),'MACI64')
+    if strcmpi(computer(),'MACI64')
         [status,result] = system(['edf2asc_x86_64 -t -c -e -miss 0 ' edf_file]);
     else
         [status,result] = system(['edf2asc -t -c -e -miss 0 ' edf_file]);
