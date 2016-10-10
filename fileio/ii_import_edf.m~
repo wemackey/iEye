@@ -22,12 +22,11 @@ function ii_import_edf(edf_file,ifg_file,data_file)
 % setenv('PATH', path1);
 % !echo $PATH;
 %
-% this is easy to do w/ ii_init.m - just need to update the edf2asc path in
-% that file depending on your setup
+% this is easy to do w/ i
 
 % SETUP FILE
 
-% TCS: updated this to be more user- and command-line friendly
+%if isempty(edf_file)
 if nargin < 1 || isempty(edf_file)
     [filename, pathname] = uigetfile('*.edf', 'Select EDF file');
     edf_file = fullfile(pathname, filename);
@@ -72,8 +71,6 @@ lchan = textscan(lchan,'%s','delimiter',',');
 echan = nchan - 3;
 
 % EXTRACT SAMPLES
-% TCS: edf2asc =64 doesn't seem to work on 64bit macs, but old version is
-% fine
 %if strcmpi(computer(),'MACI64')
 %    [status,result] = system(['edf2asc_x86_64 -t -c -s -miss 0 ' edf_file]);
 %else
