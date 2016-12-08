@@ -112,7 +112,7 @@ Mess = {};
 % GET MSG EVENTS
 token = strtok(E);
 for v = 1:length(token)
-    dm = strcmp(token(v),'MSG');
+    dm = strcmpi(token(v),'MSG');
     if dm == 1
         Mess(mline) = E(v);
         mline = mline + 1;
@@ -133,7 +133,7 @@ for i = 4:nchan
     MV = [];
     
     for v = 1:length(varbl)
-        dm = strcmp(varbl(v),cname);
+        dm = strcmpi(varbl(v),cname); % TS: no longer case-sensitive!!!
         
         if dm == 1
             MV(mline,:) = [samp_n(v) vval(v)];
