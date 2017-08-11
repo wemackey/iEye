@@ -1,4 +1,4 @@
-function ii_import_edf(edf_file,ifg_file,data_file)
+function [ii_data,ii_cfg] = ii_import_edf(edf_file,ifg_file,data_file)
 %IMPORT EYELINK EDF FILES
 %   This function will import Eyelink EDF files but requires 'edf2asc'
 %   command (from Eyelink) be installed in MATLAB's path. A config (*.ifg)
@@ -84,7 +84,8 @@ disp(result);
 asc_samp_file = strrep(edf_file, '.edf', '.asc');
 
 fid = fopen(asc_samp_file,'r');
-M = textscan(fid,'%f %f %f %f %*s');
+%M = textscan(fid,'%f %f %f %f %*s');
+M = textscan(fid,'%f %f %f %f %*s %*s %*s %*s %*s');
 M = cell2mat(M);
 s_num = M(:,1);
 x = M(:,2);
@@ -171,22 +172,22 @@ M(:,1) = [];
 eyedata = [];
 
 % SAVE AND PLOT
-h = waitbar(0,'Opening file...');
+%h = waitbar(0,'Opening file...');
 for i = 1:nchan
     cname = lchan{1}{i};
     cvalue = M(:,i);
-    assignin('base',cname,cvalue);
+%    assignin('base',cname,cvalue);
     eyedata.(lchan{1}{i})=M(:,i);
-    waitbar(i/nchan,h);
+%    waitbar(i/nchan,h);
 end
-close(h);
+%close(h);
 
 x = M(:,1);
 
-iEye;
+%iEye;
 
 % CREATE II_CFG STRUCT
-dt = datestr(now,'mmmm dd, yyyy HH:MM:SS.FFF AM');
+dt = datestr(now, 30);%'mmmm dd, yyyy HH:MM:SS.FFF AM');
 
 ii_cfg.cursel = [];
 ii_cfg.sel = x*0;
@@ -202,8 +203,12 @@ ii_cfg.tsel = x*0;
 ii_cfg.tindex = 0;
 ii_cfg.saccades = [];
 ii_cfg.history{1} = ['EDF imported ', dt];
-putvar(ii_cfg);
-ii_replot;
+
+
+ii_data = eyedata;
+
+%putvar(ii_cfg);
+%ii_replot;
 
 % SAVE FILE
 % below focuses on only the necessary variables - M is probably redundant,
