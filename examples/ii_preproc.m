@@ -37,6 +37,12 @@ ii_init;
 
 [ii_data, ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,{'X','Y'},'Pupil',1500,50,50); % maybe 50, 50? %altering this 6/1/2017 from 1800 in both x/y 
 
+
+% split into individual trials (so that individual-trial corrections can be
+% applied)
+[ii_data,ii_cfg] = ii_definetrial(ii_data,ii_cfg,'XDAT',1,'XDAT',8); % CHECK THIS!
+
+
 % TCS, made it here 8/11/2017
 
 % Smooth data
