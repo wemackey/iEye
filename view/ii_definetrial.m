@@ -69,7 +69,7 @@ if ismember(c1,fieldnames(ii_data)) && ismember(c2,fieldnames(ii_data))
     
     % putvar(ii_cfg);
     
-    ii_cfg{end+1} = sprintf('ii_definetrial %s %i to %s %i - %s',c1,v1,c2,v2,datestr(now,30));
+    ii_cfg.history{end+1} = sprintf('ii_definetrial %s %i to %s %i - %s',c1,v1,c2,v2,datestr(now,30));
     
     
 end

@@ -64,7 +64,7 @@ for cc = 1:length(chan_names)
             
         else
             
-            error('iEye:ii_smooth:unrecognizedSmoothingOperation', 'Smoothing type %s not recognized',typ)
+            error('iEye:ii_smooth:unrecognizedSmoothingOperation', 'Smoothing type %s not recognized',chan_names{cc})
         end
         
         
@@ -72,17 +72,12 @@ for cc = 1:length(chan_names)
        
         clear smoothd;
         
-        ii_cfg.history{end+1} = sprintf('ii_smooth: chan %s, %s %d - %s',chan_names{cc},typ,degr,datestr(now,30));
         
     else
         
         error('iEye:ii_smooth:channelNotFound', 'Channel %s does not exist in ii_data',chan_names{cc})
     end
-    
-    
 end
-
-
 
 
 return

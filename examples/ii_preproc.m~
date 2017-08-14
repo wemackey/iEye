@@ -34,22 +34,22 @@ ii_init;
 [ii_data,ii_cfg] = ii_invert(ii_data,ii_cfg,'Y');
 
 % Correct for blinks
-%ii_blinkcorrect('X','Pupil',0,100,100); % maybe 50, 50?
-%ii_blinkcorrect('Y','Pupil',0,100,100);
 
-[ii_data, ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,{'X','Y'},'Pupil',1100,50,50); % maybe 50, 50? %altering this 6/1/2017 from 1800 in both x/y 
-%ii_blinkcorrect('Y','Pupil',1100,50,50);
+[ii_data, ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,{'X','Y'},'Pupil',1500,50,50); % maybe 50, 50? %altering this 6/1/2017 from 1800 in both x/y 
+
+
+% split into individual trials (so that individual-trial corrections can be
+% applied)
+[ii_data,ii_cfg] = ii_definetrial(ii_data,ii_cfg,'XDAT',1,'XDAT',8); % CHECK THIS!
+
 
 
 % Smooth data
-ii_smooth('X','moving',10);
-ii_smooth('Y','moving',10);
+[ii_data,ii_cfg] = ii_smooth(ii_data,ii_cfg,{'X','Y'},'Gaussian',5);
 
-% Scale X and Y values to Tar X and Tar Y values. This is done because X
-% and Y are output by the eye-tracker in pixel coordinates, while target
-% values are expressed in MATLAB in degrees of visual angle.
-ii_autoscale('X','TarX');
-ii_autoscale('Y','TarY');
+
+% compute velocity using the smoothed data
+
 
 % % Make initial selections for calibration (Corrective saccade)
 % ii_selectbyvalue('TarX',2,0);

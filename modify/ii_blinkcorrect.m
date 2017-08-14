@@ -77,7 +77,7 @@ blink = find(blinkvec==1);
 ii_cfg.blink = blink;
 ii_cfg.blinkvec = blinkvec;
 
-ii_cfg.history{end+1,1} = sprintf('Blink corrected %s with pupil threshold of %d (%d/%d) on %s ', horzcat(chan{:}), pval, pri,fol, datestr(now,30));
+ii_cfg.history{end+1} = sprintf('Blink corrected %s with pupil threshold of %d (%d/%d) on %s ', horzcat(chan{:}), pval, pri,fol, datestr(now,30));
 
 
 return

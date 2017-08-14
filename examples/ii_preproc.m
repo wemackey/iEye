@@ -43,18 +43,13 @@ ii_init;
 [ii_data,ii_cfg] = ii_definetrial(ii_data,ii_cfg,'XDAT',1,'XDAT',8); % CHECK THIS!
 
 
-% TCS, made it here 8/11/2017
 
 % Smooth data
-ii_smooth('X','moving',10);
-ii_smooth('Y','moving',10);
+[ii_data,ii_cfg] = ii_smooth(ii_data,ii_cfg,{'X','Y'},'Gaussian',5);
 
-% Scale X and Y values to Tar X and Tar Y values. This is done because X
-% and Y are output by the eye-tracker in pixel coordinates, while target
-% values are expressed in MATLAB in degrees of visual angle.
-% NOT NECESSARY ANYMORE - SEE II_RESCALE!!!
-ii_autoscale('X','TarX');
-ii_autoscale('Y','TarY');
+
+% compute velocity using the smoothed data
+[ii_data,ii_cfg] = ii_velocity(ii_data,ii_cfg,'X_smooth','Y_smooth');
 
 % % Make initial selections for calibration (Corrective saccade)
 % ii_selectbyvalue('TarX',2,0);

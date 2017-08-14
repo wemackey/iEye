@@ -1,0 +1,49 @@
+function [ii_data,ii_cfg] = ii_velocity(ii_data,ii_cfg,xchan,ychan)
+% Calculate eye-movement velocity using eye-tracker X and Y channels as
+% input. This vector is automatically saved to ii_cfg.velocity
+%
+% Updated 8/14/2017 TCS - uses ii_data
+
+if nargin == 2
+    prompt = {'Channel 1 (X)', 'Channel 2 (Y)'};
+    dlg_title = 'Velocity';
+    num_lines = 1;
+    answer = inputdlg(prompt,dlg_title,num_lines);
+    
+    xchan = answer{1};
+    ychan = answer{2};
+end
+
+
+if ismember(xchan,fieldnames(ii_data)) && ismember(ychan,fieldnames(ii_data))
+    
+        
+        xvel = evalin('base',xchan);
+        yvel = evalin('base',ychan);
+        
+        xvel = diff(xvel);
+        yvel = diff(yvel);
+        
+        xvel = abs(xvel);
+        yvel = abs(yvel);
+        
+        xvel = xvel.^2;
+        yvel = yvel.^2;
+        
+        vel = xvel + yvel;
+        vel = sqrt(vel);
+        vel = [0; vel];
+        
+        ii_cfg.velocity = [0; sqrt(diff(ii_data.(xchan)).^2 + diff(ii_data.(ychan)).^2) ] 
+        dt = datestr(now,'mmmm dd, yyyy HH:MM:SS.FFF AM');
+        ii_cfg.history{end+1,1} = sprintf('Calculated velocity (%s,%s) on %s ', xchan, ychan, dt);
+        putvar(ii_cfg);
+        
+    
+else
+    disp('Channel to does not exist in worksapce');
+end
+
+
+end
+
