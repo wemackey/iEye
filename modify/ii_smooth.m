@@ -70,6 +70,8 @@ for cc = 1:length(chan_names)
         
         ii_data.(sprintf('%s_smooth',chan_names{cc})) = smoothd;
        
+        ii_cfg.lchan{1}{end+1} = sprintf('%s_smooth',chan_names{cc});
+        
         clear smoothd;
         
         ii_cfg.history{end+1} = sprintf('ii_smooth: chan %s, %s %d - %s',chan_names{cc},typ,degr,datestr(now,30));

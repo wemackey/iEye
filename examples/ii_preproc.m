@@ -52,16 +52,27 @@ ii_init;
 [ii_data,ii_cfg] = ii_velocity(ii_data,ii_cfg,'X_smooth','Y_smooth');
 
 
-% look for saccades
-[ii_data,ii_cfg] = ii_findsaccades(ii_data,ii_cfg,'X_smooth','Y_smooth',30,.030,1.5); 
+% look for saccades [[NOTE: potentially do this twice? once for macro, once
+% for micro?]]
+[ii_data,ii_cfg] = ii_findsaccades(ii_data,ii_cfg,'X_smooth','Y_smooth',30,.0075,0.25); 
 
 
 
 % find fixation epochs (between saccades and blinks)
 % [create X_fix, Y_fix channels? these could be overlaid with 'raw' data as
 % 'stable' eye positions
+[ii_data,ii_cfg] = ii_findfixations(ii_data,ii_cfg,{'X','Y'},'mean');
 
 
+
+% quick plot...
+figure;
+subplot(2,1,1);
+hold on;
+plot(ii_data.X);plot(ii_data.X_fix,'k-');
+subplot(2,1,2);
+hold on;
+plot(ii_data.Y);plot(ii_data.Y_fix,'k-');
 
 
 % find saccade start/endpoints - these are different from fixations, which
