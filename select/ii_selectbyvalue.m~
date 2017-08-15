@@ -81,44 +81,61 @@ end
 [ii_data,ii_cfg] = ii_selectempty(ii_data,ii_cfg); % NOTE: do we need this???
 
 
-sel = ii_cfg.sel;
-
-newsel = cond_fcn(ii_data.(c),cval);
-
-% get the beginning/end using diff (I think this will guarantee
-% matching dimensions?)
-begin_selection = find(diff([0;newsel])== 1);
-end_selection   = find(diff([newsel;0])==-1);
-% these are the samples where the selection begins, ends
-
-% should definitely be the same size...
-assert(numel(begin_selection)==numel(end_selection));
-
-cursel = [reshape(begin_selection,numel(begin_selection),1) reshape(end_selection,numel(end_selection),1)];
-
-cursel(:,1) = SplitVec(cwhere,'consecutive','firstval');
-cursel(:,2) = SplitVec(cwhere,'consecutive','lastval');
-
-% NOTE: beginning/end of selection can match! this means for plotting,
-% etc, need to plot -0.5*sample_rate and +0.5*sample_rate on each side
-
-% leaving this out for above reasons!
-for i = 1:length(cursel)
-    dif = cursel(i,2) - cursel(i,1);
-    if dif < 2
-        cursel(i,2) = cursel(i,2) + 1;
-    else
-    end
-end
-
-for i=1:(size(cursel,1))
-    sel(cursel(i,1):cursel(i,2)) = 1;
-end
-
-ii_cfg.cursel = cursel;
-ii_cfg.sel = newsel;
-
+if ismember(c,basevars)
+    %thechan = evalin('base',c);
+    sel = ii_cfg.sel;
     
+    newsel = cond_fcn(ii_data.(c),cval);
+    
+    % get the beginning/end using diff (I think this will guarantee
+    % matching dimensions?)
+    begin_selection = diff([0;newsel])==1;
+    end_selection   = diff([newsel;0])==-1;
+    % these are the s
+    
+    
+    
+    switch cond
+        case 1
+            cwhere = find(thechan == cval);
+        case 2
+            cwhere = find(thechan ~= cval);
+        case 3
+            cwhere = find(thechan < cval);
+        case 4
+            cwhere = find(thechan > cval);
+        case 5
+            cwhere = find(thechan <= cval);
+        case 6
+            cwhere = find(thechan >= cval);
+        otherwise
+            disp('Invalid condition');
+    end
+    
+    cursel(:,1) = SplitVec(cwhere,'consecutive','firstval');
+    cursel(:,2) = SplitVec(cwhere,'consecutive','lastval');
+    
+    for i = 1:length(cursel)
+        dif = cursel(i,2) - cursel(i,1);
+        if dif < 2
+            cursel(i,2) = cursel(i,2) + 1;
+        else
+        end
+    end
+    
+    for i=1:(size(cursel,1))
+        sel(cursel(i,1):cursel(i,2)) = 1;
+    end
+    
+    ii_cfg.cursel = cursel;
+    ii_cfg.sel = sel;
+    putvar(ii_cfg);
+    
+    %ii_showselections;
+    
+else
+    disp('Channel does not exist')
+end
 
 end
 

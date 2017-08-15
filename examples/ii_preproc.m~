@@ -49,6 +49,11 @@ ii_init;
 
 
 % compute velocity using the smoothed data
+[ii_data,ii_cfg] = ii_velocity(ii_data,ii_cfg,'X_smooth','Y_smooth');
+
+
+% look for saccades
+[ii_data,ii_cfg] = ii_findsaccades(ii_data,ii_cfg,[]); 
 
 
 % % Make initial selections for calibration (Corrective saccade)
