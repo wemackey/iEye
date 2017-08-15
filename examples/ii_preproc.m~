@@ -53,8 +53,12 @@ ii_init;
 
 
 % look for saccades
-[ii_data,ii_cfg] = ii_findsaccades(ii_data,ii_cfg,[]); 
+[ii_data,ii_cfg] = ii_findsaccades(ii_data,ii_cfg,'X_smooth','Y_smooth',30,.030,1.5); 
 
+
+
+% find fixation epochs (between saccades and blinks)
+% [create X_fix, Y_fix 
 
 % % Make initial selections for calibration (Corrective saccade)
 % ii_selectbyvalue('TarX',2,0);

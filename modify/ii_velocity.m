@@ -17,7 +17,7 @@ end
 
 if ismember(xchan,fieldnames(ii_data)) && ismember(ychan,fieldnames(ii_data))
     
-    ii_cfg.velocity = [0; sqrt(diff(ii_data.(xchan)).^2 + diff(ii_data.(ychan)).^2) ] / ii_cfg.hz;
+    ii_cfg.velocity = [0; sqrt(diff(ii_data.(xchan)).^2 + diff(ii_data.(ychan)).^2) ] * ii_cfg.hz;
     
     ii_cfg.history{end+1} = sprintf('ii_velocity (%s,%s) - %s ', xchan, ychan, datestr(now,30));
     

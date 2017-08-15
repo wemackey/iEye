@@ -43,11 +43,15 @@ if isstring(c)
     % check the channel exists
     if ~ismember(c,fieldnames(ii_data))
         error('iEye:ii_selectbyvalue:channelNotFound', 'Channel %s does not exist in ii_data',c)
+    else
+        chandata = ii_data.(c);
     end
 elseif isnumeric(c)
     % check it's the right size
     if numel(c)~=numel(ii_cfg.sel)
         error('iEye:ii_selectbyvalue:dimensionMismatchError', 'Anonymous input channel has %i elements, %i expected',numel(c),numel(ii_cfg.sel))
+    else
+        chandata = c;
     end
 end
     
@@ -59,8 +63,8 @@ elseif isnumeric(cond) && ~ismember(cond,1:length(valid_cond_str))
     error('iEye:ii_selectbyvalue:invalidConditionalError', 'Numeric conditional flag %i unrecognized (1-6 expected)',cond)
 elseif ischar(cond) && ~ismember(cond,valid_cond_str)
     error('iEye:ii_selectbyvalue:invalidConditionalError', 'String conditional flag %s unrecognized',cond)
-else % if not a functional, a valid number, or a valid string, error
-    error('iEye:ii_selectbyvalue:invalidConditionalError', 'Invalid input for cond')
+%else % if not a functional, a valid number, or a valid string, error
+%    error('iEye:ii_selectbyvalue:invalidConditionalError', 'Invalid input for cond')
 end
 
 
@@ -83,7 +87,9 @@ end
 
 sel = ii_cfg.sel;
 
-newsel = cond_fcn(ii_data.(c),cval);
+
+
+newsel = cond_fcn(chandata,cval);
 
 % get the beginning/end using diff (I think this will guarantee
 % matching dimensions?)
@@ -96,24 +102,24 @@ assert(numel(begin_selection)==numel(end_selection));
 
 cursel = [reshape(begin_selection,numel(begin_selection),1) reshape(end_selection,numel(end_selection),1)];
 
-cursel(:,1) = SplitVec(cwhere,'consecutive','firstval');
-cursel(:,2) = SplitVec(cwhere,'consecutive','lastval');
+%cursel(:,1) = SplitVec(cwhere,'consecutive','firstval');
+%cursel(:,2) = SplitVec(cwhere,'consecutive','lastval');
 
 % NOTE: beginning/end of selection can match! this means for plotting,
 % etc, need to plot -0.5*sample_rate and +0.5*sample_rate on each side
 
 % leaving this out for above reasons!
-for i = 1:length(cursel)
-    dif = cursel(i,2) - cursel(i,1);
-    if dif < 2
-        cursel(i,2) = cursel(i,2) + 1;
-    else
-    end
-end
-
-for i=1:(size(cursel,1))
-    sel(cursel(i,1):cursel(i,2)) = 1;
-end
+% for i = 1:length(cursel)
+%     dif = cursel(i,2) - cursel(i,1);
+%     if dif < 2
+%         cursel(i,2) = cursel(i,2) + 1;
+%     else
+%     end
+% end
+% 
+% for i=1:(size(cursel,1))
+%     sel(cursel(i,1):cursel(i,2)) = 1;
+% end
 
 ii_cfg.cursel = cursel;
 ii_cfg.sel = newsel;

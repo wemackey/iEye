@@ -51,6 +51,28 @@ ii_init;
 % compute velocity using the smoothed data
 [ii_data,ii_cfg] = ii_velocity(ii_data,ii_cfg,'X_smooth','Y_smooth');
 
+
+% look for saccades
+[ii_data,ii_cfg] = ii_findsaccades(ii_data,ii_cfg,'X_smooth','Y_smooth',30,.030,1.5); 
+
+
+
+% find fixation epochs (between saccades and blinks)
+% [create X_fix, Y_fix channels? these could be overlaid with 'raw' data as
+% 'stable' eye positions
+
+
+
+
+% find saccade start/endpoints - these are different from fixations, which
+% are quantified via mean/median over entire non-saccade interval, but
+% ignore fixational eye movements. these may be more useful for MGS
+% scoring, while fixation average positions (above) may be more useful for
+% adjusting for drift, etc.
+
+
+
+
 % % Make initial selections for calibration (Corrective saccade)
 % ii_selectbyvalue('TarX',2,0);
 % ii_selectstretch(-400,0);
