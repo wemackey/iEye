@@ -52,8 +52,9 @@ ii_init;
 [ii_data,ii_cfg] = ii_velocity(ii_data,ii_cfg,'X_smooth','Y_smooth');
 
 
-% look for saccades
-[ii_data,ii_cfg] = ii_findsaccades(ii_data,ii_cfg,'X_smooth','Y_smooth',30,.01,0.5); 
+% look for saccades [[NOTE: potentially do this twice? once for macro, once
+% for micro?]]
+[ii_data,ii_cfg] = ii_findsaccades(ii_data,ii_cfg,'X_smooth','Y_smooth',30,.0075,0.25); 
 
 
 
@@ -63,15 +64,31 @@ ii_init;
 [ii_data,ii_cfg] = ii_findfixations(ii_data,ii_cfg,{'X','Y'},'mean');
 
 
+% select last fixation during epoch [#] and drift correct each trial
+[ii_data,ii_cfg] = ii_driftcorrect(ii_data,ii_cfg,{'X','Y'},[1 2],'last_fixation',[0 0]);
 
-% quick plot...
+
+
+% add trial info [not explicitly necessary if simple experiment, TarX &
+% TarY fields used as before]
+%
+% trial_info should be n_trials x n_params/features - can be indexed in
+% some data processing commands below. can be cell or array. 
+[ii_data,ii_cfg] = ii_addtrialinfo(ii_data,ii_cfg,trialinfo);
+
+
 figure;
-subplot(2,1,1);
-hold on;
-plot(ii_data.X);plot(ii_data.X_fix,'k-');
-subplot(2,1,2);
-hold on;
-plot(ii_data.Y);plot(ii_data.Y_fix,'k-');
+nrows = 9; ncols = 4; trialnum = 1;
+for ii = 1:nrows
+    for jj = 1:ncols
+        myax = subplot(nrows,ncols,trialnum);
+        ii_plottrial(ii_data,ii_cfg,trialnum,{'X','Y'},myax,'condensed');
+        trialnum = trialnum+1;
+    end
+end
+
+
+
 
 
 % find saccade start/endpoints - these are different from fixations, which

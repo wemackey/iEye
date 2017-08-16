@@ -64,15 +64,21 @@ ii_init;
 [ii_data,ii_cfg] = ii_findfixations(ii_data,ii_cfg,{'X','Y'},'mean');
 
 
+% select last fixation during epoch [#] and drift correct each trial
+[ii_data,ii_cfg] = ii_driftcorrect(ii_data,ii_cfg,{'X','Y'},[1 2],'last_fixation',[0 0]);
 
-% quick plot...
 figure;
-subplot(2,1,1);
-hold on;
-plot(ii_data.X);plot(ii_data.X_fix,'k-');
-subplot(2,1,2);
-hold on;
-plot(ii_data.Y);plot(ii_data.Y_fix,'k-');
+nrows = 9; ncols = 4; trialnum = 1;
+for ii = 1:nrows
+    for jj = 1:ncols
+        myax = subplot(nrows,ncols,trialnum);
+        ii_plottrial(ii_data,ii_cfg,trialnum,{'X','Y'},myax,'condensed');
+        trialnum = trialnum+1;
+    end
+end
+
+
+
 
 
 % find saccade start/endpoints - these are different from fixations, which

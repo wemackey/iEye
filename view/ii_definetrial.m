@@ -67,6 +67,8 @@ if ismember(c1,fieldnames(ii_data)) && ismember(c2,fieldnames(ii_data))
     ii_cfg.trialvec = trialvec;
     ii_cfg.tindex = tindex;
     
+    ii_cfg.numtrials = size(ii_cfg.tsel,1);
+    
     % putvar(ii_cfg);
     
     ii_cfg.history{end+1} = sprintf('ii_definetrial %s %i to %s %i - %s',c1,v1,c2,v2,datestr(now,30));

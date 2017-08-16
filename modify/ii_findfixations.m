@@ -40,6 +40,7 @@ ii_cfg.sel(ii_cfg.blinkvec==1) = 0;
 
 % turn this into cursel-type start/stop indices, save as ii_cfg.fixations
 ii_cfg = ii_updatecursel(ii_cfg);
+ii_cfg.fixations = ii_cfg.cursel;
 
 
 % generate ii_data.fix_chans{cc}_fix summary eye position traces for plotting
@@ -64,5 +65,7 @@ for cc = 1:length(fix_chans)
     
 end
 
+new_chan_str = sprintf('%s_fix ',fix_chans{:});
+ii_cfg.history{end+1} = sprintf('ii_findfixations - created channels %s, method %s - %s',new_chan_str,fix_method,datestr(now,30));
 
 return
