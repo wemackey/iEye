@@ -31,7 +31,7 @@ end
 
 
 % invert ii_cfg.saccades selection
-% TODO: ii_setselect('saccades'); % set sel to ii_cfg.('saccades');
+[ii_data,ii_cfg] = ii_setselect(ii_data,ii_cfg,'saccades'); % set sel to ii_cfg.('saccades');
 [ii_data,ii_cfg] = ii_selectinverse(ii_data,ii_cfg);
 
 % remove blinks

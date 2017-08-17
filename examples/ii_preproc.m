@@ -10,6 +10,7 @@ function ii_preproc(edf_fn)
 
 if nargin < 1
     edf_fn = 'examples/exdata1.edf';
+    mat_fn = 'examples/exdata1_trialinfo.mat';
 end
 
 
@@ -35,7 +36,8 @@ ii_init;
 
 % Correct for blinks
 
-[ii_data, ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,{'X','Y'},'Pupil',1500,50,50); % maybe 50, 50? %altering this 6/1/2017 from 1800 in both x/y 
+% trying a different threshold - 150 samples before, 50 after
+[ii_data, ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,{'X','Y'},'Pupil',1500,150,50); % maybe 50, 50? %altering this 6/1/2017 from 1800 in both x/y 
 
 
 % split into individual trials (so that individual-trial corrections can be
@@ -64,8 +66,59 @@ ii_init;
 [ii_data,ii_cfg] = ii_findfixations(ii_data,ii_cfg,{'X','Y'},'mean');
 
 
-% select last fixation during epoch [#] and drift correct each trial
-[ii_data,ii_cfg] = ii_driftcorrect(ii_data,ii_cfg,{'X','Y'},[1 2],'last_fixation',[0 0]);
+
+% select the last fixation of pre-target epochs
+[ii_data,ii_cfg] = ii_selectfixationsbytrial( ii_data, ii_cfg, 'XDAT', [1 2], 'last' );
+
+ii_data_old = ii_data;
+ii_cfg_old = ii_cfg;
+
+% use those selections to drift-correct each trial (either using the
+% fixation value, which may include timepoints past end of epoch, or using
+% 'raw' or 'smoothed' data on each channel)
+%[ii_data,ii_cfg] = ii_driftcorrect(ii_data,ii_cfg,{'X','Y'},[1 2],'last_fixation',[0 0]);
+[ii_data,ii_cfg] = ii_driftcorrect(ii_data,ii_cfg,{'X','Y'},'fixation',[0 0]);
+% NOTE: in example data, trial 20 still not perfect - maybe use 'mode'
+% fixation in selectfixationsbytrial? 
+
+
+% add trial info [not explicitly necessary if simple experiment, TarX &
+% TarY fields used as before]
+%
+% trial_info should be n_trials x n_params/features - can be indexed in
+% some data processing commands below. can be cell or array. 
+
+mydata = load(mat_fn);
+
+% Col1: queried X
+% Col2: queried Y
+% Col3: non-queried X
+% Col4: non-queried Y
+% Col5: priority condition
+trial_info = horzcat(mydata.stimulus.targCoords{:});
+cond = [];
+for bb = 1:length(mydata.task{1}.block)
+    cond = [cond; mydata.task{1}.block(bb).parameter.conditionAndQueriedTarget.'];
+end
+trial_info = [trial_info cond];
+clear mydata;
+[ii_data,ii_cfg] = ii_addtrialinfo(ii_data,ii_cfg,trial_info);
+
+
+
+% 'target correct' or 'calibrate' (which name is better?)
+% adjust timeseries on a trial so that gaze at specified epoch (quantified
+% w/ specified method, like driftcorrect) is at known coords (either given
+% by a channel or a pair of cols in ii_cfg.trialinfo
+
+% first, select relevant epochs (should be one selection per trial)
+[ii_data,ii_cfg] = ii_selectfixationsbytrial(ii_data,ii_cfg,[],'last'); % 
+
+% then, calibrate by trial
+% ii_calibratebytrial.m
+[ii_data,ii_cfg] = ii_calibratebytrial(ii_data,ii_cfg,{'X','Y'},{'TarX','TarY'},'scale');
+
+
 
 figure;
 nrows = 9; ncols = 4; trialnum = 1;

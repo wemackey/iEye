@@ -10,6 +10,7 @@ function ii_preproc(edf_fn)
 
 if nargin < 1
     edf_fn = 'examples/exdata1.edf';
+    mat_fn = 'examples/exdata1_trialinfo.mat';
 end
 
 
@@ -74,7 +75,32 @@ ii_init;
 %
 % trial_info should be n_trials x n_params/features - can be indexed in
 % some data processing commands below. can be cell or array. 
-[ii_data,ii_cfg] = ii_addtrialinfo(ii_data,ii_cfg,trialinfo);
+
+mydata = load(mat_fn);
+
+% Col1: queried X
+% Col2: queried Y
+% Col3: non-queried X
+% Col4: non-queried Y
+% Col5: priority condition
+trial_info = horzcat(mydata.stimulus.targCoords{:});
+cond = [];
+for bb = 1:length(mydata.task{1}.block)
+    cond = [cond; mydata.task{1}.block(bb).parameter.conditionAndQueriedTarget.'];
+end
+trial_info = [trial_info cond];
+clear mydata;
+[ii_data,ii_cfg] = ii_addtrialinfo(ii_data,ii_cfg,trial_info);
+
+
+
+% 'target correct' or 'calibrate' (which name is better?)
+% adjust timeseries on a trial so that gaze at specified epoch (quantified
+% w/ specified method, like driftcorrect) is at known coords (either given
+% by a channel or a pair of cols in ii_cfg.trialinfo
+
+[ii_data,ii_cfg] = ii_driftcorrect(ii_data,ii_cfg,{'X','Y'},[1 2],'last_fixation',[0 0]);
+
 
 
 figure;

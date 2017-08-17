@@ -67,7 +67,7 @@ if ismember(c1,fieldnames(ii_data)) && ismember(c2,fieldnames(ii_data))
     ii_cfg.trialvec = trialvec;
     ii_cfg.tindex = tindex;
     
-    ii_cfg.numtrials = size(ii_cfg.tsel,1);
+    ii_cfg.numtrials = size(ii_cfg.tcursel,1);
     
     % putvar(ii_cfg);
     
