@@ -10,7 +10,7 @@ function [ ii_data, ii_cfg ] = ii_driftcorrect( ii_data, ii_cfg, chan_names, cor
 % CORRECT_MODE: one of 'fixation' (assuming fixaitons have been
 % computed), 'raw', or 'smooth' (assuming data has been smoothed & saved
 % as smooth channels)
-%
+
 % work in progress
 % Tommy Sprague, 8/16/2017
 

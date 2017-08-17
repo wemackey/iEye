@@ -2,7 +2,7 @@ function [ ii_data, ii_cfg ] = ii_addtrialinfo( ii_data, ii_cfg, trial_info )
 %II_ADDTRIALINFO Add additional information about each trial to ii_cfg
 %structure, such as coords of other targets, condition labels, etc.
 %   first dimension of trial_info must match ii_cfg.numtrials
-%
+
 % Tommy Sprague, 8/16/2017
 
 

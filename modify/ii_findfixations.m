@@ -3,7 +3,7 @@ function [ii_data,ii_cfg] = ii_findfixations(ii_data,ii_cfg,fix_chans,fix_method
 % intervals & create fixation-related channels
 %
 % fix_method: mean, median, mode?
-%
+
 % TCS 8/14/2017
 
 

@@ -4,7 +4,7 @@ function [ii_data,ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,chan, pchan, pval, pr
 % (3) the Pupil threshold you want to use to define a blink; the # of
 % prior (4) and following (5) samples to that threshold value you want to
 % include in the correction around each blink
-%
+
 % Updated TCS 8/11/2017 - no base space variables
 %
 % TODO: implement a pupil velocity/acceleration version of this

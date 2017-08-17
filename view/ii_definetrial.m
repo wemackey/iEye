@@ -2,6 +2,7 @@ function [ii_data,ii_cfg] = ii_definetrial(ii_data,ii_cfg, c1, v1, c2, v2)
 %II_DEFINETRIAL Splits data into individual trials based on signal in the
 %               ii_data.(chan) variable
 %   Detailed explanation goes here
+
 % Updated TCS 8/13/2017 to use ii_data, ii_cfg (no base vars)
 %
 

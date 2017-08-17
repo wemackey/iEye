@@ -18,8 +18,6 @@ end
 % initialize iEye - make sure paths are correct, etc
 ii_init;
 
-
-
 % import data
 [ii_data,ii_cfg] = ii_import_edf(edf_fn,'examples/p_1000hz.ifg',[edf_fn(1:end-3) 'mat']);
 
@@ -45,7 +43,6 @@ ii_init;
 [ii_data,ii_cfg] = ii_definetrial(ii_data,ii_cfg,'XDAT',1,'XDAT',8); % CHECK THIS!
 
 
-
 % Smooth data
 [ii_data,ii_cfg] = ii_smooth(ii_data,ii_cfg,{'X','Y'},'Gaussian',5);
 
@@ -69,9 +66,6 @@ ii_init;
 
 % select the last fixation of pre-target epochs
 [ii_data,ii_cfg] = ii_selectfixationsbytrial( ii_data, ii_cfg, 'XDAT', [1 2], 'last' );
-
-ii_data_old = ii_data;
-ii_cfg_old = ii_cfg;
 
 % use those selections to drift-correct each trial (either using the
 % fixation value, which may include timepoints past end of epoch, or using
@@ -117,6 +111,7 @@ clear mydata;
 % then, calibrate by trial
 % ii_calibratebytrial.m
 [ii_data,ii_cfg] = ii_calibratebytrial(ii_data,ii_cfg,{'X','Y'},{'TarX','TarY'},'scale');
+%[ii_data,ii_cfg] = ii_calibratebytrial(ii_data,ii_cfg,{'X','Y'},ii_cfg.trialinfo(:,[1 2]),'scale');
 
 
 
