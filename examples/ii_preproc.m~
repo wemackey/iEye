@@ -36,7 +36,8 @@ ii_init;
 
 % Correct for blinks
 
-[ii_data, ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,{'X','Y'},'Pupil',1500,50,50); % maybe 50, 50? %altering this 6/1/2017 from 1800 in both x/y 
+% trying a different threshold - 150 samples before, 50 after
+[ii_data, ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,{'X','Y'},'Pupil',1500,150,50); % maybe 50, 50? %altering this 6/1/2017 from 1800 in both x/y 
 
 
 % split into individual trials (so that individual-trial corrections can be
@@ -65,9 +66,20 @@ ii_init;
 [ii_data,ii_cfg] = ii_findfixations(ii_data,ii_cfg,{'X','Y'},'mean');
 
 
-% select last fixation during epoch [#] and drift correct each trial
-[ii_data,ii_cfg] = ii_driftcorrect(ii_data,ii_cfg,{'X','Y'},[1 2],'last_fixation',[0 0]);
 
+% select the last fixation of pre-target epochs
+[ii_data,ii_cfg] = ii_selectfixationsbytrial( ii_data, ii_cfg, 'XDAT', [1 2], 'last' );
+
+ii_data_old = ii_data;
+ii_cfg_old = ii_cfg;
+
+% use those selections to drift-correct each trial (either using the
+% fixation value, which may include timepoints past end of epoch, or using
+% 'raw' or 'smoothed' data on each channel)
+%[ii_data,ii_cfg] = ii_driftcorrect(ii_data,ii_cfg,{'X','Y'},[1 2],'last_fixation',[0 0]);
+[ii_data,ii_cfg] = ii_driftcorrect(ii_data,ii_cfg,{'X','Y'},'fixation',[0 0]);
+% NOTE: in example data, trial 20 still not perfect - maybe use 'mode'
+% fixation in selectfixationsbytrial? 
 
 
 % add trial info [not explicitly necessary if simple experiment, TarX &
@@ -99,7 +111,12 @@ clear mydata;
 % w/ specified method, like driftcorrect) is at known coords (either given
 % by a channel or a pair of cols in ii_cfg.trialinfo
 
-[ii_data,ii_cfg] = ii_driftcorrect(ii_data,ii_cfg,{'X','Y'},[1 2],'last_fixation',[0 0]);
+% first, select relevant epochs (should be one selection per trial)
+[ii_data,ii_cfg] = ii_selectfixationsbytrial(ii_data,ii_cfg,'XDAT',7,'last',100); % 
+
+% then, calibrate by trial
+% ii_calibratebytrial.m
+[ii_data,ii_cfg] = ii_calibratebytrial(ii_data,ii_cfg,{'X','Y'},{'TarX','TarY'},'scale');
 
 
 
@@ -108,7 +125,7 @@ nrows = 9; ncols = 4; trialnum = 1;
 for ii = 1:nrows
     for jj = 1:ncols
         myax = subplot(nrows,ncols,trialnum);
-        ii_plottrial(ii_data,ii_cfg,trialnum,{'X','Y'},myax,'condensed');
+        ii_plottrial(ii_data,ii_cfg,trialnum,{'X','Y','TarX','TarY'},myax,'condensed');
         trialnum = trialnum+1;
     end
 end

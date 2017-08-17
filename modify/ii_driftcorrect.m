@@ -86,8 +86,10 @@ ii_cfg.drift.amt = nan(numsel,length(chan_names));
 for cc = 1:length(chan_names)
     
     % get all channels we want to apply adjustment to
-    chans_to_adjust = {all_fields{cellfun(@any,strfind(all_fields,chan_names{cc}))}};
+    %chans_to_adjust = {all_fields{cellfun(@any,strfind(all_fields,chan_names{cc}))}};
+    %chans_to_adjust = all_fields{find(startsWith(all_fields,chan_names{cc}))};
     
+    chans_to_adjust = { all_fields{ cellfun(@(x) any(x) && x(1)==1 , strfind(all_fields,chan_names{cc} )) } };
     
     if numsel == length(tu)
         

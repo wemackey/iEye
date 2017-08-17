@@ -1,4 +1,4 @@
-function [ ii_data, ii_cfg ] = ii_selectfixationsbytrial( ii_data, ii_cfg, epoch_chan, within_epochs, sel_mode )
+function [ ii_data, ii_cfg ] = ii_selectfixationsbytrial( ii_data, ii_cfg, epoch_chan, within_epochs, sel_mode, buffer_window )
 %II_SELECTFIXATIONSBYTRIAL Selects those fixations within given epochs for
 %each trial using one of several modes ('first', 'last', 'begin', 'all'). 
 %   Used to select periods to 'calibrate' to for drift correction and
@@ -11,11 +11,18 @@ function [ ii_data, ii_cfg ] = ii_selectfixationsbytrial( ii_data, ii_cfg, epoch
 %   fixation
 %   for ALL:   select all fixations that begin during the epoch
 %
+% added a 'buffer window' to prevent selection of premature saccades as
+% fixations, especially for calibration
+%
 % Tommy Sprague, 8/16/2017
 
 
 if nargin < 3 || isempty(epoch_chan)
      epoch_chan = 'XDAT';
+end
+
+if nargin < 6
+    buffer_window = 0;
 end
 
 % make sure channel exists...
@@ -81,10 +88,10 @@ for tt = 1:length(tu)
         
         epoch_begin = find(diff(trial_idx & epoch_idx)==1);
         epoch_end = find(diff(trial_idx & epoch_idx)==-1);
-        last_fix_ind = find(ii_cfg.fixations(:,1)<epoch_end,1,'last');
+        last_fix_ind = find(ii_cfg.fixations(:,1)<(epoch_end-buffer_window),1,'last');
         
         last_fix_vec = zeros(size(new_sel));
-        last_fix_vec(max(ii_cfg.fixations(last_fix_ind,1),epoch_begin):epoch_end)=1;
+        last_fix_vec(max(ii_cfg.fixations(last_fix_ind,1),epoch_begin):(epoch_end-buffer_window))=1;
         
         new_sel = new_sel|(last_fix_vec==1);
         

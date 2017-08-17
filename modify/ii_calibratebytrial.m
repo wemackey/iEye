@@ -52,6 +52,11 @@ for cc = 1:length(chan_names)
     end
 end
 
+
+if ~iscell(calib_targets) && ischar(calib_targets)
+    calib_targets = {calib_targets};
+end
+
 % check calibration targets 
 % 1. are they numeric?
 if isnumeric(calib_targets)
@@ -65,26 +70,128 @@ if isnumeric(calib_targets)
     % exists...
     
     
-else 
+elseif iscell(calib_targets) 
     
-   % are they cells? if not (and if string), make a cell
-   if ~iscell(calib_targs) && ischar(calib_targets)
-       calib_targets = {calib_targets};
-       
-       %check that these channels are defined
-       
-   else
-       % invalid input (not numeric, or a cell of chan names)
-       error('iEye:ii_calibratebytrial:invalidCalibTargets', 'Invalid input for calibration targets. Must be cell array of strings matching length of chan_names, list of trialinfo column indices matching length of chan_names, matrix with number of columns matching length of chan_names, or cell with length(chan_names) entries, each with one row per trial');
-
-       
-   end
+% TODODODODODO
+   
+   
+   
+%else
+    % invalid input (not numeric, or a cell of chan names)
+    %error('iEye:ii_calibratebytrial:invalidCalibTargets', 'Invalid input for calibration targets. Must be cell array of strings matching length of chan_names, list of trialinfo column indices matching length of chan_names, matrix with number of columns matching length of chan_names, or cell with length(chan_names) entries, each with one row per trial');
+    
+    
+    
     
     
 end
 
 
 % check calib_mode is in expected list
+if ~ismember(calib_mode,{'scale','rotate'})
+    error('iEye:ii_calibratebytrial:invalidCalibMode', 'Calibration mode %s invalid, expected to be scale or rotate',calib_mode);
+end
+
+
+% check if .calib field already present, warn that you may be
+% double-calibrating
+
+
+tu = unique(ii_cfg.trialvec(ii_cfg.trialvec~=0));
+
+
+% get coords to calibrate to
+calibrate_to = nan(ii_cfg.numtrials,length(chan_names));
+
+% if each element of calib_targets is a string:
+if sum(cellfun(@ischar,calib_targets))==length(calib_targets)
+    
+    for cc = 1:length(calib_targets)
+        for tt = 1:length(tu)
+            
+            tr_idx = ii_cfg.trialvec==tu(tt);
+            
+            calibrate_to(tt,cc) = mean(ii_data.(calib_targets{cc})(ii_cfg.sel&tr_idx));
+            
+        end
+    end
+    
+elseif numel(calib_targets)==length(chan_names)
+
+    for cc = 1:length(calib_targets)
+        calibrate_to(:,cc) = ii_cfg.trialinfo(:,calib_targets(cc));
+    end
+    
+elseif size(calib_targets,1)==ii_cfg.numtrials && size(calib_targets,2)==length(chan_names)
+    calibrate_to = calib_targets;
+end
+
+
+all_fields = fieldnames(ii_data);
+all_fields = {all_fields{~strcmpi(all_fields,'XDAT')}};
+
+ii_cfg.calibrate.fcn = 'ii_calibratebytrial.m';
+ii_cfg.calibrate.chan = chan_names; % channels input to ii_driftcorrect
+ii_cfg.calibrate.mode = calib_mode;
+ii_cfg.calibrate.amt = nan(ii_cfg.numtrials,length(chan_names));
+
+
+
+
+if strcmpi(calib_mode,'scale')
+
+    
+    for cc = 1:length(chan_names)
+    
+        % get all channels we want to apply adjustment to
+        %chans_to_adjust = {all_fields{cellfun(@any,strfind(all_fields,chan_names{cc}))}};
+        chans_to_adjust = { all_fields{ cellfun(@(x) any(x) && x(1)==1 , strfind(all_fields,chan_names{cc} )) } };
+
+        
+        for tt = 1:length(tu)
+            
+            
+            tr_idx = ii_cfg.trialvec==tu(tt);
+            
+            if sum(ii_cfg.sel & tr_idx) > 0
+                
+                adj_by = nanmean(ii_data.(sprintf('%s_fix',chan_names{cc}))(tr_idx & ii_cfg.sel) )/calibrate_to(tt,cc);
+                
+                for ca = 1:length(chans_to_adjust)
+                    
+                    ii_data.(chans_to_adjust{ca})(tr_idx)=ii_data.(chans_to_adjust{ca})(tr_idx)./adj_by;
+                    
+                end
+                
+            else
+                
+                fprintf('Trial %i: no selected timepoints; forgoing calibration\n',tu(tt));
+                adj_by = NaN;
+                
+            end
+            
+            ii_cfg.calibrate.amt(tt,cc) = adj_by;
+            
+            clear adj_by;
+        end
+    
+    
+    end
+    
+    
+elseif strcmpi(calib_mode,'rotate')
+% if rotate, check that there's a xchannel and a ychannel, and assign
+% appropriately
+    
+    
+    
+    
+    
+end
+
+
+
+
 
 
 

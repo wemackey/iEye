@@ -112,7 +112,7 @@ clear mydata;
 % by a channel or a pair of cols in ii_cfg.trialinfo
 
 % first, select relevant epochs (should be one selection per trial)
-[ii_data,ii_cfg] = ii_selectfixationsbytrial(ii_data,ii_cfg,[],'last'); % 
+[ii_data,ii_cfg] = ii_selectfixationsbytrial(ii_data,ii_cfg,'XDAT',7,'last',100); % 
 
 % then, calibrate by trial
 % ii_calibratebytrial.m
@@ -125,7 +125,7 @@ nrows = 9; ncols = 4; trialnum = 1;
 for ii = 1:nrows
     for jj = 1:ncols
         myax = subplot(nrows,ncols,trialnum);
-        ii_plottrial(ii_data,ii_cfg,trialnum,{'X','Y'},myax,'condensed');
+        ii_plottrial(ii_data,ii_cfg,trialnum,{'X','Y','TarX','TarY'},myax,'condensed');
         trialnum = trialnum+1;
     end
 end
