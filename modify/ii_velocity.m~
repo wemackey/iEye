@@ -1,8 +1,23 @@
 function [ii_data,ii_cfg] = ii_velocity(ii_data,ii_cfg,xchan,ychan)
-% Calculate eye-movement velocity using eye-tracker X and Y channels as
-% input. This vector is automatically saved to ii_cfg.velocity
+% ii_velocity Calculates velocity of eye position given x, y channels
+%   [ii_data,ii_cfg] = ii_velocity(ii_data,ii_cfg) computes velocity on
+%   ii_data chans X_smooth and Y_smooth, if available, or defaults to X, Y.
 %
-% Updated 8/14/2017 TCS - uses ii_data
+%   [ii_data,ii_cfg] = ii_velocity(ii_data,ii_cfg,xchan,ychan) computes on
+%   channels ii_data.(xchan) and .(ychan)
+%
+% xchan and ychan must be strings, and must be fields of ii_data
+% ii_cfg.velocity will contain the instantaneous velocity (e
+% euclidean distance between paired samples)
+% 
+% Example:
+% load('exdata1.mat'); % smooth data first
+% [ii_data,ii_cfg] = ii_smooth(ii_data,ii_cfg,{'X','Y'},'Gaussian',5);
+% [ii_data,ii_cfg] = ii_velocity(ii_data,ii_cfg,'X_smooth','Y_smooth');
+%
+%
+
+% Updated 8/14/2017 TCS - uses ii_data; velocity saved in deg/s
 
 if nargin == 2
     prompt = {'Channel 1 (X)', 'Channel 2 (Y)'};
@@ -17,31 +32,14 @@ end
 
 if ismember(xchan,fieldnames(ii_data)) && ismember(ychan,fieldnames(ii_data))
     
-        
-        xvel = evalin('base',xchan);
-        yvel = evalin('base',ychan);
-        
-        xvel = diff(xvel);
-        yvel = diff(yvel);
-        
-        xvel = abs(xvel);
-        yvel = abs(yvel);
-        
-        xvel = xvel.^2;
-        yvel = yvel.^2;
-        
-        vel = xvel + yvel;
-        vel = sqrt(vel);
-        vel = [0; vel];
-        
-        ii_cfg.velocity = [0; sqrt(diff(ii_data.(xchan)).^2 + diff(ii_data.(ychan)).^2) ] 
-        dt = datestr(now,'mmmm dd, yyyy HH:MM:SS.FFF AM');
-        ii_cfg.history{end+1,1} = sprintf('Calculated velocity (%s,%s) on %s ', xchan, ychan, dt);
-        putvar(ii_cfg);
-        
+    ii_cfg.velocity = [0; sqrt(diff(ii_data.(xchan)).^2 + diff(ii_data.(ychan)).^2) ] * ii_cfg.hz;
+    
+    ii_cfg.history{end+1} = sprintf('ii_velocity (%s,%s) - %s ', xchan, ychan, datestr(now,30));
+    
+    
     
 else
-    disp('Channel to does not exist in worksapce');
+    error('iEye:ii_smooth:channelNotFound', 'Channel %s or %s does not exist in ii_data',xchan,ychan)
 end
 
 

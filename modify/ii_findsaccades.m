@@ -1,7 +1,32 @@
 function [ii_data,ii_cfg] = ii_findsaccades(ii_data,ii_cfg,xchan,ychan,vel_thresh,dur_thresh,amp_thresh)
-%Saccade detection
+%ii_findsaccades Detect saccades in eye movement traces given eye velocity
 %   This function will detect and select saccades based on a particular set
-%   of criteria (velocity and sample/time length).
+%   of criteria: peak velocity, duration, amplitude all above some
+%   thresholds
+%
+%   [ii_data,ii_cfg] = ii_findsaccades(ii_data,ii_cfg) will use default
+%   channels of 'X' and 'Y' for computing amplitude, and default
+%   thresholds for velocity, duration and amplitude (30, 0.0075, 0.25)
+%
+%   [ii_data,ii_cfg] = ii_findsaccades(ii_data,ii_cfg,xchan,ychan) will use
+%   channel names specified by xchan, ychan (each str) for
+%   detecting/thresholding amplitude
+%
+%   [ii_data,ii_cfg] = ii_findsaccades(ii_data,ii_cfg,xchan,ychan,vel_thresh, dur_thresh,amp_thresh)
+%   will use specified thresholds for velocity (deg/s), duration (s), and
+%   amplitude (deg)
+%
+% Saccades identified with velocity, duration, or amplitude below the given
+% thresholds will be culled. Duration and Amplitude thresholds are
+% optional; if given as [], will not cull based on these parameters.
+%
+% ii_cfg will contain a .saccades field, which is the beginning/end of each
+% saccade (in samples), and saccades will be selected after this function.
+%
+% Example:
+% [ii_data,ii_cfg] = ii_findsaccades(ii_data,ii_cfg,'X_smooth','Y_smooth',30,.0075,0.25); 
+%   
+
 
 
 % if nargin ~= 4
@@ -25,7 +50,35 @@ function [ii_data,ii_cfg] = ii_findsaccades(ii_data,ii_cfg,xchan,ychan,vel_thres
 % between eye movements, and to extract information/metrics about the
 % saccades themselves. [at least for now]. ii_cfg will have relevant info.
 
-%%%%%%%%%% ADD DISTANCE BETWEEN!!!!
+
+% fill in default values
+if nargin <3
+    xchan = 'X';
+end
+
+if nargin < 4
+    ychan = 'Y';
+end
+
+if nargin < 5
+    vel_thresh = 30; % deg/s
+end
+
+if nargin < 6
+    dur_thresh = 0.0075; % s
+end
+
+if nargin < 7
+    amp_thresh = 0.25;   % deg
+end
+
+if isempty(dur_thresh)
+    dur_thresh = 0;
+end
+
+if isempty(amp_thresh)
+    amp_thresh = 0;
+end
 
 % make sure relevant channels exist
 if ~ismember(xchan,fieldnames(ii_data))
@@ -40,6 +93,7 @@ if ~ismember('velocity',fieldnames(ii_cfg))
     error('iEye:ii_findsaccades:velocityNotComputed', 'Velocity has not yet been computed. Use ii_velocity before running ii_findsaccades.')
 end
 
+
 % by this point, all variables accounted for...
 
 [ii_data,ii_cfg] = ii_selectempty(ii_data,ii_cfg);
@@ -47,8 +101,6 @@ end
 % FIND SACCADES >= T
 
 [ii_data,ii_cfg] = ii_selectbyvalue(ii_data,ii_cfg,ii_cfg.velocity,'greaterthanequalto',vel_thresh);
-
-
 
 
 % compute saccade duration

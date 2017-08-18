@@ -53,7 +53,7 @@ switch selmode
         
         ii_cfg.sel = 0*ii_cfg.sel;
         for ss = 1:size(ii_cfg.fixations,1)
-            ii_cfg.sel(ii_cfg.fixations(ss,1):ii-cfg.fixations(ss,2)) = 1;
+            ii_cfg.sel(ii_cfg.fixations(ss,1):ii_cfg.fixations(ss,2)) = 1;
         end
         
 end

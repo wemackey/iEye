@@ -1,14 +1,43 @@
 function [ii_data,ii_cfg] = ii_smooth(ii_data,ii_cfg,chan_names, typ, degr)
-%II_SMOOTH Create a copy of a channel after smoothing (SmoothChan)
-%   Smooths by one of several different filter types, if one of "moving,
-%   lowess, loess, sgolay, rlowess, rloess", uses "smooth.m" in
-%   curvefitting toolbox; otherwise, if Gaussian, convolves with a gaussian of width
-%   "degree" samples.
+%II_SMOOTH Smooth data from a channel
+%   [ii_data,ii_cfg] = ii_smooth(ii_data,ii_cfg) smooths the X,Y channels
+%   by a Gaussian of std dev 5 ms.
 %
-% In updated version of iEye, this channel will typically only be used for
-% computing velocity traces when identifying saccades; where possible,
-% 'raw' gaze data will be used for scoring
+%   [ii_data,ii_cfg] = ii_smooth(ii_data,ii_cfg,chan_names) smooths each
+%   channel in chan_names (cell array of strings, or a single string)
 %
+%   [ii_data,ii_cfg] = ii_smooth(ii_data,ii_cfg,chan_names,typ) smooths
+%   using specified type (typ): one of
+%   'moving','lowess','loess','sgolay','rlowess','rloess' (from smooth.m),
+%   or 'Gaussian' (uses gaussian PDF). Uses default 'degree' 5.
+%
+%   [ii_data,ii_cfg] = ii_smooth(ii_data,ii_cfg,chan_names,typ,degr)
+%   smooths by specified degree (degr), which is different for each type of
+%   smoothing. For Gaussian, this is the standard deviation of gaussian.
+%   For others, see smooth.m documentation
+%
+% ii_data will contain new channel(s) suffixed with _smooth containing the
+% results fo the smoothing operation; no data is overwritten (unless smooth
+% channels already exist).
+%
+% Typically, smoothed channel(s) will only be used for computing velocity 
+% traces when identifying saccades or elegant visualization; where possible,
+% 'raw' gaze data will be used for all quantification
+%
+% Typically, other pre-processing would be performed prior to this, such as
+% blink-correction. For simplicity, example below does not include this
+% step (see example in ii_blinkcorrect.m)
+%
+% Example:
+% load('exdata1.mat'); 
+% [ii_data,ii_cfg] = ii_smooth(ii_data,ii_cfg,{'X','Y'},'Gaussian',15);
+% figure; hold on;
+% plot(ii_data.X,'--');plot(ii_data.Y,'--');
+% plot(ii_data.X_smooth,'-');plot(ii_data.Y_smooth,'-');
+% xlabel('Samples');
+% title('Unsmoothed (dashed) vs smoothed (solid) X, Y');
+
+
 % Modified by TCS 8/14/2017
 
 if nargin == 2
@@ -38,6 +67,10 @@ if nargin < 5
     degr = 5; % for gaussian
 end
 
+degr = ii_cfg.hz*degr/1000;
+if ~strcmpi(typ,'Gaussian')
+    degr = round(degr);
+end
 
 
 for cc = 1:length(chan_names)

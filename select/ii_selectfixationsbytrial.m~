@@ -1,4 +1,4 @@
-function [ ii_data, ii_cfg ] = ii_selectfixationsbytrial( ii_data, ii_cfg, epoch_chan, within_epochs, sel_mode )
+function [ ii_data, ii_cfg ] = ii_selectfixationsbytrial( ii_data, ii_cfg, epoch_chan, within_epochs, sel_mode, buffer_window )
 %II_SELECTFIXATIONSBYTRIAL Selects those fixations within given epochs for
 %each trial using one of several modes ('first', 'last', 'begin', 'all'). 
 %   Used to select periods to 'calibrate' to for drift correction and
@@ -10,12 +10,20 @@ function [ ii_data, ii_cfg ] = ii_selectfixationsbytrial( ii_data, ii_cfg, epoch
 %   for BEGIN: select the fixation from beginning of epoch to first new
 %   fixation
 %   for ALL:   select all fixations that begin during the epoch
+%   for MODE:  select longest fixation among all
+%
+% added a 'buffer window' to prevent selection of premature saccades as
+% fixations, especially for calibration
 %
 % Tommy Sprague, 8/16/2017
 
 
 if nargin < 3 || isempty(epoch_chan)
      epoch_chan = 'XDAT';
+end
+
+if nargin < 6
+    buffer_window = 0;
 end
 
 % make sure channel exists...
@@ -25,8 +33,8 @@ end
 
 
 % check sel_mode is one of 'last','first','all'
-if ~ismember(sel_mode,{'last','first','begin','all'})
-    error('iEye:ii_selectfixationsbytrial:invalidSelectionMode', 'Selection mode %s invalid: use one of first, last, begin, all',sel_mode);
+if ~ismember(sel_mode,{'last','first','begin','all','mode'})
+    error('iEye:ii_selectfixationsbytrial:invalidSelectionMode', 'Selection mode %s invalid: use one of first, last, begin, all, mode',sel_mode);
 end
 
 % make sure fixations have been computed
@@ -79,15 +87,16 @@ for tt = 1:length(tu)
             error('iEye:ii_selectfixationsbytrial:nonContiguousEpoch', 'On trial %i, epochs non-contiguous',tu(tt));
         end
         
+        epoch_begin = find(diff(trial_idx & epoch_idx)==1);
         epoch_end = find(diff(trial_idx & epoch_idx)==-1);
-        last_fix_ind = find(ii_cfg.fixations(:,1)<epoch_end,1,'last');
+        last_fix_ind = find(ii_cfg.fixations(:,1)<(epoch_end-buffer_window),1,'last');
         
         last_fix_vec = zeros(size(new_sel));
-        last_fix_vec(ii_cfg.fixations(last_fix_ind,1):epoch_end)=1;
+        last_fix_vec(max(ii_cfg.fixations(last_fix_ind,1),epoch_begin):(epoch_end-buffer_window))=1;
         
         new_sel = new_sel|(last_fix_vec==1);
         
-        clear last_fix_vec epoch_end last_fix_ind trial_idx;
+        clear last_fix_vec epoch_begin epoch_end last_fix_ind trial_idx;
         
         
     elseif strcmpi(sel_mode,'first')
@@ -146,6 +155,29 @@ for tt = 1:length(tu)
         new_sel = epoch_idx==1 & trial_idx==1 & all_fixvec==1;
         
         
+    
+    % look for longest fixation within an epoch
+    elseif strcmpi(correct_mode,'mode')
+        
+        % quick check to make sure just one contiguous selection...
+        if sum(diff(trial_idx & epoch_idx)==1) ~= 1 || sum(diff(trial_idx & epoch_idx)==-1) ~= 1
+            error('iEye:ii_selectfixationsbytrial:nonContiguousEpoch', 'On trial %i, epochs non-contiguous',tu(tt));
+        end
+        
+        % find all fixations during this epoch, trial
+        this_fix = epoch_idx==1 & trial_idx==1 & all_fixvec==1;
+        
+        % figure out how long each is
+        % (first, find out when they start/stop)
+        fix_begin = find(diff([0;this_fix])== 1);
+        fix_end   = find(diff([this_fix;0])==-1);
+        
+        % 
+        fix_dur = fix_end-fix_begin;
+        [~,fix_idx] = max(fix_dur);
+        new_sel(fix_begin(fix_idx):fix_end(fix_idx)) = 1==1;
+        
+        clear this_fix fix_begin fix_end fix_dur fix_idx;
     end
     
 end
@@ -157,7 +189,7 @@ ii_cfg = ii_updatecursel(ii_cfg);
 
 % ordinarily wouldn't put this in history, but because it's used for things
 % like drift correction, etc, makes sense here
-ii_cfg.history{end+1} = sprintf('ii_selectfixationsby);
+ii_cfg.history{end+1} = sprintf('ii_selectfixationsbytrial - selected epochs %s from chan %s with mode %s - %s',num2str(within_epochs),epoch_chan,sel_mode,datestr(now,30));
 
 
 

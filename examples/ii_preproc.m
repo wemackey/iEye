@@ -51,6 +51,8 @@ ii_init;
 [ii_data,ii_cfg] = ii_velocity(ii_data,ii_cfg,'X_smooth','Y_smooth');
 
 
+% below - need to document still....
+
 % look for saccades [[NOTE: potentially do this twice? once for macro, once
 % for micro?]]
 [ii_data,ii_cfg] = ii_findsaccades(ii_data,ii_cfg,'X_smooth','Y_smooth',30,.0075,0.25); 
@@ -65,7 +67,7 @@ ii_init;
 
 
 % select the last fixation of pre-target epochs
-[ii_data,ii_cfg] = ii_selectfixationsbytrial( ii_data, ii_cfg, 'XDAT', [1 2], 'last' );
+[ii_data,ii_cfg] = ii_selectfixationsbytrial( ii_data, ii_cfg, 'XDAT', [1 2], 'mode' );
 
 % use those selections to drift-correct each trial (either using the
 % fixation value, which may include timepoints past end of epoch, or using
@@ -111,79 +113,22 @@ clear mydata;
 % then, calibrate by trial
 % ii_calibratebytrial.m
 [ii_data,ii_cfg] = ii_calibratebytrial(ii_data,ii_cfg,{'X','Y'},{'TarX','TarY'},'scale');
-%[ii_data,ii_cfg] = ii_calibratebytrial(ii_data,ii_cfg,{'X','Y'},ii_cfg.trialinfo(:,[1 2]),'scale');
 
 
+% plot all these - make sure they're good
+f_all = ii_plotalltrials(ii_data,ii_cfg);
 
-figure;
-nrows = 9; ncols = 4; trialnum = 1;
-for ii = 1:nrows
-    for jj = 1:ncols
-        myax = subplot(nrows,ncols,trialnum);
-        ii_plottrial(ii_data,ii_cfg,trialnum,{'X','Y','TarX','TarY'},myax,'condensed');
-        trialnum = trialnum+1;
+% save the figures for our records
+if length(f_all)>1
+    for ff = 1:lenght(f_all)
+        saveas(f_all,sprintf('%s_iEye_preproc_%02.f.png',ii_cfg.edf_file(1:end-4),ff),'png');
     end
+else
+    saveas(f_all,sprintf('%s_iEye_preproc.png',ii_cfg.edf_file(1:end-4)),'png');
 end
 
+% save ii_data,ii_cfg in _preproc.mat file
+ii_savedata(ii_data,ii_cfg,sprintf('%s_iEye_preproc.mat',ii_cfg.edf_file(1:end-4)));
 
 
-
-
-% find saccade start/endpoints - these are different from fixations, which
-% are quantified via mean/median over entire non-saccade interval, but
-% ignore fixational eye movements. these may be more useful for MGS
-% scoring, while fixation average positions (above) may be more useful for
-% adjusting for drift, etc.
-
-
-
-
-% % Make initial selections for calibration (Corrective saccade)
-% ii_selectbyvalue('TarX',2,0);
-% ii_selectstretch(-400,0);
-% 
-% % Hold these 
-% ii_selecthold;
-
-% Select fixations
-ii_selectbyvalue('XDAT',1,1);
-%ii_selectstretch(-250,-250); % SAMPLES, NOT MS!!!!! (for now)
-ii_selectstretch(-125,-125); % SAMPLES, NOT MS!!!!! (for now)
-
-% Hold these 
-ii_selecthold;
-
-% Make initial selections for calibration (Corrective saccade)
-ii_selectbyvalue('XDAT',1,5);
-%ii_selectstretch(-400,0);
-ii_selectstretch(-200,0);
-
-% Merge fixation selections with corrective saccades
-ii_selectmerge;
-
-%%%%%%%%%%%%%%%
-%% IMPORTANT!! %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%
-%
-% At this point it is vital to manually check that the selections are
-% correct before calibration. It is likelY theY are not 100% accurate due
-% to differences in individual subject behavior.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% make sure TarX, TarY are 0 at XDAT = 1:
-% TarX(XDAT==1) = 0;TarY(XDAT==1)=0;
-
-% Once selections are finalized, we calibrate.
-ii_calibrateto('X','TarX',3);
-ii_calibrateto('Y','TarY',3);
-
-% Empty selections
-ii_selectempty;
-
-% Get and store eye-movement velocity
-ii_velocity('X','Y');
-
-disp ('save me!');
-
-% Now save me!
 end

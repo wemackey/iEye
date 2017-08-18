@@ -1,15 +1,34 @@
 function [ii_data,ii_cfg] = ii_findfixations(ii_data,ii_cfg,fix_chans,fix_method)
-% II_FINDFIXATIONS - Once all saccades & blinks identified, label fixation
-% intervals & create fixation-related channels
+% II_FINDFIXATIONS Identifies/selects stable fixations between saccades,
+% excluding blinks
+%   Creates a new set of channels _fix in ii_data containing stable
+%   fixations
 %
-% fix_method: mean, median, mode?
+%   [ii_data,ii_cfg] = ii_findfixations(ii_data,ii_cfg) selects fixations
+%   given ii_cfg.saccades and saves out stable fixation channels for
+%   default gaze channels X,Y based on MEAN gaze within fixation epochs
+%
+%   [ii_data,ii_cfg] = ii_findfixations(ii_data,ii_cfg,fix_chans) computes
+%   fixations for channel(s) listed in fix_chans (cell array of strings, or
+%   string)
+%
+%   [ii_data,ii_cfg] = ii_findfixations(ii_data,ii_cfg,fix_chans,fix_method) 
+%   uses fix_method (one of 'mean' or 'median') to compute fixation 
+%   position within each of fix_chans
+%
+% ii_cfg will have a new field, fixations, which contains the start/end of
+% each fixation. fixations will be selected within ii_cfg.sel, cursel
+%
+% Example:
+% [ii_data,ii_cfg] = ii_findfixations(ii_data,ii_cfg,{'X','Y'},'mean');
+
 
 % TCS 8/14/2017
 
 
 % check whether ii_cfg.saccades & ii_cfg.blinks is defined
 assert(isfield(ii_cfg,'saccades')); % TODO: add error message
-assert(isfield(ii_cfg,'blink'));
+assert(isfield(ii_cfg,'blinks'));
 
 if ~iscell(fix_chans)
     fix_chans = {fix_chans};

@@ -123,9 +123,9 @@ else
     this_ylim = get(gca,'YLim');
     if abs(this_ylim(1)) < abs(this_ylim(2))
         %t_han = text(0.25,this_ylim(2),sprintf('Trial %i',trial_num));
-        t_han = text(0.25,3.5,sprintf('Trial %i',trial_num),'FontSize',9);
+        t_han = text(0.0,3.5,sprintf('Trial %i',trial_num),'FontSize',9);
     else
-        t_han = text(0.25,-3.5,sprintf('Trial %i',trial_num),'FontSize',9);
+        t_han = text(0.0,-3.5,sprintf('Trial %i',trial_num),'FontSize',9);
     end
     
     plot(myt,zeros(size(myt)),'k--');

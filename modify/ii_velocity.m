@@ -1,7 +1,32 @@
 function [ii_data,ii_cfg] = ii_velocity(ii_data,ii_cfg,xchan,ychan)
-% Calculate eye-movement velocity using eye-tracker X and Y channels as
-% input. This vector is automatically saved to ii_cfg.velocity
+% ii_velocity Calculates velocity of eye position given x, y channels
+%   [ii_data,ii_cfg] = ii_velocity(ii_data,ii_cfg) computes velocity on
+%   ii_data chans X_smooth and Y_smooth, if available, or defaults to X, Y.
 %
+%   [ii_data,ii_cfg] = ii_velocity(ii_data,ii_cfg,xchan,ychan) computes on
+%   channels ii_data.(xchan) and .(ychan)
+%
+% xchan and ychan must be strings, and must be fields of ii_data
+% ii_cfg.velocity will contain the instantaneous velocity euclidean 
+% distance between paired samples) of defined channels
+% 
+% Example:
+% load('exdata1.mat'); % smooth data first
+% [ii_data,ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,{'X','Y'},'Pupil',1500,150,50);
+% [ii_data,ii_cfg] = ii_smooth(ii_data,ii_cfg,{'X','Y'},'Gaussian',5);
+% [ii_data,ii_cfg] = ii_velocity(ii_data,ii_cfg,'X_smooth','Y_smooth');
+% figure;
+% subplot(2,1,1);
+% hold on;
+% plot(ii_data.X_smooth,'-','LineWidth',1);
+% plot(ii_data.Y_smooth,'-','LineWidth',1);
+% xlabel('Samples');
+% title('Smoothed data');
+% subplot(2,1,2);
+% plot(ii_cfg.velocity,'k-','LineWidth',1);
+% xlabel('Samples');
+% title('Velocity (s^{-1})');
+
 % Updated 8/14/2017 TCS - uses ii_data; velocity saved in deg/s
 
 if nargin == 2

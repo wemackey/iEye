@@ -7,7 +7,12 @@ function [ii_data,ii_cfg] = ii_import_edf(edf_file,ifg_file,data_file, varargin)
 %   structure. Saved data file (data_file) will contain ii_data and ii_cfg
 %   structures, for use by other iEye functions. 
 %
-% ii_import_edf prompts user for EDF file, IFG file and filename to save to
+% ii_import_edf prompts user for EDF file, IFG file
+%
+% ii_import_edf(edf_file, ifg_file) saves to edf_file_iEye.mat
+%
+% ii_import_edf(edf_file, ifg_file, []) prompts user for name/location of
+% output file
 %
 % ii_import_edf(edf_file, ifg_file, data_file) reads
 % edf_file with configuration ifg_file and saves data into data_file. if
@@ -57,10 +62,16 @@ if nargin < 2 || isempty(ifg_file)
     
 end
 
-iEye_file = strrep(edf_file, '.edf', '.mat');
 
-% TCS moved from end of script
-if nargin < 3 || isempty(data_file)
+
+if nargin < 3
+    
+   data_file = sprintf('%s_iEye.mat',edf_file(1:(end-4)));
+    
+end
+
+if isempty(data_file)
+    iEye_file = sprintf('%s_iEye.mat',edf_file(1:(end-4))); %strrep(edf_file, '.edf', '.mat');
     [filename_data, pathname] = uiputfile(iEye_file, 'Create data file');
     data_file = fullfile(pathname, filename_data);    
     if filename_data==0
@@ -217,11 +228,14 @@ ii_data = eyedata;
 % data saved (58-->3 MB for a single run)
 % [only need -append for 'oldstyle' saving]
 
-if ~isempty(varargin) && strcmpi(varargin{1},'oldstyle')
-    save(data_file,'ii_cfg','edf_file','M','ii_data');
-    save(data_file,'-struct','eyedata','-append');
-else % default save state - ii_cfg and ii_data encapsulate all info
-    save(data_file,'ii_cfg','ii_data','edf_file');
+% only save if you give a filename, or you don't and don't get output args
+if nargin >= 3 || (nargin<3 && nargout == 0)
+    if ~isempty(varargin) && strcmpi(varargin{1},'oldstyle')
+        save(data_file,'ii_cfg','edf_file','M','ii_data');
+        save(data_file,'-struct','eyedata','-append');
+    else % default save state - ii_cfg and ii_data encapsulate all info
+        save(data_file,'ii_cfg','ii_data','edf_file');
+    end
 end
 
 end

@@ -1,19 +1,24 @@
 function [ii_data,ii_cfg] = ii_rescale(ii_data,ii_cfg,chan,resolution,ppd,fixation)
-%II_RESCALE Rescales a channel(s) (e.g., pix to dva)
+%II_RESCALE Rescales channel values to known units (e.g., pix to dva)
 %   Used for converting 'raw' gaze coordinates into the coordinate system
-%   used to present stimuli. Required:
+%   used to present stimuli. 
+% [ii_data,ii_cfg] = ii_rescale(ii_data,ii_cfg,chan,resolution) rescales channels
+% listed in chan (cell array of strings) stored in ii_data given a
+% resolution (width x height, pix) and assumed 'default' ppd of 34.1445 (30
+% cm tall, 1024 pix, 56 cm display distance). Assumes center of screen for
+% fixation (0,0).
+%
+% [ii_data,ii_cfg] = ii_rescale(ii_data,ii_cfg,chan,resolution,fixation)
+% adj
+%
+% REQUIRED:
 %   CHAN: channel name, or list of channel names (cell), to adjust
 %      default: {'X', 'Y'}
 %   RESOLUTION: # pixels wide, high
-%      default: [1280 1024]
+%      default: [1280 1024] - should match order of channel names!!!
 %   PPD: if a pixels per degree (ppd) ratio is provided with 'ppd'
 %        parameter, all channels within CHAN are adjusted by this amount
 %        after shifting by RESOLUTION/2 (in absence of fix_pos)
-%   SCREEN_PARAMS: structure with fields .view_dist and .screen_width (in
-%   same units, irrelevant what they are). PPD will be computed given
-%   these.
-%      default: .view_dist = 56; .screen_width = ????
-%   
 % OPTIONAL:
 %   FIX_POS: position, in pixels, of fixation point (defaults to
 %   resolution/2)
@@ -21,37 +26,27 @@ function [ii_data,ii_cfg] = ii_rescale(ii_data,ii_cfg,chan,resolution,ppd,fixati
 % Tommy Sprague, 8/11/2017
 
 
-narginchk(5,5);
+narginchk(5,6);
 
+if nargin < 5
+    ppd = 34.1445;
+    fprintf('WARNING: using default ppd value for behavioral room, PLEASE CHECK!\n');
+end
 
-
-
-% interpret params
-p = inputParser;
-default_resolution = [1280 1024];
-default_scr_params.view_dist = 56;
-default_scr_params.screen_width = 40;
-default_chan = {'X','Y'};
-default_ppd = 34.1445;
-
-%expected_chan = fieldnames(ii_data); % can't use a channel that doesn't exist...
-
-addParameter(p,'resolution',default_resolution,@isnumeric);
-addParameter(p,'fixation',@isnumeric);
-
-addParameter(p,'ppd',default_ppd,@isnumeric);
-addParameter(p,'screen_params',default_scr_params,@isstruct);
-
-p.StructExpand = 0;
-
-parse(p,varargin{:});
-
-%chan = p.Results.chan;
+if nargin < 6
+    fixation = resolution/2;
+end
 
 if ~iscell(chan)
     chan = {chan};
 end
 
+for cc = 1:length(chan)
+    
+    ii_data.(chan{cc}) = (ii_data.(chan{cc})-fixation(cc))/ppd;
+    
+end
 
+ii_cfg.history{end+1} = sprintf('ii_rescale %s %s',horzcat(chan{:}),datestr(now,30));
 
 return

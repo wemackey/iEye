@@ -10,6 +10,7 @@ function [ ii_data, ii_cfg ] = ii_selectfixationsbytrial( ii_data, ii_cfg, epoch
 %   for BEGIN: select the fixation from beginning of epoch to first new
 %   fixation
 %   for ALL:   select all fixations that begin during the epoch
+%   for MODE:  select longest fixation among all
 %
 % added a 'buffer window' to prevent selection of premature saccades as
 % fixations, especially for calibration
@@ -32,8 +33,8 @@ end
 
 
 % check sel_mode is one of 'last','first','all'
-if ~ismember(sel_mode,{'last','first','begin','all'})
-    error('iEye:ii_selectfixationsbytrial:invalidSelectionMode', 'Selection mode %s invalid: use one of first, last, begin, all',sel_mode);
+if ~ismember(sel_mode,{'last','first','begin','all','mode'})
+    error('iEye:ii_selectfixationsbytrial:invalidSelectionMode', 'Selection mode %s invalid: use one of first, last, begin, all, mode',sel_mode);
 end
 
 % make sure fixations have been computed
@@ -60,7 +61,7 @@ epoch_idx = ismember(ii_data.(epoch_chan),within_epochs);
 % if necessary, create a vector of fixations - this will be useful for the
 % 'all' mode, we can just AND this with epoch_idx and trial_idx and
 % update_cursel
-if strcmpi(sel_mode,'all')
+if any(strcmpi(sel_mode,{'all','mode'}))
     all_fixvec = 0*ii_cfg.sel;
     for ff = 1:size(ii_cfg.fixations)
         all_fixvec(ii_cfg.fixations(ff,1):ii_cfg.fixations(ff,2))=1;
@@ -142,18 +143,42 @@ for tt = 1:length(tu)
         new_sel = new_sel|(first_fix_vec==1);
         
         clear first_fix_vec epoch_begin epoch_end first_fix_ind trial_idx;
+       
         
-        
-        
-        
-        
-    elseif strcmpi(correct_mode,'all') % used for ??? (maybe multiple saccades?)
+    elseif strcmpi(sel_mode,'all') % used for ??? (maybe multiple saccades?)
         
         % find all fixations that occur within interval 
         
         new_sel = epoch_idx==1 & trial_idx==1 & all_fixvec==1;
         
         
+    
+    % look for longest fixation within an epoch
+    elseif strcmpi(sel_mode,'mode')
+        
+        % quick check to make sure just one contiguous selection...
+        if sum(diff(trial_idx & epoch_idx)==1) ~= 1 || sum(diff(trial_idx & epoch_idx)==-1) ~= 1
+            error('iEye:ii_selectfixationsbytrial:nonContiguousEpoch', 'On trial %i, epochs non-contiguous',tu(tt));
+        end
+        
+        % find all fixations during this epoch, trial
+        this_fix = epoch_idx==1 & trial_idx==1 & all_fixvec==1;
+        
+        % figure out how long each is
+        % (first, find out when they start/stop)
+        fix_begin = find(diff([0;this_fix])== 1);
+        fix_end   = find(diff([this_fix;0])==-1);
+        
+        % their duration is their end minus their beginning
+        fix_dur = fix_end-fix_begin;
+        
+        % which one is longest?
+        [~,fix_idx] = max(fix_dur);
+        
+        % add that fixation to the selection
+        new_sel(fix_begin(fix_idx):fix_end(fix_idx)) = 1==1;
+        
+        clear this_fix fix_begin fix_end fix_dur fix_idx;
     end
     
 end

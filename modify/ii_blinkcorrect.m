@@ -1,9 +1,38 @@
 function [ii_data,ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,chan, pchan, pval, pri, fol)
-% Basic blink correction. This function takes 5 inputs: (1) The channel you
-% want to perform blink correction on; (2) the name of the Pupil channel;
-% (3) the Pupil threshold you want to use to define a blink; the # of
-% prior (4) and following (5) samples to that threshold value you want to
-% include in the correction around each blink
+%ii_blinkcorrect Cleans data by identifying and removing blinks
+%   [ii_data,ii_cfg] =
+%   ii_blinkcorrect(ii_data,ii_cfg,chan,pchan,pval,pri,fol) looks for
+%   blinks in pchan (values less than pval), removes pri ms of samples before and
+%   fol ms of samples after pchan dips below pval, and sets all channels in chan
+%   to NaN.
+%
+% ii_data.(chan) at identified blinks will be NaN
+% ii_cfg.blinks is 'cursel'-style list of on/offsets of each blink
+% ii_cfg.blinkvec is binary mask of blink samples (including pri/fol)
+% 
+% Inputs (all required):
+%   chan:  channel(s) from which blinks should be removed (cell array or
+%          string, field(s) of ii_data)
+%   pchan: channel name containing pupil data (string)
+%   pval:  threshold, in pupil channel units, below which a blink is
+%          identified
+%   pri:   time before detected blink onset to exclude (ms)
+%   fol:   time following detected blink offset to exclude (ms)
+%
+% Example (run from iEye toolbox home):
+% 
+% load('exdata1.mat');
+% figure; 
+% subplot(2,1,1);hold on;
+% plot(ii_data.X,'k-','LineWidth',0.5); plot(ii_data.Y,'k-','LineWidth',0.5);
+% [ii_data, ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,{'X','Y'},'Pupil',1500,150,50);  
+% plot(ii_data.X,'-','LineWidth',2);plot(ii_data.Y,'-','LineWidth',2);
+% xlabel('Samples');
+% title('Before (thin black) and after (thick) blink correction');
+% subplot(2,1,2);
+% plot(ii_data.Pupil);
+% xlabel('Samples');
+% ylabel('Pupil size');
 
 % Updated TCS 8/11/2017 - no base space variables
 %
@@ -26,14 +55,16 @@ if nargin == 2 % only data, cfg
     fol = str2num(answer{5});
 end
 
-%basevars = evalin('base','who');
+% convert pri from milliseconds to samples given sampling rate
+pri = round((pri/1000)*ii_cfg.hz);
+fol = round((fol/1000)*ii_cfg.hz);
+
 
 if ~iscell(chan)
     chan = {chan};
 end
 
 % first, find blinks
-
 pupil = ii_data.(pchan);
 
 blink_mask = pupil <= pval; 
@@ -72,12 +103,11 @@ for cc = 1:length(chan)
     ii_data.(chan{cc})(blinkvec==1) = nan;
 end
 
-blink = find(blinkvec==1);
 
-ii_cfg.blink = blink;
+ii_cfg.blinks = blink_window;
 ii_cfg.blinkvec = blinkvec;
 
-ii_cfg.history{end+1} = sprintf('Blink corrected %s with pupil threshold of %d (%d/%d) on %s ', horzcat(chan{:}), pval, pri,fol, datestr(now,30));
+ii_cfg.history{end+1} = sprintf('ii_blinkcorrect - corrected channels %s with pupil channel %s, threshold of %d (%d/%d) on %s ', horzcat(chan{:}), pchan, pval, pri,fol, datestr(now,30));
 
 
 return
