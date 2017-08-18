@@ -13,6 +13,7 @@ function [ f_han ] = ii_plotalltrials2d( ii_data,ii_cfg,which_chans, varargin )
 %   plotting options:
 %       can add any/all of the below strings at end of arg list:
 %       'nofixations' - does not plot fixations
+%       'noorigin'  - does not plot a fixation point at 0,0
 %       'usesmooth' - uses which_chans{}_smooth for visualization; use this
 %                     so that fix still works
 %       'targlocs' - next argument should be target location on each trial
@@ -25,7 +26,8 @@ function [ f_han ] = ii_plotalltrials2d( ii_data,ii_cfg,which_chans, varargin )
 
 % TODO: plotting constants up here
 
-
+FIXATION_MARKERSIZE = 7;
+TARGET_MARKERSIZE = 0.65*FIXATION_MARKERSIZE;
 
 
 if nargin < 3
@@ -36,6 +38,8 @@ if length(which_chans)~=2
     error('iEye:ii_plotalltrials2d:channelInputError','must provide 2 channels');
 end
 
+str_args = {varargin{cellfun(@ischar,varargin)}};
+str_args_ind = find(cellfun(@ischar,varargin));
 
 
 % open the figure, add a descriptive title
@@ -57,7 +61,7 @@ trial_colors = lines(ii_cfg.numtrials);
 for tt = 1:ii_cfg.numtrials
     
     % if we want to plot smooth lines
-    if ismember(varargin,'usesmooth')
+    if ismember(str_args,'usesmooth')
         plot(ii_data.(sprintf('%s_smooth',which_chans{1}))(ii_cfg.tcursel(tt,1):ii_cfg.tcursel(tt,2)),...
              ii_data.(sprintf('%s_smooth',which_chans{2}))(ii_cfg.tcursel(tt,1):ii_cfg.tcursel(tt,2)),...
              '-','LineWidth',1.5,'Color',trial_colors(tt,:));
@@ -71,14 +75,43 @@ for tt = 1:ii_cfg.numtrials
     
     % if we want to plot fixations (if available), do so as cirlces
     % TODO
-    
+    if ismember('fixations',fieldnames(ii_cfg)) && ~ismember('nofixations',str_args)
+        
+        % find the first fixation timepoint (so we don't draw too many
+        % circles)
+        
+        fix_idx = ii_cfg.fixations( ii_cfg.fixations(:,1)>=ii_cfg.tcursel(tt,1) & ii_cfg.fixations(:,1)<=ii_cfg.tcursel(tt,2) ,1);
+        
+        plot(ii_data.(sprintf('%s_fix',which_chans{1}))(fix_idx),...
+             ii_data.(sprintf('%s_fix',which_chans{2}))(fix_idx),...
+            'o','LineWidth',1.0,'Color',[0 0 0],'MarkerSize',FIXATION_MARKERSIZE,...
+            'MarkerFaceColor',trial_colors(tt,:));
+        
+        clear fix_idx;
+    end
 end
 
 
 % TODO: add target locations, if specified
+if ismember('targlocs',str_args)
+    param_idx = str_args_ind(ismember('targlocs',str_args))+1;
+    
+    if ~isnumeric(varargin{param_idx}) || size(varargin{param_idx},1)~=ii_cfg.numtrials || size(varargin{param_idx},2)~=2
+        error('iEye:ii_plotalltrials2d:invalidTargLocsInput','When plotting targlocs, need to provide a coordinate for each trial as n_trials x 2 matrix');
+    end
+    
+    targ_locs = varargin{param_idx};
+    
+    plot(targ_locs(:,1),targ_locs(:,2),'kx','LineWidth',1,'MarkerSize',TARGET_MARKERSIZE);
+    
+end
 
 % add fixation point at [0,0] (black plus)
-
+if ~ismember('noorigin',str_args)
+    
+    plot(0,0,'k+','LineWidth',1.5, 'MarkerSize',5);
+    
+end
 
 
 % add scale bar, if requested
