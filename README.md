@@ -4,8 +4,11 @@ Presently, work-in-progress - refactoring functions to better compartmentalize d
 
 ## Data model
 Updated version will no longer use base variables - all data will be encapsualted in ii_* structs:
+
 **ii_cfg** - data about the run, including channels recorded, trial times, blinks, saccades, and condition labels
+
 **ii_data** - data from each channel (X, Y, Pupil, etc) over the entire timeseries, sampled at ii_cfg.hz
+
 **ii_sacc** - information about each saccade detected from ii_data, so each field of ii_sacc has size(ii_cfg.saccades,1) elements
 
 Our goal will be to convert timeseries data into scores, via preprocessing operations, then saccade sorting operations, then scoring operations. All of which operate on these structures, and GUIs must all update these structures, and update plots according to updated data within these structures (approx model/view/controller design, but not quite).
