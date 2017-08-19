@@ -1,8 +1,16 @@
-function ii_invert(chan)
-%II_INVERT Summary of this function goes here
-%   Detailed explanation goes here
+function [ii_data,ii_cfg] = ii_invert(ii_data,ii_cfg,chan)
+%II_INVERT Invert a channel (e.g., pix to cartesian coordinates)
+%   Applies inversion to ii_data.(chan), returns ii_data and an updated
+%   ii_cfg with full command history. 
+%
+% [ii_data,ii_cfg] = ii_invert(ii_data,ii_cfg,chan) inverts values in
+% ii_data.(chan)
+%
+% Most useful when values already 'centered', by ii_rescale.
 
-if nargin ~= 1
+% Tommy Sprague, 8/17/2017
+
+if nargin ~= 3
     prompt = {'Enter channel to invert:'};
     dlg_title = 'Invert Channel';
     num_lines = 1;
@@ -10,14 +18,13 @@ if nargin ~= 1
     chan = answer{1};
 end
 
-basevars = evalin('base','who');
 
-if ismember(chan,basevars)
-    ichan = evalin('base',chan);
-    ivrt = ichan * -1;
-    assignin('base',chan,ivrt);
-    ii_replot;
+if ismember(chan,fieldnames(ii_data))
+    ii_data.(chan) = -1*ii_data.(chan);
+
+    ii_cfg.history{end+1} = sprintf('ii_invert %s %s',chan, datestr(now,30));
+    
 else
-    disp('Channel does not exist')
+    error('iEye:ii_invert:channelNotFound', 'Channel %s does not exist in ii_data',chan)
 end
 end

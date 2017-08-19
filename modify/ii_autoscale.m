@@ -2,6 +2,11 @@ function ii_autoscale(chan,chan2)
 %Scale values of one channel to another
 %   This function will scale the values of one channel to the min/max of
 %   another channel
+%
+% DEPRECATED! Should always know screen parameters for adjustments, this is
+% a non-reliable way to adjust coordinates. 
+
+fprintf('WARNING!!!!! USE ii_rescale.m IF AT ALL POSSIBLE; USE KNOWN SCREEN PARAMETERS!!!!\n\n');
 
 if nargin ~= 2
     prompt = {'Enter channel to autoscale:', 'Enter channel to autoscale to:'};

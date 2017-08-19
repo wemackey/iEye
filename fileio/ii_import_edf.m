@@ -1,33 +1,46 @@
-function ii_import_edf(edf_file,ifg_file,data_file)
+function [ii_data,ii_cfg] = ii_import_edf(edf_file,ifg_file,data_file, varargin)
 %IMPORT EYELINK EDF FILES
 %   This function will import Eyelink EDF files but requires 'edf2asc'
 %   command (from Eyelink) be installed in MATLAB's path. A config (*.ifg)
 %   file is also required. After import, you can save as binary MAT file
 %   for faster file I/O. Config information will be baked into ii_cfg
-%   structure.
-
+%   structure. Saved data file (data_file) will contain ii_data and ii_cfg
+%   structures, for use by other iEye functions. 
+%
+% ii_import_edf prompts user for EDF file, IFG file
+%
+% ii_import_edf(edf_file, ifg_file) saves to edf_file_iEye.mat
+%
+% ii_import_edf(edf_file, ifg_file, []) prompts user for name/location of
+% output file
+%
+% ii_import_edf(edf_file, ifg_file, data_file) reads
+% edf_file with configuration ifg_file and saves data into data_file. if
+% any arguments are empty, they are prompted via GUI.
+%
+% [ii_data, ii_cfg] = ii_import_edf(edf_file, ifg_file, data_file) returns
+% ii_data, ii_cfg structures for use by other iEye programs
+%
+% ii_import_edf(edf_file, ifg_file, data_file, 'oldstyle') saves each
+% channel separately, rather than packing into ii_data (for backwards
+% compatibility)
+%
+% Misc info:
 % MONOCULAR ONLY AT THE MOMENT
 % Ignores corneal reflection flag information at the moment
 % Automatically pulls out x,y,pupil sample data
 % Will always be saved samples, messages
 % i.e. x,y,pupil, message1, message2, message3
 % Message variables are CASE SENSITIVE
-
-
-% *IMPORTANT* MAKE SURE EDF2ASC COMMAND IS IN ENV PATH
-% Add edf2asc command location to path if not already included. For
-% example, this adds "/usr/local/bin" to the env path.
-% path1 = getenv('PATH');
-% path1 = [path1 ':/usr/local/bin'];
-% setenv('PATH', path1);
-% !echo $PATH;
 %
-% this is easy to do w/ ii_init.m - just need to update the edf2asc path in
-% that file depending on your setup
+% *IMPORTANT* MAKE SURE EDF2ASC COMMAND IS IN ENV PATH
+% Use ii_init.m - but check the pathname within that function for your
+% local install
 
-% SETUP FILE
+% Updated TCS 8/17/2017 & prior - saves out ii_data, ii_cfg structs instead
+% of channel variables. Can use ii_unpackdata to put all channels into base
+% workspace (not advised!)
 
-% TCS: updated this to be more user- and command-line friendly
 if nargin < 1 || isempty(edf_file)
     [filename, pathname] = uigetfile('*.edf', 'Select EDF file');
     edf_file = fullfile(pathname, filename);
@@ -49,10 +62,16 @@ if nargin < 2 || isempty(ifg_file)
     
 end
 
-iEye_file = strrep(edf_file, '.edf', '.mat');
 
-% TCS moved from end of script
-if nargin < 3 || isempty(data_file)
+
+if nargin < 3
+    
+   data_file = sprintf('%s_iEye.mat',edf_file(1:(end-4)));
+    
+end
+
+if isempty(data_file)
+    iEye_file = sprintf('%s_iEye.mat',edf_file(1:(end-4))); %strrep(edf_file, '.edf', '.mat');
     [filename_data, pathname] = uiputfile(iEye_file, 'Create data file');
     data_file = fullfile(pathname, filename_data);    
     if filename_data==0
@@ -84,7 +103,8 @@ disp(result);
 asc_samp_file = strrep(edf_file, '.edf', '.asc');
 
 fid = fopen(asc_samp_file,'r');
-M = textscan(fid,'%f %f %f %f %*s');
+%M = textscan(fid,'%f %f %f %f %*s');
+M = textscan(fid,'%f %f %f %f %*s %*s %*s %*s %*s');
 M = cell2mat(M);
 s_num = M(:,1);
 x = M(:,2);
@@ -94,11 +114,9 @@ pupil = M(:,4);
 delete (asc_samp_file);
 
 % EXTRACT EVENTS
-%if strcmpi(computer(),'MACI64')
-%[status,result] = system(['edf2asc_x86_64 -t -c -e -miss 0 ' edf_file]);
-%else
+
 [status,result] = system(['edf2asc -t -c -e -miss 0 ' edf_file]);
-%end
+
 disp(status);
 disp(result);
 asc_evnt_file = strrep(edf_file, '.edf', '.asc');
@@ -170,23 +188,18 @@ M(:,1) = [];
 % also insert channel data into eyedata, to be saved out into data_file
 eyedata = [];
 
-% SAVE AND PLOT
-h = waitbar(0,'Opening file...');
+
 for i = 1:nchan
     cname = lchan{1}{i};
     cvalue = M(:,i);
-    assignin('base',cname,cvalue);
     eyedata.(lchan{1}{i})=M(:,i);
-    waitbar(i/nchan,h);
 end
-close(h);
 
 x = M(:,1);
 
-iEye;
 
 % CREATE II_CFG STRUCT
-dt = datestr(now,'mmmm dd, yyyy HH:MM:SS.FFF AM');
+dt = datestr(now, 30);%'mmmm dd, yyyy HH:MM:SS.FFF AM');
 
 ii_cfg.cursel = [];
 ii_cfg.sel = x*0;
@@ -202,8 +215,10 @@ ii_cfg.tsel = x*0;
 ii_cfg.tindex = 0;
 ii_cfg.saccades = [];
 ii_cfg.history{1} = ['EDF imported ', dt];
-putvar(ii_cfg);
-ii_replot;
+
+ii_cfg.edf_file = edf_file;
+
+ii_data = eyedata;
 
 % SAVE FILE
 % below focuses on only the necessary variables - M is probably redundant,
@@ -211,9 +226,17 @@ ii_replot;
 % commands are necessary as it's impossible to save struct fields and
 % variables simultaneously it seems. This *vastly* cuts down on amount of
 % data saved (58-->3 MB for a single run)
-save(data_file,'ii_cfg','edf_file','M');
+% [only need -append for 'oldstyle' saving]
 
-save(data_file,'-struct','eyedata','-append');
+% only save if you give a filename, or you don't and don't get output args
+if nargin >= 3 || (nargin<3 && nargout == 0)
+    if ~isempty(varargin) && strcmpi(varargin{1},'oldstyle')
+        save(data_file,'ii_cfg','edf_file','M','ii_data');
+        save(data_file,'-struct','eyedata','-append');
+    else % default save state - ii_cfg and ii_data encapsulate all info
+        save(data_file,'ii_cfg','ii_data','edf_file');
+    end
+end
 
 end
 
