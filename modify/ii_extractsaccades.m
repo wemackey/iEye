@@ -138,14 +138,14 @@ for ss = 1:size(ii_cfg.saccades)
     ii_sacc.idx(ss,:) = ii_cfg.saccades(ss,:);
     
     % epoch labels at beginning/end of saccade
-    ii_sacc.epoch_start = ii_data.(epoch_chan)(ii_cfg.saccades(ss,1));
-    ii_sacc.epoch_end   = ii_data.(epoch_chan)(ii_cfg.saccades(ss,2));
+    ii_sacc.epoch_start(ss) = ii_data.(epoch_chan)(ii_cfg.saccades(ss,1));
+    ii_sacc.epoch_end(ss)   = ii_data.(epoch_chan)(ii_cfg.saccades(ss,2));
     
     % if trials defined, add those fields
     if ismember('trialvec',fieldnames(ii_cfg))
         
-        ii_sacc.trial_start = ii_cfg.trialvec(ii_cfg.saccades(ss,1));
-        ii_sacc.trial_end   = ii_cfg.trialvec(ii_cfg.saccades(ss,2));
+        ii_sacc.trial_start(ss) = ii_cfg.trialvec(ii_cfg.saccades(ss,1));
+        ii_sacc.trial_end(ss)   = ii_cfg.trialvec(ii_cfg.saccades(ss,2));
         
     end
     
@@ -162,7 +162,7 @@ for ss = 1:size(ii_cfg.saccades)
         if strcmpi('fixation',startpoint_mode)
             % last fixation before saccade start
             fixidx = find(ii_cfg.fixations(:,2)<ii_cfg.saccades(ss,1),1,'last');
-            ii_sacc.(sprintf('%s_start',which_chans{cc}))(ss) = nanmean(ii_data.(sprintf('%s_fix',which_chans{cc}))(fixidx));
+            ii_sacc.(sprintf('%s_start',which_chans{cc}))(ss) = nanmean(ii_data.(sprintf('%s_fix',which_chans{cc}))(ii_cfg.fixations(fixidx,2)));
             clear fixidx;
         
         % if just a single number 
@@ -182,7 +182,7 @@ for ss = 1:size(ii_cfg.saccades)
         if strcmpi('fixation',endpoint_mode)
             % first fixation after saccade end
             fixidx = find(ii_cfg.fixations(:,1)>ii_cfg.saccades(ss,2),1,'first');
-            ii_sacc.(sprintf('%s_end',which_chans{cc}))(ss) = nanmean(ii_data.(sprintf('%s_fix',which_chans{cc}))(fixidx));
+            ii_sacc.(sprintf('%s_end',which_chans{cc}))(ss) = nanmean(ii_data.(sprintf('%s_fix',which_chans{cc}))(ii_cfg.fixations(fixidx,1)));
             clear fixidx;
         
         % if just a single number 
