@@ -79,7 +79,7 @@ blink_offsets = find(diff(blink_mask)==-1);
 
 if blink_onsets(1) > blink_offsets(1)
     
-    blink_onsets = [1; blinkonsets];
+    blink_onsets = [1; blink_onsets];
     
 end
 

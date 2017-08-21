@@ -1,25 +1,19 @@
-function ii_preproc(edf_fn)
-% Generic script for pre-processing memory-guided saccade data. This script
-% assumes the data is already imported in iEye. It addresses the following
-% issues: The Y channel is inverted to its correct orientation, the data is
-% then blink-corrected and slightly smoothed. Finally, the data is scaled
-% and re-calibrated.
-
-% edited TCS & GH 8/25/2016
+function ii_preproc(edf_fn,cfg_fn,preproc_fn,trialinfo,ii_params)
+% ii_preproc Performs default pre-processing stream
+%
+% new functionality - TODO.
+%
+% Tommy Sprague, 8/20/2017
 
 
-if nargin < 1
-    edf_fn = 'examples/exdata1.edf';
-    mat_fn = 'examples/exdata1_trialinfo.mat';
-end
-
-
+% TODO: params contains resolution, ppd (or screen params), saccade
+% detection params, etc. 
 
 % initialize iEye - make sure paths are correct, etc
 ii_init;
 
 % import data
-[ii_data,ii_cfg] = ii_import_edf(edf_fn,'examples/p_1000hz.ifg',[edf_fn(1:end-3) 'mat']);
+[ii_data,ii_cfg] = ii_import_edf(edf_fn,cfg_fn,[edf_fn(1:end-3) 'mat']);
 
 % Show only the channels we care about at the moment
 %ii_view_channels('X,Y,TarX,TarY,XDAT');
@@ -74,8 +68,7 @@ ii_init;
 % 'raw' or 'smoothed' data on each channel)
 %[ii_data,ii_cfg] = ii_driftcorrect(ii_data,ii_cfg,{'X','Y'},[1 2],'last_fixation',[0 0]);
 [ii_data,ii_cfg] = ii_driftcorrect(ii_data,ii_cfg,{'X','Y'},'fixation',[0 0]);
-% NOTE: in example data, trial 20 still not perfect - maybe use 'mode'
-% fixation in selectfixationsbytrial? 
+
 
 
 % add trial info [not explicitly necessary if simple experiment, TarX &
@@ -84,22 +77,25 @@ ii_init;
 % trial_info should be n_trials x n_params/features - can be indexed in
 % some data processing commands below. can be cell or array. 
 
-mydata = load(mat_fn);
+%mydata = load(mat_fn);
 
 % Col1: queried X
 % Col2: queried Y
 % Col3: non-queried X
 % Col4: non-queried Y
 % Col5: priority condition
-trial_info = horzcat(mydata.stimulus.targCoords{:});
-cond = [];
-for bb = 1:length(mydata.task{1}.block)
-    cond = [cond; mydata.task{1}.block(bb).parameter.conditionAndQueriedTarget.'];
-end
-trial_info = [trial_info cond];
-clear mydata;
-[ii_data,ii_cfg] = ii_addtrialinfo(ii_data,ii_cfg,trial_info);
+% trial_info = horzcat(mydata.stimulus.targCoords{:});
+% cond = [];
+% for bb = 1:length(mydata.task{1}.block)
+%     cond = [cond; mydata.task{1}.block(bb).parameter.conditionAndQueriedTarget.'];
+% end
+% trial_info = [trial_info cond];
+% clear mydata;
 
+% if trialinfo is defined, otherwise skip
+if nargin>=4 && ~isempty(trialinfo)
+    [ii_data,ii_cfg] = ii_addtrialinfo(ii_data,ii_cfg,trialinfo);
+end
 
 
 % 'target correct' or 'calibrate' (which name is better?)
@@ -121,14 +117,14 @@ f_all = ii_plotalltrials(ii_data,ii_cfg);
 % save the figures for our records
 if length(f_all)>1
     for ff = 1:lenght(f_all)
-        saveas(f_all,sprintf('%s_iEye_preproc_%02.f.png',ii_cfg.edf_file(1:end-4),ff),'png');
+        saveas(f_all,sprintf('%s_%02.f.png',preproc_fn(1:end-4),ff),'png');
     end
 else
-    saveas(f_all,sprintf('%s_iEye_preproc.png',ii_cfg.edf_file(1:end-4)),'png');
+    saveas(f_all,sprintf('%s.png',preproc_fn(1:end-4)),'png');
 end
 
 % save ii_data,ii_cfg in _preproc.mat file
-ii_savedata(ii_data,ii_cfg,sprintf('%s_iEye_preproc.mat',ii_cfg.edf_file(1:end-4)));
-
+%ii_savedata(ii_data,ii_cfg,sprintf('%s_iEye_preproc.mat',ii_cfg.edf_file(1:end-4)));
+ii_savedata(ii_data,ii_cfg,preproc_fn);%sprintf('%s_iEye_preproc.mat',ii_cfg.edf_file(1:end-4)));
 
 end
