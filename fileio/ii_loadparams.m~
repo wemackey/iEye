@@ -1,0 +1,77 @@
+function [ ii_params ] = ii_loadparams( params_fn )
+%ii_loadparams Load pre/processing parameters
+%   To use automated pre-processing function ii_preproc, must define a set
+%   of params for each stage of pre/processing. If no params_fn given, then
+%   default parameters will be loaded.
+%
+% Edit this function to update default parameters for your setup (or you
+% could modify this to load a default_params.mat file - but seems easier to
+% read putting it in a text file like this)
+%
+% TODO: add flags for whether or not to run each piece of preproc? maybe
+% better in a 'flags' suffix of ii_preproc.m...
+
+% Tommy Sprague, 8/21/2017
+
+
+if nargin < 1
+    
+    % DEFAULT PARAMETER VALUES
+    
+    % epoch channel
+    ii_params.epoch_chan = 'XDAT';
+    
+    % stimulus display information
+    ii_params.resolution = [1280 1024]; % Curtis lab, behavior room
+    ii_params.ppd = 34.1445;            % Curtis lab, behavior room (pix/deg)
+    
+    % blink correction
+    ii_params.blink_thresh = 1500; 
+    ii_params.blink_window = [150 150]; % before and after, ms
+    
+    % trial definition
+    ii_params.trial_start_chan  = ii_params.epoch_chan;
+    ii_params.trial_start_value = 1;
+    ii_params.trial_end_chan    = ii_params.epoch_chan;
+    ii_params.trial_end_value   = 8;
+    
+    % smoothing
+    ii_params.smooth_type = 'Gaussian';
+    ii_params.smooth_amt  = 5;
+    
+    % saccade detection
+    ii_params.sacc_velocity_thresh = 30;    % deg/s
+    ii_params.sacc_duration_thresh = 0.075; % s
+    ii_params.sacc_amplitude_thresh = 0.25; % deg
+    
+    % fixation detection (mode for computing fixations)
+    ii_params.fixation_mode = 'mean';
+    
+    % drift correction
+    ii_params.drift_epoch = [1 2];  % which epochs to use?
+    ii_params.drift_fixation_mode  = 'mode'; % how to choose which fixation?
+    ii_params.drift_select_mode    = 'fixation'; % use fixation, or mean over previous epoch?
+    ii_params.drift_target = [0 0]; % where to correct to
+    
+    % calibrate to feedback stim
+    
+    [ii_data,ii_cfg] = ii_selectfixationsbytrial(ii_data,ii_cfg,ii_params.epoch_chan,...
+        7,'last',100); %
+   
+    
+    
+    
+else
+    
+    ii_params = load(params_fn);
+    
+    % handle case where saved as ii_params w/in file
+    if ismember('ii_params',fieldnames(ii_params))
+        ii_params = ii_params.ii_params;
+    end
+       
+end
+
+
+end
+

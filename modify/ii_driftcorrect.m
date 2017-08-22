@@ -35,7 +35,7 @@ end
 % fixation before end of specified epoch(s)
 if nargin < 4 || isempty(correct_mode)
     if ismember('fixations',fieldnames(ii_cfg))
-        correct_mode = 'last_fixation';
+        correct_mode = 'fixation';
     else
         correct_mode = 'epoch_mean';
     end
@@ -146,13 +146,11 @@ for cc = 1:length(chan_names)
                 adj_idx(ii_cfg.cursel(tt,1):end) = 1; 
             end
             
-            try
+            
             % apply adjustment to time series until next selection
             % (adj_idx, above)
             for ca = 1:length(chans_to_adjust)
                 ii_data.(chans_to_adjust{ca})(adj_idx==1) = ii_data.(chans_to_adjust{ca})(adj_idx==1)-adj_by;
-            end
-            catch
             end
             
             ii_cfg.drift.amt(tt,cc) = adj_by;
