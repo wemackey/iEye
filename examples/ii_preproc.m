@@ -39,7 +39,7 @@ end
 
 % Correct for blinks
 [ii_data, ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,{'X','Y'},'Pupil', ...
-      ii_params.blink_thresh,ii_params.blink_window(1),ii_params.blink_window(2)); % maybe 50, 50? %altering this 6/1/2017 from 1800 in both x/y 
+      ii_params.blink_thresh,ii_params.blink_window(1),ii_params.blink_window(2),'prctile'); % maybe 50, 50? %altering this 6/1/2017 from 1800 in both x/y 
 
 
 % split into individual trials (so that individual-trial corrections can be

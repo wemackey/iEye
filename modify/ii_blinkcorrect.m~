@@ -81,9 +81,7 @@ if nargin < 7 || isempty(fol)
     fol = 100;
 end
 
-if ismember(varargin,'prctile')
-    pval = prctile(ii_data.(pchan)(ii_data.(pchan)~=0),pval);
-end
+if ismember(
 
 
 % convert pri from milliseconds to samples given sampling rate

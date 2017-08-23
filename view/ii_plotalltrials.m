@@ -25,6 +25,10 @@ function [ f_han ] = ii_plotalltrials( ii_data,ii_cfg,which_chans,nrows,ncols )
 % ii_plotalltrials(ii_data,ii_cfg);
 %
 % TODO: specify which trials in a vector
+%
+% TODO: navigate w/ pageup/down between trials (and allow GUI, if specified
+% in varargin - so that opening a single-trial view from the GUI gives
+% buttons) https://www.mathworks.com/matlabcentral/answers/1450-gui-for-keyboard-pressed-representing-the-push-button
 
 % Tommy Sprague, 8/17/2017
 
