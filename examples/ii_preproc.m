@@ -24,7 +24,7 @@ end
 
 
 % import data
-[ii_data,ii_cfg] = ii_import_edf(edf_fn,cfg_fn,[edf_fn(1:end-3) 'mat']);
+[ii_data,ii_cfg] = ii_import_edf(edf_fn,cfg_fn,[edf_fn(1:end-4) '_iEye.mat']);
 
 % Show only the channels we care about at the moment
 %ii_view_channels('X,Y,TarX,TarY,XDAT');
@@ -127,6 +127,11 @@ if length(f_all)>1
 else
     saveas(f_all,sprintf('%s.png',preproc_fn(1:end-4)),'png');
 end
+
+% and plot the final full timeseries
+f_ts = ii_plottimeseries(ii_data,ii_cfg);
+saveas(f_ts,sprintf('%s_timeseries.png',preproc_fn(1:end-4)),'png');
+
 
 % save the preprocessing params
 ii_cfg.params = ii_params;

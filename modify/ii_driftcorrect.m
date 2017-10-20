@@ -103,6 +103,7 @@ for cc = 1:length(chan_names)
             
             if strcmpi(correct_mode,'fixation')
                 adj_by = nanmean(ii_data.(sprintf('%s_fix',chan_names{cc}))(ii_cfg.cursel(tt,1):ii_cfg.cursel(tt,2)))-target_coords(cc);
+                
             elseif strcmpi(correct_mode,'smooth')
                 adj_by = nanmean(ii_data.(sprintf('%s_smooth',chan_names{cc}))(ii_cfg.cursel(tt,1):ii_cfg.cursel(tt,2)))-target_coords(cc);
             else
