@@ -61,7 +61,7 @@ if nargin < 1
     ii_params.calibrate_mode = 'scale'; % or rotate
     
     % plotting params
-    ii_params.plot_epoch = [];
+    ii_params.plot_epoch
     
     
 else

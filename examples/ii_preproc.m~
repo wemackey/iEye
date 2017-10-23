@@ -117,7 +117,7 @@ end
 
 
 % plot all these - make sure they're good
-f_all = ii_plotalltrials(ii_data,ii_cfg,{'X','Y'},[],[],ii_params.epoch_chan,ii_params.plot_epoch);
+f_all = ii_plotalltrials(ii_data,ii_cfg,{'X','Y'},[],[],ii_params.epoch_chan,ii_para);
 
 % save the figures for our records
 if length(f_all)>1

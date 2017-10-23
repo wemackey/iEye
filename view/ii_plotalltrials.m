@@ -1,4 +1,4 @@
-function [ f_han ] = ii_plotalltrials( ii_data,ii_cfg,which_chans,nrows,ncols )
+function [ f_han ] = ii_plotalltrials( ii_data,ii_cfg,which_chans,nrows,ncols,epoch_chan,epoch_nums )
 %ii_plotalltrials Plots all trials within ii_data
 %   ii_plotalltrials(ii_data,ii_cfg) plots all trials as subplots within a
 %   new figure if trials have been defined using a default set of plotting
@@ -37,7 +37,7 @@ if ~ismember('trialvec',fieldnames(ii_cfg))
     error('iEye:ii_plotalltrials:trialsNotDefined','Trials not defined; run ii_definetrials before plotting all trials. To plot timeseries, see ii_plottimeseries');
 end
 
-if nargin < 3
+if nargin < 3 || isempty(which_chans)
     which_chans = {'X','Y'};
 end
 
@@ -45,12 +45,21 @@ if ~iscell(which_chans)
     which_chans = {which_chans};
 end
 
-if nargin < 5
+if nargin < 5 || isempty(ncols)
     ncols = 4;
 end
 
 if nargin < 4 || isempty(nrows)
     nrows = min(10,ceil(ii_cfg.numtrials/ncols));
+end
+
+if nargin < 6 || isempty(epoch_chan)
+    epoch_chan = 'XDAT';
+end
+
+if nargin < 7 || isempty(epoch_nums)
+    % default to 'all' 
+    epoch_nums = [];
 end
 
 % make sure which_chans exist
@@ -84,7 +93,7 @@ while trial_cnt <= ii_cfg.numtrials
     end
     
     thisax = subplot(nrows,ncols,(rowidx-1)*ncols+colidx); 
-    ii_plottrial(ii_data,ii_cfg,trial_cnt,{'X','Y'},thisax,'condensed');
+    ii_plottrial(ii_data,ii_cfg,trial_cnt,{'X','Y'},thisax,'condensed',epoch_chan,epoch_nums);
     
     % TODO: add a uimenu w/ callback to plot a detailed version of selected
     % trial?
