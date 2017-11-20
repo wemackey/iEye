@@ -13,7 +13,7 @@ function [ ii_data, ii_cfg ] = ii_selectfixationsbytrial( ii_data, ii_cfg, epoch
 %   for MODE:  select longest fixation among all
 %
 % added a 'buffer window' to prevent selection of premature saccades as
-% fixations, especially for calibration
+% fixations, especially for calibration (ms)
 %
 % Tommy Sprague, 8/16/2017
 
@@ -25,6 +25,9 @@ end
 if nargin < 6
     buffer_window = 0;
 end
+
+% get buffer_window into ms
+buffer_window = 1000*buffer_window/ii_cfg.hz;
 
 % make sure channel exists...
 if ~ismember(epoch_chan,fieldnames(ii_data))
