@@ -59,9 +59,11 @@ if nargin < 1
     ii_params.calibrate_window = 100; % ms, before end of epoch in case there are premature saccades
     ii_params.calibrate_target = {'TarX','TarY'}; % 4th arg to ii_calibratebytrial
     ii_params.calibrate_mode = 'scale'; % or rotate
+    ii_params.calibrate_limits = [-inf inf]; % or [0.75 1.333]; - ratios within which range to execute trial-by-trial calibration
     
     % plotting params
     ii_params.plot_epoch = [];
+    ii_params.show_plots = 0; % whether figures are visible when ii_preproc is run (still saved out)
     
     
 else

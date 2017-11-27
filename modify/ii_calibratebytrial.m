@@ -1,4 +1,4 @@
-function [ ii_data, ii_cfg ] = ii_calibratebytrial( ii_data, ii_cfg, chan_names, calib_targets, calib_mode )
+function [ ii_data, ii_cfg ] = ii_calibratebytrial( ii_data, ii_cfg, chan_names, calib_targets, calib_mode, adj_limits )
 %II_CALIBRATEBYTRIAL Adjust gaze coords so that gaze is a known value at a
 %known period of trial.
 %   One selection expected per trial, and either channels, column indices
@@ -12,6 +12,12 @@ function [ ii_data, ii_cfg ] = ii_calibratebytrial( ii_data, ii_cfg, chan_names,
 %     desired_chan_value/actual_chan_value independently
 %   - rotate: convert to r, th, scale r and rotate th to achieve desired
 %     coords
+%   ADJ_LIMITS is a set of limits [min, max] delineating the minimum or
+%   maximum scaling applied to each trial. This takes care of issues like
+%   when an obvious 'calibration' fixation is not found, so adjustments are
+%   wildly inaccurate (during blinks, etc). By default, this will be [-inf
+%   inf], but results from such an analysis should be carefully checked.
+%   (NOTE: the 'amt' variable is tested against this, see code below)
 %
 % Note: it's helpful to have run driftcorrect before this so that
 % 'fixation' values are set to 0,0, and so scaling doesn't substantially
@@ -57,6 +63,10 @@ end
 
 if ~iscell(calib_targets) && ischar(calib_targets)
     calib_targets = {calib_targets};
+end
+
+if nargin < 6 || isempty(adj_limits)
+    adj_limits = [-inf inf];
 end
 
 % check calibration targets 
@@ -172,6 +182,8 @@ ii_cfg.calibrate.fcn = 'ii_calibratebytrial.m';
 ii_cfg.calibrate.chan = chan_names; % channels input to ii_driftcorrect
 ii_cfg.calibrate.mode = calib_mode;
 ii_cfg.calibrate.amt = nan(ii_cfg.numtrials,length(chan_names));
+ii_cfg.calibrate.adj_limits = adj_limits;
+ii_cfg.calibrate.adj = zeros(ii_cfg.numtrials,1)==1; % whether adjustment was performed on this trial
 
 if strcmpi(calib_mode,'scale')
 
@@ -196,10 +208,16 @@ if strcmpi(calib_mode,'scale')
                 % chans_to_adjust within trial by this value
                 adj_by = nanmean(ii_data.(sprintf('%s_fix',chan_names{cc}))(tr_idx & ii_cfg.sel) )/calibrate_to(tt,cc);
                 
-                for ca = 1:length(chans_to_adjust)
-                    % adjust entire trial (scale) so that selection is
-                    % equal to calibrate_to
-                    ii_data.(chans_to_adjust{ca})(tr_idx)=ii_data.(chans_to_adjust{ca})(tr_idx)./adj_by;
+                if adj_by > adj_limits(1) && adj_by < adj_limits(2)
+                    
+                    for ca = 1:length(chans_to_adjust)
+                        % adjust entire trial (scale) so that selection is
+                        % equal to calibrate_to
+                        ii_data.(chans_to_adjust{ca})(tr_idx)=ii_data.(chans_to_adjust{ca})(tr_idx)./adj_by;
+                    end
+                    
+                    ii_cfg.calibrate.adj(tt) = 1==1;
+                    
                 end
                 
             else
@@ -210,6 +228,7 @@ if strcmpi(calib_mode,'scale')
             end
             
             % save the ratio used for calibration
+            % (NOTE: still save, even if we don't actually apply this!!!)
             ii_cfg.calibrate.amt(tt,cc) = adj_by;
             
             clear adj_by;

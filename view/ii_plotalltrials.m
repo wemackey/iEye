@@ -1,4 +1,4 @@
-function [ f_han ] = ii_plotalltrials( ii_data,ii_cfg,which_chans,nrows,ncols,epoch_chan,epoch_nums )
+function [ f_han ] = ii_plotalltrials( ii_data,ii_cfg,which_chans,nrows,ncols,epoch_chan,epoch_nums, fig_visible )
 %ii_plotalltrials Plots all trials within ii_data
 %   ii_plotalltrials(ii_data,ii_cfg) plots all trials as subplots within a
 %   new figure if trials have been defined using a default set of plotting
@@ -9,6 +9,9 @@ function [ f_han ] = ii_plotalltrials( ii_data,ii_cfg,which_chans,nrows,ncols,ep
 %
 %   ii_plotalltrials(ii_data,ii_cfg,which_chans,nrows,ncols) plots into
 %   specified subplots, continuing onto multiple figures as necessary
+%
+%   ii_plotalltrials(ii_data,ii_cfg,which_chans,nrows,ncols,0) plots into
+%   an invisible figure(s), to avoid disruption when scripting
 %
 %   [f_han] = ii_plotalltrials(...) returns the handle(s) to figures
 %   created during call to ii_plotalltrials
@@ -62,6 +65,10 @@ if nargin < 7 || isempty(epoch_nums)
     epoch_nums = [];
 end
 
+if nargin < 8 || isempty(fig_visible)
+    fig_visible = 1;
+end
+
 % make sure which_chans exist
 for cc = 1:length(which_chans)
     if ~ismember(which_chans{cc},fieldnames(ii_data))
@@ -83,7 +90,11 @@ f_han = [];
 while trial_cnt <= ii_cfg.numtrials
     
     if rowidx==1 && colidx==1
-        f_han(end+1) = figure;
+        if fig_visible == 1
+            f_han(end+1) = figure;
+        else
+            f_han(end+1) = figure('visible','off');
+        end
         fig_cnt = fig_cnt + 1;
         if nfigs > 1
             set(gcf,'NumberTitle','off','Name',sprintf('%s - %i of %i',fn_fortitle,fig_cnt,nfigs));
