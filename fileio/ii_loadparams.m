@@ -66,6 +66,11 @@ if nargin < 1
     ii_params.show_plots = 0; % whether figures are visible when ii_preproc is run (still saved out)
     
     
+    % saccade extraction params
+    ii_params.extract_sacc_mode_start = 'fixation';
+    ii_params.extract_sacc_mode_end   = 'fixation';
+    
+    
 else
     
     ii_params = load(params_fn);

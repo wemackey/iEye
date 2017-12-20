@@ -108,6 +108,8 @@ end
 % - ii_sacc.idx (idx, into ii_data, of start/end)
 % - ii_sacc.epoch_start
 % - ii_sacc.epoch_end
+% - ii_sacc.<chan>_trace (cell array; full timecourse of that channel from
+%                         beginning to end of saccade)
 
 n_sacc = size(ii_cfg.saccades,1);
 
@@ -119,6 +121,7 @@ ii_sacc.duration    = nan(n_sacc,1);
 ii_sacc.idx         = nan(n_sacc,2); % from beginning to end
 ii_sacc.epoch_start = nan(n_sacc,1);
 ii_sacc.epoch_end   = nan(n_sacc,1);
+
 
 
 % if trial labels present, define them
@@ -153,6 +156,8 @@ for ss = 1:size(ii_cfg.saccades)
         if ss == 1
             ii_sacc.(sprintf('%s_start',which_chans{cc})) = nan(n_sacc,1);
             ii_sacc.(sprintf('%s_end',  which_chans{cc})) = nan(n_sacc,1);
+            
+            ii_sacc.(sprintf('%s_trace',which_chans{cc})) = cell(n_sacc,1);
         end
         
         % START
@@ -194,6 +199,9 @@ for ss = 1:size(ii_cfg.saccades)
             ii_sacc.(sprintf('%s_end',which_chans{cc}))(ss) = nanmean(ii_data.(which_chans{cc})(fixidx));
             clear fixidx;
         end
+        
+        % save out full trace of each channel
+        ii_sacc.(sprintf('%s_trace',which_chans{cc})){ss} = ii_data.(which_chans{cc})(ii_cfg.saccades(ss,1):ii_cfg.saccades(ss,2));
         
     end
   

@@ -161,4 +161,14 @@ ii_cfg.params = ii_params;
 % save ii_data,ii_cfg in _preproc.mat file
 ii_savedata(ii_data,ii_cfg,preproc_fn);
 
+
+% get the saccades
+[ii_data,ii_cfg,ii_sacc] = ii_extractsaccades(ii_data,ii_cfg,{'X','Y'},...
+    ii_params.extract_sacc_mode_start,...
+    ii_params.extract_sacc_mode_end,...
+    ii_params.epoch_chan);
+
+% save the saccades
+ii_savesacc(ii_cfg,ii_sacc,[preproc_fn(1:end-4) '_sacc.mat']);
+
 end
