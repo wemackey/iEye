@@ -42,7 +42,7 @@ if nargin < 3
     which_chans = {'X','Y'};
 end
 
-if length(which_chans)~=2
+if length(which_chans)~=2   
     error('iEye:ii_exctractsaccades:invalidChannels','Must use 2 channels for saccade metric exctraction');
 end
 

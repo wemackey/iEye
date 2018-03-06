@@ -188,9 +188,14 @@ ii_cfg.calibrate.adj = zeros(ii_cfg.numtrials,1)==1; % whether adjustment was pe
 if strcmpi(calib_mode,'scale')
 
     
-    % FIRST: compute amount to adjust    
+    % FIRST: compute amount to adjust
+    
     for cc = 1:length(chan_names)
     
+        % get all channels we want to apply adjustment to (e.g., X_smooth,
+        % X_fix if adjusting X. Will also implement "child" channels in
+        % ii_cfg...
+        chans_to_adjust = { all_fields{ cellfun(@(x) any(x) && x(1)==1 , strfind(all_fields,chan_names{cc} )) } };
 
         for tt = 1:length(tu)
             
@@ -205,6 +210,17 @@ if strcmpi(calib_mode,'scale')
                 % chans_to_adjust within trial by this value
                 adj_by = nanmean(ii_data.(sprintf('%s_fix',chan_names{cc}))(tr_idx & ii_cfg.sel) )/calibrate_to(tt,cc);
                 
+                if adj_by > adj_limits(1) && adj_by < adj_limits(2)
+                    
+                    for ca = 1:length(chans_to_adjust)
+                        % adjust entire trial (scale) so that selection is
+                        % equal to calibrate_to
+                        ii_data.(chans_to_adjust{ca})(tr_idx)=ii_data.(chans_to_adjust{ca})(tr_idx)./adj_by;
+                    end
+                    
+                    ii_cfg.calibrate.adj(tt) = 1==1;
+                    
+                end
                 
             else
                 
@@ -225,41 +241,23 @@ if strcmpi(calib_mode,'scale')
     % THEN, MAKE SURE THOSE ARE IN 'NORMAL' RANGE (for ALL channels), and
     % adjust if necessary
     
-    for cc = 1:length(chan_names)
-    
-        % get all channels we want to apply adjustment to (e.g., X_smooth,
-        % X_fix if adjusting X. Will also implement "child" channels in
-        % ii_cfg...
-        chans_to_adjust = { all_fields{ cellfun(@(x) any(x) && x(1)==1 , strfind(all_fields,chan_names{cc} )) } };
-
-        for tt = 1:length(tu)
-            
-            % get timepoints for this trial
-            tr_idx = ii_cfg.trialvec==tu(tt);
-            
-                % only perform adjustment if ALL channels are within spec
-                if all(ii_cfg.calibrate.amt(tt,:) > adj_limits(1)) && all(ii_cfg.calibrate.amt(tt,:) < adj_limits(2))
-                    
-                    for ca = 1:length(chans_to_adjust)
-                        % adjust entire trial (scale) so that selection is
-                        % equal to calibrate_to
-                        ii_data.(chans_to_adjust{ca})(tr_idx)=ii_data.(chans_to_adjust{ca})(tr_idx)./ii_cfg.calibrate.amt(tt,cc);
-                    end
-                    
-                    ii_cfg.calibrate.adj(tt) = 1==1;
-                    
-                end
-    
-        end
-    
-    end
-    
-    
 elseif strcmpi(calib_mode,'rotate')
 % if rotate, check that there's a xchannel and a ychannel, and assign
 % appropriately
     error('iEye:ii_calibratebytrial:unsupportedCalibMode','Sorry, rotate mode not supported quite yet - stay tuned!');
-        
+    
+    
+    
+    
+    
 end
 
+
+
+
+
+
+
+
 end
+
