@@ -32,6 +32,9 @@ function [ nearest_coord, coord_idx, dist_to_coords ] = ii_nearestcoord( ii_data
 % included in /examples)
 
 % Tommy Sprague, 8/21/2017 (eclipse day)
+%
+% updated 4/3/2018 - now extracts trial number from ii_cfg.trialvec rather
+% than assuming each selection is a consecutive trial
 
 
 % must have 3 inputs, otherwise bail
@@ -39,9 +42,10 @@ if nargin < 3
     error('iEye:ii_nearestcoord:insufficientInputs','Not enough inputs: need ii_data, ii_cfg and list of coords');
 end
 
-% check coords - must have numel equal to number of selections in ii_cfg
-if numel(coords) ~= size(ii_cfg.cursel,1)
-    error('iEye:ii_nearestcoord:nonMatchingCoords','Number of elements of coords (%i) is different from number of selections (%i)',numel(coords),size(cursel,1));
+% We can have more coords than selections, but not more selections than
+% coords
+if numel(coords) < size(ii_cfg.cursel,1)
+    error('iEye:ii_nearestcoord:notEnoughCoords','Number of elements of coords (%i) is smaller than number of selections (%i)',numel(coords),size(cursel,1));
 end
 
 
@@ -59,10 +63,11 @@ if ~ismember(varargin,'nofixation')
     end
 end
 
-% initialize variables
-nearest_coord = nan(size(ii_cfg.cursel,1),2);
-coord_idx = nan(size(ii_cfg.cursel,1),1);
-dist_to_coords = nan(size(ii_cfg.cursel,1),max(cellfun(@numel,coords)));
+% initialize variables - these will be size of coords! NaNs if no selection
+% for that trial
+nearest_coord = nan(numel(coords),2);
+coord_idx = nan(numel(coords),1);
+dist_to_coords = nan(numel(coords),max(cellfun(@numel,coords)));
 
 % loop over selections
 for ss = 1:size(ii_cfg.cursel,1)
@@ -71,14 +76,17 @@ for ss = 1:size(ii_cfg.cursel,1)
     this_fix = [ nanmean(ii_data.(which_chans{1})(ii_cfg.cursel(ss,1):ii_cfg.cursel(ss,2))),...
                  nanmean(ii_data.(which_chans{2})(ii_cfg.cursel(ss,1):ii_cfg.cursel(ss,2)))];
     
+    % trial number for this selection (usually same as idx)
+    this_trial = ii_cfg.trialvec(ii_cfg.cursel(ss,1));
+             
     % distance for each element of coords{ss}
-    this_dist = cellfun(@(c) sqrt((c(1)-this_fix(1)).^2+(c(2)-this_fix(2)).^2),  coords{ss});
+    this_dist = cellfun(@(c) sqrt((c(1)-this_fix(1)).^2+(c(2)-this_fix(2)).^2),  coords{this_trial});
     
     % find closest coord based on minimum distance (idx)
-    [~,coord_idx(ss)] = min(this_dist);
-    dist_to_coords(ss,1:length(this_dist)) = this_dist;
+    [~,coord_idx(this_trial)] = min(this_dist);
+    dist_to_coords(this_trial,1:length(this_dist)) = this_dist;
     
-    nearest_coord(ss,:) = [coords{ss}{coord_idx(ss)}];
+    nearest_coord(this_trial,:) = [coords{this_trial}{coord_idx(this_trial)}];
     
     clear this_fix this_dist;
     
