@@ -185,6 +185,13 @@ ii_cfg.calibrate.amt = nan(ii_cfg.numtrials,length(chan_names));
 ii_cfg.calibrate.adj_limits = adj_limits;
 ii_cfg.calibrate.adj = zeros(ii_cfg.numtrials,1)==1; % whether adjustment was performed on this trial
 
+% add indicator(s) for why a trial wasn't adjusted
+ii_cfg.calibrate.excl_info = cell(ii_cfg.numtrials,1); % fill this in with information about why a trial was excluded
+% codes:
+% - 1: no selected timepoints
+% - 2: at least one channel out of range
+
+
 if strcmpi(calib_mode,'scale')
 
     
@@ -210,7 +217,7 @@ if strcmpi(calib_mode,'scale')
                 
                 warning('iEye:ii_calibratebytrial:noSelectedTimepoints','Trial %i: no selected timepoints; forgoing calibration\n',tu(tt));
                 adj_by = NaN;
-                
+                ii_cfg.calibrate.excl_info{tt}(end+1) = 1;
             end
             
             % save the ratio used for calibration
@@ -247,7 +254,9 @@ if strcmpi(calib_mode,'scale')
                     end
                     
                     ii_cfg.calibrate.adj(tt) = 1==1;
-                    
+                   
+                else
+                    ii_cfg.calibrate.excl_info{tt}(end+1)=2;
                 end
     
         end
