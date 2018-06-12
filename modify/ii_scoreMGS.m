@@ -212,6 +212,12 @@ ii_trial.f_sacc_trace = cell(ii_cfg.numtrials,1);
 
 ii_trial.excl_trial = cell(ii_cfg.numtrials,1);  % why is this trial excluded? each cell includes several markers
 
+
+% let's copy over ii_cfg.trialinfo, if it exists
+if isfield(ii_cfg,'trialinfo')
+    ii_trial.trialinfo = ii_cfg.trialinfo;
+end
+
 % add parameters used for extracting saccades: ii_trial.params (as they
 % were input/sanitized - but, for e.g., targ_coord, not updated [?])
 ii_trial.params.excl_criteria = excl_criteria;
@@ -407,8 +413,6 @@ for aa = 1:length(align_fields)
     clear tmpth tmpr adjth adjr;
     
 end
-
-
 
 
 return
