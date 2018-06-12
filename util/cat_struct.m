@@ -1,14 +1,25 @@
- % cat_struct.m
-%
-% simple utility function that concatenates entries in all compatible
-% fields; recursive to also concatenate sub-structs
-%
-% always vertically concatenates
-%
-% for string fields, creates a cell array
-
-
 function s_combined = cat_struct(s1,s2,skip_fields)
+%cat_struct Combines structures that have the same format by concatenating
+%fields:
+%   [s_combined] = cat_struct(s1,s2) loops over all fields in s2 and
+%   concatenates them with matching fields in s1
+%
+%   [s_combined] = cat_struct(s1,s2,skip_fields) does not apply
+%   concatenation operation to fields with names matching those in
+%   skip_fields
+%
+%   [s_combined] = cat_struct([],s2,...) returns s2 - useful for looping
+%   over a set of structs and concatenating element 1,2, then [1,2],3,etc. 
+%
+% cat_struct is recursive such that it will concatenate sub-structs as
+% well (at present, no support for skipping those fields...)
+%
+% cat_struct always VERTICALLY concatenates; it's assumed that you want to
+% stack data on top of each other.
+%
+% When a field is a string, cat_struct creates a cell array (vertical) of
+% strings
+%
 
 % which fields do we not concatenate (will use s1's values)?
 
