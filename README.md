@@ -6,10 +6,10 @@
 Previous versions of **iEye** worked in a GUI-forward manner, with some automated steps that selected epochs of trials, etc, for further culling by manual inspection. The present version aims to remove all manual interaction entirely. We still use the concept of a 'selection' throughout (this is how saccades/blinks/etc are identified), but I am intentionally not yet implementing the ability to manually override automatic selections. Thus far, this seems to work well, and ensures full reproducibility of analyses from raw files to final figures.
 
 The general workflow when using iEye is:
-- preprocess raw eye data files (typically EDF) and attach relevant behavioral variables
-- compute parameters for all saccades (such as their amplitude, start/end points, etc)
-- find relevant saccades for each trial (primary and final saccades, RTs) based on expected response epochs and known target position(s) 
-- flag trials for possible exclusion based on defined criteria, such as broken fixation, erroneous response, drift/calibration issues, etc
+- preprocess raw eye data files (typically EDF) and attach relevant behavioral variables - ii_preproc.m
+- compute parameters for all saccades (such as their amplitude, start/end points, etc) - ii_exctractsaccades.m
+- find relevant saccades for each trial (primary and final saccades, RTs) based on expected response epochs and known target position(s) - ii_scoreMGS.m
+- flag trials for possible exclusion based on defined criteria, such as broken fixation, erroneous response, drift/calibration issues, etc (also in ii_scoreMGS.m)
 - plot all trials with flags indicating what could be wrong with each trial
 
 Instead of manually editing any single trial, a set of **parameters** can be updated and all data processing can be recomputed. These parameters may be set for individual participants as necessary, but should not be adjusted based on task conditions when possible (all of these automatic plots intentionally obscure information about task condition when possible to maximally blind experimenter)
@@ -25,9 +25,11 @@ Updated version will no longer use base variables - all data will be encapsualte
 
 **ii_sacc** - information about each saccade detected from ii_data, so each field of ii_sacc has size(ii_cfg.saccades,1) elements
 
+**ii_trial** - information about primary/final saccades extracted from each trial; uses previously-extractd saccades 
+
 Our goal will be to convert timeseries data into scores, via preprocessing operations, then saccade sorting operations, then scoring operations. All of which operate on these structures, and GUIs must all update these structures, and update plots according to updated data within these structures (approx model/view/controller design, but not quite).
 
-Conversion from ii_data to ii_sacc should occur **only** at the very end of all preprocessing, once no further data cleaning is necessary. This is because any changes to ii_data are NOT echoed to ii_sacc at present, and so they can easily become out-of-sync.
+Conversion from ii_data to ii_sacc should occur **only** at the very end of all preprocessing, once no further data cleaning is necessary. This is because any changes to ii_data are NOT echoed to ii_sacc at present, and so they can easily become out-of-sync. Same for scoring of ii_sacc, which converts it to ii_trial. 
 
 
 
