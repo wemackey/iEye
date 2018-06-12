@@ -1,4 +1,4 @@
-function [ii_trial,ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc,targ_coords,resp_epoch,fix_epoch,excl_criteria,save_chans,score_mode)
+function [ii_trial,ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc,targ_coords,resp_epoch,fix_epoch,excl_criteria,save_chans,score_mode,align_to)
 %ii_scoreMGS Extract typical parameters from each trial of an MGS dataset:
 % - primary saccade: first saccade, exceeding some amplitude threshold,
 %   after a response cue in the direction of one or more target positions
@@ -20,6 +20,12 @@ function [ii_trial,ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc,targ_coords,resp
 % - excl_trial: structure listing several exclusion criterion applying to
 %   drift correction, epochs that are considered 'fixation', calibration
 %   criteria, etc. 
+% - i/f_sacc_trace: cell array (n_trials x 1) with trace of initial/final
+%   saccade through time, beginning at i_sacc_rt
+% - i/f_sacc_err: euclidean distance between first target and endpoint of
+%   initial/final saccade
+% - targ: n_trials x 2, extracted (or input) target coordinates for X,Y on 
+%   each trial
 %
 % Because ii_data, ii_sacc are not modified, we won't return them here.
 %
@@ -66,6 +72,12 @@ function [ii_trial,ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc,targ_coords,resp
 % whether a scored saccade must begin AND end during indicated epoch(s)
 % ('strict'), or just begin ('lenient'). Default is 'strict'.
 %
+% [ii_trial, ii_cfg] =
+% ii_scoreMGS(ii_data,ii_cfg,ii_sacc,[],[],[],[],[],[],align_to) aligns
+% i_sacc_raw and f_sacc_raw to coordinate in align_to (1x2). if absent,
+% aligns only based on polar angle, DOES NOT adjust ecc!!! If input for X 
+% is nan, also does not adjust ecc. (default: [NaN 0])
+%
 % Examples:
 % TODO
 %
@@ -76,6 +88,8 @@ function [ii_trial,ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc,targ_coords,resp
 %   called from here, but let's assume it's already been called
 % - asusming coordinate pairs: X,Y (no support for 1D or 3D, etc, coords) -
 %   this is consistent with ii_extractsaccades
+% - for aligning all targets, do we want to scale in polar coords, or
+%   translate in cartesian? [discuss!]
 %
 %
 % Tommy Sprague, 6/11/2018 - adapted from individual study
@@ -91,8 +105,6 @@ end
 % if targ_coords empty, use TarX, TarY
 if nargin < 4 || isempty(targ_coords)
     targ_coords = {'TarX','TarY'};
-%elseif % if targ_coords already defined, first check to be sure it's either some multiple of n_trials long, or same size as # of channels used for ii_sacc
-    % TODO:
 end
 
 % if no response epoch defined:
@@ -131,7 +143,7 @@ end
     
 excl_fields = fields(excl_default);
 for ee = 1:length(excl_fields)
-    if ~ismember(fields(excl_criteria),excl_fields{ee})
+    if ~ismember(excl_fields{ee},fields(excl_criteria))
         excl_criteria.(excl_fields{ee}) = excl_default.(excl_fields{ee});
     end
 end
@@ -146,6 +158,9 @@ elseif ~ismember(score_mode,{'strict','lenient'})
     error('iEye:ii_scoreMGS:invalidMode','Only strict and lenient allowed as score_mode inputs');
 end
 
+if nargin < 10 || isempty(align_to)
+    align_to = [NaN 0];
+end
 
 
 %% Figure out which channels we're looking at
@@ -155,6 +170,7 @@ end
 % bit ugly below, but cellfun's weren't working the way I wanted)
 tmp_fields = fields(ii_sacc);
 tmp_idx = find(cellfun(@any,strfind(tmp_fields,'_trace')));
+which_chans = cell(length(tmp_idx),1);
 for cc = 1:length(tmp_idx)
     which_chans{cc} = tmp_fields{tmp_idx(cc)}(1:(strfind(tmp_fields{tmp_idx(cc)},'_trace')-1));
 end
@@ -199,10 +215,11 @@ ii_trial.excl_trial = cell(ii_cfg.numtrials,1);  % why is this trial excluded? e
 % add parameters used for extracting saccades: ii_trial.params (as they
 % were input/sanitized - but, for e.g., targ_coord, not updated [?])
 ii_trial.params.excl_criteria = excl_criteria;
-ii_trial.params.resp_epoch = resp_epoch;
-ii_trial.params.fix_epoch  = fix_epoch;
+ii_trial.params.resp_epoch  = resp_epoch;
+ii_trial.params.fix_epoch   = fix_epoch;
 ii_trial.params.targ_coords = targ_coords;
-ii_trial.params.save_chan = save_chan;
+ii_trial.params.save_chans  = save_chans;
+ii_trial.params.score_mode  = score_mode;
 
 
 %% extract targ_coords for each trial
@@ -214,11 +231,13 @@ if size(targ_coords,1)==ii_cfg.numtrials && size(targ_coords,2) == 2
     targ_coords_extracted = targ_coords;
 
 % if a cell, then we need to look in ii_data at these fields for each trial
+% we assume that the target coordinate is given by the epoch immediately
+% after the end of the response epoch (resp_epoch(end)+1)
 % always takes the mode - so uses whatever is present during resp_epoch of
 % this channel most commonly (to account for mis-sampling, etc)
 elseif iscell(targ_coords)
     for tt = 1:ii_cfg.numtrials
-        thisidx = ii_cfg.trialvec==tt & ismember(ii_data.XDAT,resp_epoch);
+        thisidx = ii_cfg.trialvec==tt & ismember(ii_data.XDAT,resp_epoch(end)+1);
         for cc = 1:length(targ_coords)
             targ_coords_extracted(tt,cc) = mode(ii_data.(targ_coords{cc})(thisidx));
         end
@@ -234,22 +253,154 @@ else
     error('iEye:ii_scoreMGS:invalidInput','Invalid input for targ_coords: input should be a pair of channels (cell array of strings), list of coordinates (numtrials x 2), or pair of columns into ii_cfg.trialinfo');
 end
 
+% save these in ii_trial as ii_trial.targ
+ii_trial.targ = targ_coords_extracted;
 
 
 
+% get idx saccades to look at (those that start [end] in resp_epoch), and
+% corresponding trial index
+if strcmpi(score_mode,'strict')
+    which_sacc = find(ismember(ii_sacc.epoch_start,resp_epoch) & ismember(ii_sacc.epoch_end,resp_epoch));
+elseif strcmpi(score_mode','lenient')
+    % if lenient, just needs to start in this epoch
+    which_sacc = find(ismember(ii_sacc.epoch_start,resp_epoch));
+end
+
+which_trials = ii_sacc.trial_start(which_sacc); % trial number for each saccade in which_sacc
 
 %% loop over trials
 for tt = 1:ii_cfg.numtrials
     
     % save the data from each channel from each trial
     for chan_idx = 1:length(save_chans)
-        ii_trial.(save_chans{chan_idx}){thisidx(tt)} = ii_data.(save_chans{chan_idx})(ii_cfg.trialvec==tt);
+        ii_trial.(save_chans{chan_idx}){tt} = ii_data.(save_chans{chan_idx})(ii_cfg.trialvec==tt);
     end
     
     % time that relevant epoch of trial started
-    t_start = find(ii_cfg.trialvec==tt & ismember(ii_data.XDAT,resp_epoch) ,1,'first')/this_cfg.hz; %CHECK
+    t_start = find(ii_cfg.trialvec==tt & ismember(ii_data.XDAT,resp_epoch) ,1,'first')/ii_cfg.hz; 
+    
+    %% score saccades: find primary/initial; final saccade
+    
+    % all saccades that started (and ended?) in resp_epoch on this trial
+    this_i_sacc = which_sacc(which_trials==tt);
+    
+    % extract amplitude of each of these
+    this_i_amp = ii_sacc.amplitude(this_i_sacc);
+    this_i_dur = ii_sacc.duration(this_i_sacc);
+    
+    
+    % if amplitude too small or duration too short (for ALL
+    % saccades in response epoch
+    
+    % first, if no saccade detected (if i_sacc is empty),
+    % record as "20" - no identified saccades (whatosever!)
+    if isempty(this_i_sacc)
+        ii_trial.excl_trial{tt}(end+1) = 20; % no saccades identified in response epoch
+    elseif ~any(this_i_dur<=excl_criteria.i_dur_thresh & this_i_amp>=excl_criteria.i_amp_thresh)  % if none of the saccades pass the amplitude & duration criteria
+        ii_trial.excl_trial{tt}(end+1) = 21; % none of the identified saccades (>0) passed exclusion criteria for primary saccade
+    else
+        % ok, now we can use the first of the saccades that do
+        % pass exclusion criteria as the 'primary' saccade
+        
+        % find the first of this_i_sacc for which amp & dur
+        % pass threshold
+        this_i_sacc = this_i_sacc(this_i_amp>=excl_criteria.i_amp_thresh & this_i_dur <= excl_criteria.i_dur_thresh);
+        
+        % just index into the first element of this_i_sacc... [TODO: use
+        % which_chan to compute this....]
+        ii_trial.i_sacc_raw(tt,:) = [ii_sacc.X_end(this_i_sacc(1)) ii_sacc.Y_end(this_i_sacc(1))];
+        ii_trial.i_sacc_rt(tt) = ii_sacc.t(this_i_sacc(1),1)-t_start;
+        ii_trial.i_sacc_trace{tt} = [ii_sacc.X_trace{this_i_sacc(1)} ii_sacc.Y_trace{this_i_sacc(1)}];
+        
+    end
+    clear this_i_amp this_i_dur;
+    
+    % same for final sacc
+    this_f_sacc = which_sacc(find(which_trials==tt,1,'last'));
+    if ~isempty(this_f_sacc)
+        ii_trial.f_sacc_raw(tt,:) = [ii_sacc.X_end(this_f_sacc) ii_sacc.Y_end(this_f_sacc)];
+        ii_trial.f_sacc_rt(tt) = ii_sacc.t(this_f_sacc,1)-t_start;
+        ii_trial.f_sacc_trace{tt} = [ii_sacc.X_trace{this_f_sacc} ii_sacc.Y_trace{this_f_sacc}];
+    end
+    
+    % count saccades in this trial during relevant epoch AFTER
+    % primary saccade, up to and including final saccade
+    
+    % first saccade: primary
+    
+    % last saccade: final
+    
+    % so, I think we just need the length of i_sacc:f_sacc
+    if ~isempty(this_i_sacc) && ~isempty(this_f_sacc)
+        % in most cases, we'll identify both i_sacc & f_sacc -
+        % use this algo
+        ii_trial.n_sacc(tt) = length(this_i_sacc:this_f_sacc);
+    else
+        % if either of them is undefined (or both), this will
+        % give us the # of saccades: 1 if only i_sacc or only
+        % f_sacc, 0 if neither
+        ii_trial.n_sacc(tt) = sum([~isempty(this_i_sacc) ~isempty(this_f_sacc)]);
+    end
 
+    %% trial exclusions: find reasons we may want to exclude each trial
+    
+    % ~~~~~ FIRST: exclude based on trial-level features (see above)
+    
+    % DRIFT CORRECTION TOO BIG
+    if sqrt(sum(ii_cfg.drift.amt(tt,:).^2)) > excl_criteria.drift_thresh
+        ii_trial.excl_trial{tt}(end+1) = 11;
+    end
+    
+    % CALIBRATION OUTSIDE OF RANGE
+    if ii_cfg.calibrate.adj(tt)~=1
+        ii_trial.excl_trial{tt}(end+1) = 12;
+    end
+    
+    % DURING DELAY, FIXATION OUTSIDE OF RANGE
+    
+    % find fixations in this trial; epoch [TODO: make sure I'm using the
+    % right channels here!!]
+    this_fix_idx = ii_cfg.trialvec==tt & ismember(ii_data.XDAT,fix_epoch);
+    if max(sqrt(ii_data.X_fix(this_fix_idx).^2+ii_data.Y_fix(this_fix_idx).^2)) > excl_criteria.delay_fix_thresh
+        ii_trial.excl_trial{tt}(end+1) = 13;
+    end
+    
+    % I_SACC ERROR TOO HIGH (use targ_coords_extracted)
+    if ~isempty(this_i_sacc)
+        if sqrt(sum((ii_trial.i_sacc_raw(tt,:)-targ_coords_extracted(tt,:)).^2,2)) > ...
+                excl_criteria.i_err_thresh
+            ii_trial.excl_trial{tt}(end+1) = 22;
+        end
+    end
+    
+    clear this_i_sacc this_f_sacc;
+    
+    
 end
+
+%% compute error for initial, final saccade based on extracted targ coords
+% error for initial (note: mean absolute error..)
+ii_trial.i_sacc_err = sqrt(sum((ii_trial.i_sacc_raw-targ_coords_extracted).^2,2));
+
+% error for final
+ii_trial.f_sacc_err = sqrt(sum((ii_trial.f_sacc_raw-targ_coords_extracted).^2,2));
+
+
+%% rotate all trials such that i_sacc, f_sacc aligned to targ
+
+% rotate all so that i_sacc, f_sacc are at known position... (align_to)
+[tmpth,tmpr] = cart2pol(ii_trial.i_sacc_raw(:,1),  ii_trial.i_sacc_raw(:,2));
+[adjth,adjr] = cart2pol(targ_coords_extracted(:,1),targ_coords_extracted(:,2));
+tmpth = tmpth - adjth;  % TOD
+[ii_trial.i_sacc(:,1),ii_trial.i_sacc(:,2)] = pol2cart(tmpth,tmpr);
+clear tmpth tmpr;
+
+[tmpth,tmpr] = cart2pol(ii_trial.f_sacc_raw(:,1),ii_trial.f_sacc_raw(:,2));
+tmpth = tmpth - deg2rad(thisbehav.c_map(:,1));
+[ii_trial.f_sacc(:,1),ii_trial.f_sacc(:,2)] = pol2cart(tmpth,tmpr);
+clear tmpth tmpr;
+
 
 
 return
