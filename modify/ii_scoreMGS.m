@@ -357,14 +357,14 @@ for tt = 1:ii_cfg.numtrials
     % run!
     
     % DRIFT CORRECTION TOO BIG
-    if isfield(ii_cfg.drift)
+    if isfield(ii_cfg,'drift')
         if sqrt(sum(ii_cfg.drift.amt(tt,:).^2)) > excl_criteria.drift_thresh
             ii_trial.excl_trial{tt}(end+1) = 11;
         end
     end
     
     % CALIBRATION OUTSIDE OF RANGE
-    if isfield(ii_cfg.calibrate)
+    if isfield(ii_cfg,'calibrate')
         if ii_cfg.calibrate.adj(tt)~=1
             ii_trial.excl_trial{tt}(end+1) = 12;
         end
