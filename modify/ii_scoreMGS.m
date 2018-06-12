@@ -353,14 +353,21 @@ for tt = 1:ii_cfg.numtrials
     
     % ~~~~~ FIRST: exclude based on trial-level features (see above)
     
+    % note: only reject trials based on these criteria if those steps were
+    % run!
+    
     % DRIFT CORRECTION TOO BIG
-    if sqrt(sum(ii_cfg.drift.amt(tt,:).^2)) > excl_criteria.drift_thresh
-        ii_trial.excl_trial{tt}(end+1) = 11;
+    if isfield(ii_cfg.drift)
+        if sqrt(sum(ii_cfg.drift.amt(tt,:).^2)) > excl_criteria.drift_thresh
+            ii_trial.excl_trial{tt}(end+1) = 11;
+        end
     end
     
     % CALIBRATION OUTSIDE OF RANGE
-    if ii_cfg.calibrate.adj(tt)~=1
-        ii_trial.excl_trial{tt}(end+1) = 12;
+    if isfield(ii_cfg.calibrate)
+        if ii_cfg.calibrate.adj(tt)~=1
+            ii_trial.excl_trial{tt}(end+1) = 12;
+        end
     end
     
     % DURING DELAY, FIXATION OUTSIDE OF RANGE

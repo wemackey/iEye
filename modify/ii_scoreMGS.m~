@@ -212,6 +212,12 @@ ii_trial.f_sacc_trace = cell(ii_cfg.numtrials,1);
 
 ii_trial.excl_trial = cell(ii_cfg.numtrials,1);  % why is this trial excluded? each cell includes several markers
 
+
+% let's copy over ii_cfg.trialinfo, if it exists
+if isfield(ii_cfg,'trialinfo')
+    ii_trial.trialinfo = ii_cfg.trialinfo;
+end
+
 % add parameters used for extracting saccades: ii_trial.params (as they
 % were input/sanitized - but, for e.g., targ_coord, not updated [?])
 ii_trial.params.excl_criteria = excl_criteria;
@@ -347,14 +353,20 @@ for tt = 1:ii_cfg.numtrials
     
     % ~~~~~ FIRST: exclude based on trial-level features (see above)
     
+    % note: only reject trials based on t
+    
     % DRIFT CORRECTION TOO BIG
-    if sqrt(sum(ii_cfg.drift.amt(tt,:).^2)) > excl_criteria.drift_thresh
-        ii_trial.excl_trial{tt}(end+1) = 11;
+    if isfield(ii_cfg.drift)
+        if sqrt(sum(ii_cfg.drift.amt(tt,:).^2)) > excl_criteria.drift_thresh
+            ii_trial.excl_trial{tt}(end+1) = 11;
+        end
     end
     
     % CALIBRATION OUTSIDE OF RANGE
-    if ii_cfg.calibrate.adj(tt)~=1
-        ii_trial.excl_trial{tt}(end+1) = 12;
+    if isfield(ii_cfg.calibrate)
+        if ii_cfg.calibrate.adj(tt)~=1
+            ii_trial.excl_trial{tt}(end+1) = 12;
+        end
     end
     
     % DURING DELAY, FIXATION OUTSIDE OF RANGE
@@ -389,18 +401,24 @@ ii_trial.f_sacc_err = sqrt(sum((ii_trial.f_sacc_raw-targ_coords_extracted).^2,2)
 
 %% rotate all trials such that i_sacc, f_sacc aligned to targ
 
-% rotate all so that i_sacc, f_sacc are at known position... (align_to)
-[tmpth,tmpr] = cart2pol(ii_trial.i_sacc_raw(:,1),  ii_trial.i_sacc_raw(:,2));
-[adjth,adjr] = cart2pol(targ_coords_extracted(:,1),targ_coords_extracted(:,2));
-tmpth = tmpth - adjth;  % TOD
-[ii_trial.i_sacc(:,1),ii_trial.i_sacc(:,2)] = pol2cart(tmpth,tmpr);
-clear tmpth tmpr;
+align_fields = {'i_sacc','f_sacc'}; % use these_raw, align them
 
-[tmpth,tmpr] = cart2pol(ii_trial.f_sacc_raw(:,1),ii_trial.f_sacc_raw(:,2));
-tmpth = tmpth - deg2rad(thisbehav.c_map(:,1));
-[ii_trial.f_sacc(:,1),ii_trial.f_sacc(:,2)] = pol2cart(tmpth,tmpr);
-clear tmpth tmpr;
-
+for aa = 1:length(align_fields)
+    
+    % rotate all so that i_sacc, f_sacc are at known position... (align_to)
+    [tmpth,tmpr] = cart2pol(ii_trial.(sprintf('%s_raw',align_fields{aa}))(:,1),  ii_trial.(sprintf('%s_raw',align_fields{aa}))(:,2));
+    [adjth,adjr] = cart2pol(targ_coords_extracted(:,1),targ_coords_extracted(:,2)); % for now, we don't use radius here for anything...
+    tmpth = tmpth - adjth;  % TODO: use align_to?
+    [ii_trial.(align_fields{aa})(:,1),ii_trial.(align_fields{aa})(:,2)] = pol2cart(tmpth,tmpr);
+    
+    % adjust x if align_to is not nan [NOTE: this is a translation, not a
+    % scaling]
+    if ~isnan(align_to(1))
+        ii_trial.(align_fields{aa})(:,1) = ii_trial.(align_fields{aa})(:,1) - (adjr-align_to(1));
+    end
+    clear tmpth tmpr adjth adjr;
+    
+end
 
 
 return

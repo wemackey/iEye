@@ -1,7 +1,11 @@
-function ii_preproc(edf_fn,cfg_fn,preproc_fn,ii_params,trialinfo)
+function [ii_data,ii_cfg,ii_sacc] = ii_preproc(edf_fn,cfg_fn,preproc_fn,ii_params,trialinfo,skip_steps)
 % ii_preproc Performs default pre-processing stream
 %
 % new functionality - TODO.
+%
+% skip_steps: for now, only optional steps are drift-correction ('drift') and
+% calibration ('calibration') - when it comes time to do those steps, don't
+% execute them if ismember(skip_steps,those)
 %
 % Tommy Sprague, 8/20/2017
 
@@ -22,12 +26,15 @@ if ischar(ii_params)
     ii_params = ii_loadparams(ii_params);
 end
 
+if nargin < 6 || isempty(skip_steps)
+    skip_steps = {}; % don't skip anything!
+end
+
 
 % import data
 [ii_data,ii_cfg] = ii_import_edf(edf_fn,cfg_fn,[edf_fn(1:end-4) '_iEye.mat']);
 
-% Show only the channels we care about at the moment
-%ii_view_channels('X,Y,TarX,TarY,XDAT');
+
 
 % rescale X, Y based on screen info
 [ii_data,ii_cfg] = ii_rescale(ii_data,ii_cfg,{'X','Y'},ii_params.resolution,ii_params.ppd);
@@ -81,17 +88,19 @@ end
 [ii_data,ii_cfg] = ii_findfixations(ii_data,ii_cfg,{'X','Y'},ii_params.fixation_mode);
 
 
-% select the last fixation of pre-target epochs
-[ii_data,ii_cfg] = ii_selectfixationsbytrial( ii_data, ii_cfg, ii_params.epoch_chan,...
-    ii_params.drift_epoch, ii_params.drift_fixation_mode );
+% select the fixation used for drift correction
+if ~ismember('drift',skip_steps)
+
+    [ii_data,ii_cfg] = ii_selectfixationsbytrial( ii_data, ii_cfg, ii_params.epoch_chan,...
+        ii_params.drift_epoch, ii_params.drift_fixation_mode );
 
 
 % use those selections to drift-correct each trial (either using the
 % fixation value, which may include timepoints past end of epoch, or using
 % 'raw' or 'smoothed' data on each channel)
-[ii_data,ii_cfg] = ii_driftcorrect(ii_data,ii_cfg,{'X','Y'},ii_params.drift_select_mode,...
-    ii_params.drift_target);
-
+    [ii_data,ii_cfg] = ii_driftcorrect(ii_data,ii_cfg,{'X','Y'},ii_params.drift_select_mode,...
+        ii_params.drift_target);
+end
 
 
 % add trial info [not explicitly necessary if simple experiment, TarX &
@@ -114,23 +123,20 @@ end
 % by a channel or a pair of cols in ii_cfg.trialinfo
 
 % first, select relevant epochs (should be one selection per trial)
-% FOR LAST FIXATION ON THAT TRIAL
-%[ii_data,ii_cfg] = ii_selectfixationsbytrial(ii_data,ii_cfg,ii_params.epoch_chan,...
-%    ii_params.calibrate_epoch,ii_params.calibrate_select_mode,ii_params.calibrate_window); % 
 
-% FOR SPECIFIED TARGETS/NEAREST FIXATION SELECTION
-[ii_data,ii_cfg] = ii_selectfixationsbytrial(ii_data,ii_cfg,ii_params.epoch_chan,...
-    ii_params.calibrate_epoch,ii_params.calibrate_select_mode,ii_params.calibrate_window,...
-    ii_params.calibrate_target,{'X_fix','Y_fix'}); % 
-
-
-% then, calibrate by trial
-% FOR LAST MODE
-% ii_calibratebytrial.m
-[ii_data,ii_cfg] = ii_calibratebytrial(ii_data,ii_cfg,{'X','Y'},...
-   ii_params.calibrate_target,ii_params.calibrate_mode, ii_params.calibrate_limits);
-
-
+if ~ismember('calibration',skip_steps)
+    % FOR SPECIFIED TARGETS/NEAREST FIXATION SELECTION
+    [ii_data,ii_cfg] = ii_selectfixationsbytrial(ii_data,ii_cfg,ii_params.epoch_chan,...
+        ii_params.calibrate_epoch,ii_params.calibrate_select_mode,ii_params.calibrate_window,...
+        ii_params.calibrate_target,{'X_fix','Y_fix'}); %
+    
+    
+    % then, calibrate by trial
+    % FOR LAST MODE
+    % ii_calibratebytrial.m
+    [ii_data,ii_cfg] = ii_calibratebytrial(ii_data,ii_cfg,{'X','Y'},...
+        ii_params.calibrate_target,ii_params.calibrate_mode, ii_params.calibrate_limits);
+end
 
 % plot all these - make sure they're good
 f_all = ii_plotalltrials(ii_data,ii_cfg,{'X','Y'},[],[],ii_params.epoch_chan,ii_params.plot_epoch,ii_params.show_plots);
