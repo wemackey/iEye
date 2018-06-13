@@ -264,8 +264,7 @@ if strcmpi(calib_mode,'scale')
             tr_idx = ii_cfg.trialvec==tu(tt);
             
                 % only perform adjustment if ALL channels are within spec
-                %if all(ii_cfg.calibrate.amt(tt,:) > adj_limits(1)) && all(ii_cfg.calibrate.amt(tt,:) < adj_limits(2))
-                if ii_cfg.calibrate.err(tt) <= adj_limit 
+                if ii_cfg.calibrate.err(tt) <= adj_limit && ii_cfg.calibrate.err(tt) > eps % only calibrate if within distnace, but > 0 
                 
                 % only perform adjustment if, across channels, the error is
                 % within spec (ii_cfg.calibrate.err(tt) <= adj_limits)
@@ -278,7 +277,11 @@ if strcmpi(calib_mode,'scale')
                     ii_cfg.calibrate.adj(tt) = 1==1;
                    
                 else
-                    ii_cfg.calibrate.excl_info{tt}(end+1)=2;
+                    if ii_cfg.calibrate.err(tt) >= adj_limit
+                        ii_cfg.calibrate.excl_info{tt}(end+1)=2;
+                    else
+                        ii_cfg.calibrate.excl_info{tt}(end+1)=3; % no adj after feedback
+                    end
                 end
     
         end
