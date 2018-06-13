@@ -30,7 +30,7 @@ function [fh] = ii_plotQC_exclusions(ii_trial,ii_cfg,which_excl,fig_visible)
 %
 % NOTE: ii_cfg not used in this function...
 %
-% TODO: auto-figure-pos
+% TODO: auto-figure-pos: 155 pix per subplot wide, 375 pix per subplot tall
 %
 % Tommy Sprague, 6/12/2018
 
@@ -146,6 +146,18 @@ end
 
 set(get(fh,'Children'),'TickDir','out','LineWidth',1.5,'FontSize',14);
 
+% see above - use this to auto-position figure [on iMac: todo: do this w/
+% normalized units!!!]
+fig_height = this_nrows * 375/1440; % to normalized units
+fig_width  = this_ncols * 155/2560;
+
+% center: (note: matlab defines bottom left corner as 1,1 for monitor and
+% figure)
+%tmp_scr = get(groot,'MonitorPositions');
+fig_center = [0.5 0.5];
+fig_pos = [fig_center - [fig_width fig_height]*0.5 fig_width fig_height];
+set(gcf,'Units','Normalized');
+set(gcf,'Position',fig_pos);
 
 %% plot overall trial exclusions
 %

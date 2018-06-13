@@ -96,6 +96,12 @@ function [ii_trial,ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc,targ_coords,resp
 %   saccade; trial number if it's either of those (useful for plotting main
 %   sequences later on)
 %
+% TRIAL EXCLUSION CODES:
+% first-digit:
+% - 1 - trial-level exclusion (bad drift correction [11], calibration [12], or delay-
+%       fixation break [13]
+% - 2 - primary saccade exclusion (no primary sacc [20]; too small/short [21], large error [22])
+%
 %
 % Tommy Sprague, 6/11/2018 - adapted from individual study
 % _extractSaccadeData scripts (e.g., MGSMap_extractSaccadeData)
@@ -134,7 +140,7 @@ end
 
 excl_default.i_dur_thresh = 150; % must be shorter than 150 ms
 excl_default.i_amp_thresh = 5;   % must be longer than 5 dva [if FIRST saccade in denoted epoch is not at least this long and at most this duration, drop the trial]
-excl_default.i_err_thresh = 2.5;   % i_sacc must be within this many DVA of target pos to consider the trial
+excl_default.i_err_thresh = 5;   % i_sacc must be within this many DVA of target pos to consider the trial
 
 excl_default.drift_thresh = 2.5;     % if drift correction norm is this big or more, drop
 excl_default.delay_fix_thresh = 2.5; % if any fixation is this far from 0,0 during delay (epoch 3)
@@ -214,6 +220,17 @@ ii_trial.f_sacc_rt = nan(ii_cfg.numtrials,1);
 
 ii_trial.i_sacc_trace = cell(ii_cfg.numtrials,1);
 ii_trial.f_sacc_trace = cell(ii_cfg.numtrials,1);
+
+% save some calibration, drift correction info for convenience
+if isfield(ii_cfg,'calibrate')
+    ii_trial.calib_amt = ii_cfg.calibrate.amt;
+    ii_trial.calib_adj = ii_cfg.calibrate.adj;
+    ii_trial.calib_err = ii_cfg.calibrate.err;
+end
+
+if isfield(ii_cfg,'drift')
+    ii_trial.drift_amt = ii_cfg.drift.amt;
+end
 
 ii_trial.excl_trial = cell(ii_cfg.numtrials,1);  % why is this trial excluded? each cell includes several markers
 
