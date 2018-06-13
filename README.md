@@ -1,5 +1,8 @@
 # iEye: open-source oculomotor preprocessing and visualization toolbox for MATLAB/Octave
 
+
+![Example traces](examples/exfmri_r01_preproc_timeseries.png "Example timeseries")
+
 ## Goals
 **iEye** is a set of *command line* functions built to translate data from 'raw' format (typically, EDF files) into scored responses on each trial. Typically, we use these functions for memory-guided saccade (MGS) tasks, in which each trial requires ~1 eye movement at a specified time to one of a small number of specified locations. Accordingly, most functions (especially 'scoring' functions) are written with this use case in mind.
 
@@ -37,6 +40,15 @@ To import EDF files, you'll need the Eyelink SDK installed, and know the path to
 `setpref('iEye_ts','edf2asc_path','/Where/my/binary/lives')`
 
 The most verbose example scripts to check out are **example_preproc.m**, which implements a 'custom' version of preprocessing, and **example_anlaysis.m**, which goes through a standardized preprocessing procedure (using ii_preproc), standardized scoring, QC, and simple plotting/analysis. These scripts are meant to act as 'recipes' you can use to set up your own workflows. See documentation, especially, for example_anlaysis.m
+
+## Plotting utilities
+If data is kept in the ii_data,ii_cfg set of structs, then full runs can easily be plotted with one of several plotting utilities:
+
+- `ii_plottimeseries(ii_data,ii_cfg)` - plots the full timeseries of a run. Can provide which channels you'd like to see (`ii_plottimeseries(ii_data,ii_cfg,{'X','TarX'})`, etc); can be used at any time during preprocessing to examine data and should intelligently plot selections, trial breaks, epochs, saccades, fixations, etc. ![Example traces](examples/exfmri_r01_preproc_timeseries.png "Example timeseries")
+
+- `ii_plotalltrials(ii_data,ii_cfg)` - plots traces from each trial of a run for easy examination to be sure fixations are being correctly scored. Can specify which epochs to plot if necessary. ![example trials](examples/exfmri_r01_preproc.png)
+
+- `ii_plotalltrials2d(ii_data,ii_cfg)` - plots traces from each trial in 2D coordinates (X,Y), along with fixations (circles) ![2d traces](examples/example_run.png)
 
 
 ## Disclaimer
