@@ -34,9 +34,9 @@ Conversion from ii_data to ii_sacc should occur **only** at the very end of all 
 
 ## Getting started
 To import EDF files, you'll need the Eyelink SDK installed, and know the path to your edf2asc binary file. With a typical installation on OSX, the binary file ends up in /Applications/Eyelink/EDF_Access_API/Example. When running preprocessing, etc, the first file that's run is ii_init - this looks for a preference variable called edf2asc_path and ensure this is added to the system path. If that preference is not defined, we default to the Curtis lab setup, where a private edf2asc binary is installed. This *will not* work in outside setups, so be sure to set the edf2asc path variable like:
-setpref('iEye_ts','edf2asc_path','/Where/my/binary/lives')
+`setpref('iEye_ts','edf2asc_path','/Where/my/binary/lives')`
 
-The most verbose example scripts to check out are example_preproc.m, which implements a 'custom' version of preprocessing, and example_anlaysis.m, which goes through a standardized preprocessing procedure (using ii_preproc), standardized scoring, QC, and simple plotting/analysis. These scripts are meant to act as 'recipes' you can use to set up your own workflows. See documentation, especially, for example_anlaysis.m
+The most verbose example scripts to check out are **example_preproc.m**, which implements a 'custom' version of preprocessing, and **example_anlaysis.m**, which goes through a standardized preprocessing procedure (using ii_preproc), standardized scoring, QC, and simple plotting/analysis. These scripts are meant to act as 'recipes' you can use to set up your own workflows. See documentation, especially, for example_anlaysis.m
 
 
 ## Disclaimer
