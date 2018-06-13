@@ -1,5 +1,8 @@
 # iEye: open-source oculomotor preprocessing and visualization toolbox for MATLAB/Octave
 
+
+![Example traces](examples/exfmri_r01_preproc_timeseries.png "Example timeseries")
+
 ## Goals
 **iEye** is a set of *command line* functions built to translate data from 'raw' format (typically, EDF files) into scored responses on each trial. Typically, we use these functions for memory-guided saccade (MGS) tasks, in which each trial requires ~1 eye movement at a specified time to one of a small number of specified locations. Accordingly, most functions (especially 'scoring' functions) are written with this use case in mind.
 
@@ -34,9 +37,18 @@ Conversion from ii_data to ii_sacc should occur **only** at the very end of all 
 
 ## Getting started
 To import EDF files, you'll need the Eyelink SDK installed, and know the path to your edf2asc binary file. With a typical installation on OSX, the binary file ends up in /Applications/Eyelink/EDF_Access_API/Example. When running preprocessing, etc, the first file that's run is ii_init - this looks for a preference variable called edf2asc_path and ensure this is added to the system path. If that preference is not defined, we default to the Curtis lab setup, where a private edf2asc binary is installed. This *will not* work in outside setups, so be sure to set the edf2asc path variable like:
-setpref('iEye_ts','edf2asc_path','/Where/my/binary/lives')
+`setpref('iEye_ts','edf2asc_path','/Where/my/binary/lives')`
 
-The most verbose example scripts to check out are example_preproc.m, which implements a 'custom' version of preprocessing, and example_anlaysis.m, which goes through a standardized preprocessing procedure (using ii_preproc), standardized scoring, QC, and simple plotting/analysis. These scripts are meant to act as 'recipes' you can use to set up your own workflows. See documentation, especially, for example_anlaysis.m
+The most verbose example scripts to check out are **example_preproc.m**, which implements a 'custom' version of preprocessing, and **example_anlaysis.m**, which goes through a standardized preprocessing procedure (using ii_preproc), standardized scoring, QC, and simple plotting/analysis. These scripts are meant to act as 'recipes' you can use to set up your own workflows. See documentation, especially, for example_anlaysis.m
+
+## Plotting utilities
+If data is kept in the ii_data,ii_cfg set of structs, then full runs can easily be plotted with one of several plotting utilities:
+
+- `ii_plottimeseries(ii_data,ii_cfg)` - plots the full timeseries of a run. Can provide which channels you'd like to see (`ii_plottimeseries(ii_data,ii_cfg,{'X','TarX'})`, etc); can be used at any time during preprocessing to examine data and should intelligently plot selections, trial breaks, epochs, saccades, fixations, etc. ![Example traces](examples/exfmri_r01_preproc_timeseries.png "Example timeseries")
+
+- `ii_plotalltrials(ii_data,ii_cfg)` - plots traces from each trial of a run for easy examination to be sure fixations are being correctly scored. Can specify which epochs to plot if necessary. ![example trials](examples/exfmri_r01_preproc.png)
+
+- `ii_plotalltrials2d(ii_data,ii_cfg)` - plots traces from each trial in 2D coordinates (X,Y), along with fixations (circles) ![2d traces](examples/example_run.png)
 
 
 ## Disclaimer
