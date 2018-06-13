@@ -35,6 +35,9 @@ root = tmp(1:(tmp2(end)-1));
 
 edf_files = dir(fullfile(root,'exfmri*.edf'));
 
+% create empty cell array of all our trial data for combination later on
+ii_trial = cell(length(edf_files),1);
+
 for ff = 1:length(edf_files)
     
     % what is the output filename?
@@ -54,4 +57,26 @@ for ff = 1:length(edf_files)
         ii_plotalltrials2d(ii_data,ii_cfg); % plots all trials, in 2d, overlaid on one another w/ fixations
     end
     
+    % score trials
+    % default parameters should work fine - but see docs for other
+    % arguments you can/should give when possible
+    [ii_trial{ff},ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc); 
+    
 end
+
+ii_sess = ii_combineruns(ii_trial);
+
+%% look at the processed data, make sure it looks ok
+
+% based on what criteria shoudl we exclude trials?
+which_excl = [11 13 20 21];
+
+% first, plot an exclusion report over all runs
+% - this will open a few figures. first one will be a 'dot plot', which
+%   shows all exclusion criteria exceeded for a given trial by plotting a dot
+%   above that criterion. if any dot for a trial is red, we're going to throw that
+%   trial away. if black, we'll ignore that criterion for now.
+% - second, plots a summary graph, showing % of trials excluded due to each
+%   criterion, and how many overall will be excluded. If plotting
+%   run-concatenated data, also show how this varies across runs
+ii_plotQC_exclusions(ii_sess,which_excl);
