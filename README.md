@@ -25,7 +25,7 @@ Updated version will no longer use base variables - all data will be encapsualte
 
 **ii_sacc** - information about each saccade detected from ii_data, so each field of ii_sacc has size(ii_cfg.saccades,1) elements
 
-**ii_trial** - information about primary/final saccades extracted from each trial; uses previously-extractd saccades 
+**ii_trial** - information about primary/final saccades extracted from each trial; uses previously-extracted saccades 
 
 Our goal will be to convert timeseries data into scores, via preprocessing operations, then saccade sorting operations, then scoring operations. All of which operate on these structures, and GUIs must all update these structures, and update plots according to updated data within these structures (approx model/view/controller design, but not quite).
 
