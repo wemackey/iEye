@@ -183,7 +183,7 @@ clear tmp_fields tmp_idx;
 
 
 if nargin < 8 || isempty(save_chans)
-    save_chans = {which_chans{:},'Pupil','XDAT'};
+    save_chans = {which_chans{:},'Pupil','XDAT','Velocity'};
 end
 
 

@@ -46,7 +46,8 @@ if ismember(xchan,fieldnames(ii_data)) && ismember(ychan,fieldnames(ii_data))
     
     ii_cfg.history{end+1} = sprintf('ii_velocity (%s,%s) - %s ', xchan, ychan, datestr(now,30));
     
-    
+    % added 6/13/2018 - save velocity as a channel in ii_data
+    ii_data.Velocity = ii_cfg.velocity;
     
 else
     error('iEye:ii_smooth:channelNotFound', 'Channel %s or %s does not exist in ii_data',xchan,ychan)
