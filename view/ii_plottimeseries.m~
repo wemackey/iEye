@@ -160,8 +160,13 @@ end
 set(gcf,'NumberTitle','off','Name',fn_fortitle);
 
 
-% fill up figure better, optimize display
-set(gca,'Position',[0.05 0.2 0.9 0.75],'TickDir','out','LineWidth',1.5,'FontSize',14,'TickLength',[0.0075 0.0075]);
+% fill up figure better
+set(gca,'Position',[0.05 0.15 0.9 0.8],'TickDir','out','LineWidth',1.5,'FontSize',14);
+set(gca,'Position',[0.05 0.2 0.9 0.75],'TickDir','out','LineWidth',1.5,'FontSize',14);
+
+
+
+
 
 % label axes, etc
 xlabel('Time (s)');
