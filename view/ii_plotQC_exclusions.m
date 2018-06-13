@@ -1,4 +1,4 @@
-function [fh] = ii_plotQC_exclusions(ii_trial,which_excl,fig_visible)
+function [fh] = ii_plotQC_exclusions(ii_trial,ii_cfg,which_excl,fig_visible)
 % ii_plotQC_exclusions Plots which trials are excluded [per run] in two
 % plots: (1) 'dot' plot, which indicates which criteria apply to each trial,
 % and (2) bar graph, indicating overall percentage of trials excluded per
@@ -28,6 +28,8 @@ function [fh] = ii_plotQC_exclusions(ii_trial,which_excl,fig_visible)
 %
 % Based on plotSaccadeSummary scripts written for individual projects...
 %
+% NOTE: ii_cfg not used in this function...
+%
 % TODO: auto-figure-pos
 %
 % Tommy Sprague, 6/12/2018
@@ -39,11 +41,11 @@ excl_labels = {'drift','calibration','delay fixation','no i_sacc','bad i_sacc','
 
 fh = []; % empty figure handle
 
-if nargin < 2 || isempty(which_excl)
+if nargin < 3 || isempty(which_excl)
     which_excl = all_excl; 
 end
 
-if nargin < 3 || isempty(fig_visible)
+if nargin < 4 || isempty(fig_visible)
     fig_visible = 1;
 end
 

@@ -79,4 +79,22 @@ which_excl = [11 13 20 21];
 % - second, plots a summary graph, showing % of trials excluded due to each
 %   criterion, and how many overall will be excluded. If plotting
 %   run-concatenated data, also show how this varies across runs
-ii_plotQC_exclusions(ii_sess,which_excl);
+ii_plotQC_exclusions(ii_sess,ii_cfg,which_excl);
+
+% second, plot every trial, scored - this will overlay the primary saccade
+% (purple), final saccade (if one; green) on the raw channel traces for
+% each trial. the trial # indicator will indicate whether we shoudl
+% consider the trial carefully: if italics, at least one exclusion
+% criterion reached. If red, we exclude trial based on a criterion. After
+% the trial number, there are several letters indicating which, if any,
+% exclusion criteria were passed, and an asterisk says whether that one was
+% used to exclude. 
+% - d: drift correction
+% - c: calibration
+% - fb: fixation break
+% - ei: iniital saccade error
+% - xi: no initial saccade detected within response window
+% - bi: bad initial saccade (duration/amplitude outside range)
+% Also plotted is the response window (vertical gray lines) and the target
+% position (horizontal dashed lines)
+ii_plotQC_alltrials(ii_sess,ii_cfg,which_excl);

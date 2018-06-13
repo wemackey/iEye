@@ -16,17 +16,27 @@ function [ ii_plotparams ] = ii_loadplotparams( params_fn )
 
 if nargin < 1
     
-    % DEFAULT PARAMETER VALUES
-    ii_plotparams.EXCL_COLOR = [0.8 0 0];
     
+    tmp_lines = lines(7); % colors we draw from
+    
+    % DEFAULT PARAMETER VALUES
+    ii_plotparams.EXCL_COLOR = [0.8 0 0]; % color to draw excluded trials in
+    
+    ii_plotparams.RAW_COLORS = tmp_lines([1 2],:); % for 1d traces (X,Y)
+
+    ii_plotparams.SACC_COLORS = tmp_lines([4 5],:);% for primary; final saccade overlay
+
+    
+    % maximum ecc to which we plot (15 deg is aperture size in scanner)
+    ii_plotparams.MAXECC = 15;
     
 else
     
     ii_plotparams = load(params_fn);
     
     % handle case where saved as ii_params w/in file
-    if ismember('ii_plotparams',fieldnames(ii_params))
-        ii_params = ii_params.ii_params;
+    if ismember('ii_plotparams',fieldnames(ii_plotparams))
+        ii_plotparams = ii_plotparams.ii_plotparams;
     end
        
 end

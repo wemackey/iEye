@@ -91,6 +91,11 @@ function [ii_trial,ii_cfg] = ii_scoreMGS(ii_data,ii_cfg,ii_sacc,targ_coords,resp
 % - for aligning all targets, do we want to scale in polar coords, or
 %   translate in cartesian? [discuss!]
 %
+% TODO:
+% - add a i_sacc, f_sacc idx to ii_sacc - it's zero if not a scored
+%   saccade; trial number if it's either of those (useful for plotting main
+%   sequences later on)
+%
 %
 % Tommy Sprague, 6/11/2018 - adapted from individual study
 % _extractSaccadeData scripts (e.g., MGSMap_extractSaccadeData)
@@ -226,6 +231,7 @@ ii_trial.params.fix_epoch   = fix_epoch;
 ii_trial.params.targ_coords = targ_coords;
 ii_trial.params.save_chans  = save_chans;
 ii_trial.params.score_mode  = score_mode;
+ii_trial.params.score_chans = which_chans; % the two channels that were used for scoring
 
 
 %% extract targ_coords for each trial
