@@ -33,7 +33,8 @@ ii_params.ppd = 31.8578; % for scanner, 1280 x 1024 - convert pix to DVA
 tmp = mfilename('fullpath'); tmp2 = strfind(tmp,filesep);
 root = tmp(1:(tmp2(end)-1));
 
-edf_files = dir(fullfile(root,'exfmri*.edf'));
+edf_prefix = 'exfmri';
+edf_files = dir(fullfile(root,sprintf('%s*.edf',edf_prefix)));
 
 % create empty cell array of all our trial data for combination later on
 ii_trial = cell(length(edf_files),1);
@@ -79,7 +80,7 @@ which_excl = [11 13 20 21];
 % - second, plots a summary graph, showing % of trials excluded due to each
 %   criterion, and how many overall will be excluded. If plotting
 %   run-concatenated data, also show how this varies across runs
-ii_plotQC_exclusions(ii_sess,ii_cfg,which_excl);
+fh_excl = ii_plotQC_exclusions(ii_sess,ii_cfg,which_excl);
 
 % second, plot every trial, scored - this will overlay the primary saccade
 % (purple), final saccade (if one; green) on the raw channel traces for
@@ -97,7 +98,18 @@ ii_plotQC_exclusions(ii_sess,ii_cfg,which_excl);
 % - bi: bad initial saccade (duration/amplitude outside range)
 % Also plotted is the response window (vertical gray lines) and the target
 % position (horizontal dashed lines)
-ii_plotQC_alltrials(ii_sess,ii_cfg,which_excl);
+fh_trial = ii_plotQC_alltrials(ii_sess,ii_cfg,which_excl);
+
+% often, it's useful to save these out as pngs:
+for ff = 1:length(fh_excl)
+    fn2s = sprintf('%s/%s_QC_excl_%02.f.png',edf_files(1).folder,edf_prefix,ff);
+    saveas(fh_excl(ff),fn2s);
+end
+
+for ff = 1:length(fh_trial)
+    fn2s = sprintf('%s/%s_QC_trial_%02.f.png',edf_files(1).folder,edf_prefix,ff);
+    saveas(fh_trial(ff),fn2s);
+end
 
 %% now some very basic analysis recipes 
 %  (RT histogram, all traces, and distribution of endpoints, etc)
