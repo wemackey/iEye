@@ -1,12 +1,14 @@
-function ii_plottrial(ii_data,ii_cfg,trial_num,which_chans,ax,plot_mode)
+function ii_plottrial(ii_data,ii_cfg,trial_num,which_chans,ax,plot_mode,epoch_chan,epoch_nums)
 % II_PLOTTRIAL Plots channels & selections for a single trial; can put into
 % subplots in outside function
 %
 % TCS 8/15/2017 - ii_plot* functions are mostly meant to be used via
 % command line or for spot-checking data, at least now are not intended to
 % be interactive. potentially can change that in the future
-% TODO: allow for multiple trials, will create subplots within here (though
-% that can/should also happen outside of this)
+%
+% TCS 10/23/2017 - allows for plotting only selected epochs within a trial
+% (useful for long-delay fMRI experiments, when only saccade is relevant)
+% - BOTH epoch_chan & epoch_nums must be defined!
 
 
 if nargin < 5 || isempty(ax)
@@ -41,7 +43,11 @@ if ~ismember('trialvec',fieldnames(ii_cfg))
 end
 
 % grab temporal indices for this trial
-thisidx = ii_cfg.trialvec==trial_num;
+if nargin < 7 || isempty(epoch_nums)
+    thisidx = ii_cfg.trialvec==trial_num;
+else
+    thisidx = ii_cfg.trialvec==trial_num & ismember(ii_data.(epoch_chan),epoch_nums);
+end
 
 % make sure this trial exists...
 if sum(thisidx)==0

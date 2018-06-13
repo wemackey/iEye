@@ -15,8 +15,6 @@ function [ ii_data, ii_cfg ] = ii_driftcorrect( ii_data, ii_cfg, chan_names, cor
 % Tommy Sprague, 8/16/2017
 
 
-% TODO: check channels exist...
-
 
 if nargin < 3
     chan_names = {'X','Y'}; % or FixX, FixY? 
@@ -35,7 +33,7 @@ end
 % fixation before end of specified epoch(s)
 if nargin < 4 || isempty(correct_mode)
     if ismember('fixations',fieldnames(ii_cfg))
-        correct_mode = 'last_fixation';
+        correct_mode = 'fixation';
     else
         correct_mode = 'epoch_mean';
     end
@@ -69,6 +67,8 @@ numsel = size(ii_cfg.cursel,1);
 % now we make adjustments [in future, we'll allow for selections to already
 % exist, then will just do below]
 %
+% ~~~~ NOTE: below is something we'll add in the future - for now, need to
+%       account for trials w/ no selections in typical MGS expt... ~~~~~~~
 % if same number of selections as unique non-zero values in trialvec,
 % assume that we want to correct all of trialvec given values in
 % cursel(tt,:). otherwise, correct from beginning of selection to beginning
@@ -81,86 +81,55 @@ all_fields = {all_fields{~strcmpi(all_fields,'XDAT')}};
 
 ii_cfg.drift.chan = chan_names; % channels input to ii_driftcorrect
 ii_cfg.drift.mode = correct_mode;
-ii_cfg.drift.amt = nan(numsel,length(chan_names));
+ii_cfg.drift.amt = nan(length(tu),length(chan_names));
 
 for cc = 1:length(chan_names)
     
     % get all channels we want to apply adjustment to
-    %chans_to_adjust = {all_fields{cellfun(@any,strfind(all_fields,chan_names{cc}))}};
-    %chans_to_adjust = all_fields{find(startsWith(all_fields,chan_names{cc}))};
     
     chans_to_adjust = { all_fields{ cellfun(@(x) any(x) && x(1)==1 , strfind(all_fields,chan_names{cc} )) } };
     
-    if numsel == length(tu)
+    
         
-        for tt = 1:length(tu)
-            
-            tr_idx = ii_cfg.trialvec==tu(tt);
-            
-            % if mode is fixation-mean - use which_chans_fix, otherwise,
-            % average of which_chans
-            % also - correct all chanels which_chans*
-            
-            if strcmpi(correct_mode,'fixation')
-                adj_by = nanmean(ii_data.(sprintf('%s_fix',chan_names{cc}))(ii_cfg.cursel(tt,1):ii_cfg.cursel(tt,2)))-target_coords(cc);
-            elseif strcmpi(correct_mode,'smooth')
-                adj_by = nanmean(ii_data.(sprintf('%s_smooth',chan_names{cc}))(ii_cfg.cursel(tt,1):ii_cfg.cursel(tt,2)))-target_coords(cc);
-            else
-                adj_by = nanmean(ii_data.(chan_names{cc})(ii_cfg.cursel(tt,1):ii_cfg.cursel(tt,2)))-target_coords(cc);
-            end
-            
-            % apply adjustment to entire trial
-            for ca = 1:length(chans_to_adjust)
-                ii_data.(chans_to_adjust{ca})(tr_idx) = ii_data.(chans_to_adjust{ca})(tr_idx)-adj_by;
-            end
-            
-            ii_cfg.drift.amt(tt,cc) = adj_by;
-            
-            
-            clear adj_by tr_idx;
-            
+    % LOOP OVER SELECTIONS
+    % - figure out which trial is selected, select full trial timecourse,
+    %   adjust as prescribed. leave trials with no selections as NaN for
+    %   ii_cfg.drift.amt
+    
+    
+    
+    for sel_idx = 1:size(ii_cfg.cursel,1)
+        
+        % look up trial # at start of selection (this should be
+        % fine...)
+        which_trial = ii_cfg.trialvec(ii_cfg.cursel(sel_idx,1));
+        
+        tr_idx = ii_cfg.trialvec==which_trial;%tu(tt);
+        
+        % if mode is fixation-mean - use which_chans_fix, otherwise,
+        % average of which_chans
+        % also - correct all chanels which_chans*
+        
+        if strcmpi(correct_mode,'fixation')
+            adj_by = nanmean(ii_data.(sprintf('%s_fix',chan_names{cc}))(ii_cfg.cursel(sel_idx,1):ii_cfg.cursel(sel_idx,2)))-target_coords(cc);
+        elseif strcmpi(correct_mode,'smooth')
+            adj_by = nanmean(ii_data.(sprintf('%s_smooth',chan_names{cc}))(ii_cfg.cursel(sel_idx,1):ii_cfg.cursel(sel_idx,2)))-target_coords(cc);
+        else
+            adj_by = nanmean(ii_data.(chan_names{cc})(ii_cfg.cursel(sel_idx,1):ii_cfg.cursel(sel_idx,2)))-target_coords(cc);
         end
         
-    else % TODO.... [[not tested!!!!]]
-        
-        for tt = 1:numsel
-
-            
-            % what to adjust by:
-            if strcmpi(correct_mode,'fixation')
-                adj_by = nanmean(ii_data.(sprintf('%s_fix',chan_names{cc}))(ii_cfg.cursel(tt,1):ii_cfg.cursel(tt,2)))-target_coords(cc);
-            elseif strcmpi(correct_mode,'smooth')
-                adj_by = nanmean(ii_data.(sprintf('%s_smooth',chan_names{cc}))(ii_cfg.cursel(tt,1):ii_cfg.cursel(tt,2)))-target_coords(cc);
-            else
-                adj_by = nanmean(ii_data.(chan_names{cc})(ii_cfg.cursel(tt,1):ii_cfg.cursel(tt,2)))-target_coords(cc);
-            end
-            
-            
-            
-            % samples to apply adjustment to:
-            % from beginning of selection to beginning of next selection
-            adj_idx = 0*ii_cfg.sel;
-            if tt~=numsel
-                adj_idx(ii_cfg.cursel(tt,1):(ii_cfg.cursel(tt+1,1)-1)) = 1;
-            else
-                adj_idx(ii_cfg.cursel(tt,1):end) = 1; 
-            end
-            
-            
-            % apply adjustment to time series until next selection
-            % (adj_idx, above)
-            for ca = 1:length(chans_to_adjust)
-                ii_data.(chans_to_adjust{ca})(adj_idx) = ii_data.(chans_to_adjust{ca})(adj_idx)-adj_by;
-            end
-            
-            ii_cfg.drift.amt(tt,cc) = adj_by;
-            
-            clear adj_by adj_idx;
-            
+        % apply adjustment to entire trial
+        for ca = 1:length(chans_to_adjust)
+            ii_data.(chans_to_adjust{ca})(tr_idx) = ii_data.(chans_to_adjust{ca})(tr_idx)-adj_by;
         end
         
+        ii_cfg.drift.amt(which_trial,cc) = adj_by;
+        
+        
+        clear adj_by tr_idx;
         
     end
+    
     
     
     

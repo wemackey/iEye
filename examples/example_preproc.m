@@ -49,10 +49,8 @@
 % Tommy Sprague, 8/18/2017
 
 
-if nargin < 1
-    edf_fn = 'examples/exdata1.edf';
-    mat_fn = 'examples/exdata1_trialinfo.mat';
-end
+edf_fn = 'examples/exdata1.edf';
+mat_fn = 'examples/exdata1_trialinfo.mat';
 
 
 

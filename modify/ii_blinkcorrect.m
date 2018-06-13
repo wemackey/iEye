@@ -1,10 +1,14 @@
-function [ii_data,ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,chan, pchan, pval, pri, fol)
+function [ii_data,ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,chan, pchan, pval, pri, fol,varargin)
 %ii_blinkcorrect Cleans data by identifying and removing blinks
 %   [ii_data,ii_cfg] =
 %   ii_blinkcorrect(ii_data,ii_cfg,chan,pchan,pval,pri,fol) looks for
 %   blinks in pchan (values less than pval), removes pri ms of samples before and
 %   fol ms of samples after pchan dips below pval, and sets all channels in chan
 %   to NaN.
+%
+%   ii_blinkcorrect(...,'prctile') uses a percentile-based threshold,
+%   whereby pval is assumed to be an input to prctile (0-100). Threshold is
+%   set at prctile(ii_data.(pchan)(ii_data.(pchan)~=0),pval).
 %
 % ii_data.(chan) at identified blinks will be NaN
 % ii_cfg.blinks is 'cursel'-style list of on/offsets of each blink
@@ -35,6 +39,7 @@ function [ii_data,ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,chan, pchan, pval, pr
 % ylabel('Pupil size');
 
 % Updated TCS 8/11/2017 - no base space variables
+% Updated TCS 8/23/2017 - support for percentile-based thresholding
 %
 % TODO: implement a pupil velocity/acceleration version of this
 
@@ -54,6 +59,32 @@ if nargin == 2 % only data, cfg
     pri = str2num(answer{4});
     fol = str2num(answer{5});
 end
+
+
+if nargin < 3
+    chan = {'X','Y'};
+end
+
+if nargin < 4
+    pchan = 'Pupil';
+end
+
+if nargin < 5 || isempty(pval)
+    pval = 1000;
+end
+
+if nargin < 6 || isempty(pri)
+    pri = 100;
+end
+
+if nargin < 7 || isempty(fol)
+    fol = 100;
+end
+
+if ismember(varargin,'prctile')
+    pval = prctile(ii_data.(pchan)(ii_data.(pchan)~=0),pval);
+end
+
 
 % convert pri from milliseconds to samples given sampling rate
 pri = round((pri/1000)*ii_cfg.hz);
@@ -79,7 +110,7 @@ blink_offsets = find(diff(blink_mask)==-1);
 
 if blink_onsets(1) > blink_offsets(1)
     
-    blink_onsets = [1; blinkonsets];
+    blink_onsets = [1; blink_onsets];
     
 end
 

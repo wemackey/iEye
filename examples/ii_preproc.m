@@ -1,50 +1,71 @@
-function ii_preproc(edf_fn)
-% Generic script for pre-processing memory-guided saccade data. This script
-% assumes the data is already imported in iEye. It addresses the following
-% issues: The Y channel is inverted to its correct orientation, the data is
-% then blink-corrected and slightly smoothed. Finally, the data is scaled
-% and re-calibrated.
-
-% edited TCS & GH 8/25/2016
-
-
-if nargin < 1
-    edf_fn = 'examples/exdata1.edf';
-    mat_fn = 'examples/exdata1_trialinfo.mat';
-end
+function [ii_data,ii_cfg,ii_sacc] = ii_preproc(edf_fn,cfg_fn,preproc_fn,ii_params,trialinfo,skip_steps)
+% ii_preproc Performs default pre-processing stream
+%
+% new functionality - TODO.
+%
+% skip_steps: for now, only optional steps are drift-correction ('drift') and
+% calibration ('calibration') - when it comes time to do those steps, don't
+% execute them if ismember(skip_steps,those)
+%
+% Tommy Sprague, 8/20/2017
 
 
+% TODO: params contains resolution, ppd (or screen params), saccade
+% detection params, etc. 
 
 % initialize iEye - make sure paths are correct, etc
 ii_init;
 
-% import data
-[ii_data,ii_cfg] = ii_import_edf(edf_fn,'examples/p_1000hz.ifg',[edf_fn(1:end-3) 'mat']);
 
-% Show only the channels we care about at the moment
-%ii_view_channels('X,Y,TarX,TarY,XDAT');
+if nargin < 4 || isempty(ii_params)
+    ii_params = ii_loadparams;
+end
+
+% in case a params file is given
+if ischar(ii_params)
+    ii_params = ii_loadparams(ii_params);
+end
+
+if nargin < 6 || isempty(skip_steps)
+    skip_steps = {}; % don't skip anything!
+end
+
+
+% import data
+[ii_data,ii_cfg] = ii_import_edf(edf_fn,cfg_fn,[edf_fn(1:end-4) '_iEye.mat']);
+
+
 
 % rescale X, Y based on screen info
-[ii_data,ii_cfg] = ii_rescale(ii_data,ii_cfg,{'X','Y'},[1280 1024],34.1445);
+[ii_data,ii_cfg] = ii_rescale(ii_data,ii_cfg,{'X','Y'},ii_params.resolution,ii_params.ppd);
 
 
 
 % Invert Y channel (the eye-tracker spits out flipped Y values)
 [ii_data,ii_cfg] = ii_invert(ii_data,ii_cfg,'Y');
 
-% Correct for blinks
 
-% trying a different threshold - 150 samples before, 50 after
-[ii_data, ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,{'X','Y'},'Pupil',1500,150,50); % maybe 50, 50? %altering this 6/1/2017 from 1800 in both x/y 
+% remove extreme-valued X,Y channels (further than the screen edges)
+[ii_data,ii_cfg] = ii_censorchans(ii_data,ii_cfg,{'X','Y'},...
+    {[-0.5 0.5]*ii_params.resolution(1)/ii_params.ppd,...
+     [-0.5 0.5]*ii_params.resolution(2)/ii_params.ppd});
+
+
+% Correct for blinks
+[ii_data, ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,{'X','Y'},'Pupil', ...
+      ii_params.blink_thresh,ii_params.blink_window(1),ii_params.blink_window(2),'prctile'); % maybe 50, 50? %altering this 6/1/2017 from 1800 in both x/y 
 
 
 % split into individual trials (so that individual-trial corrections can be
 % applied)
-[ii_data,ii_cfg] = ii_definetrial(ii_data,ii_cfg,'XDAT',1,'XDAT',8); % CHECK THIS!
+[ii_data,ii_cfg] = ii_definetrial(ii_data,ii_cfg,...
+    ii_params.trial_start_chan, ii_params.trial_start_value,...
+    ii_params.trial_end_chan,   ii_params.trial_end_value); 
 
 
 % Smooth data
-[ii_data,ii_cfg] = ii_smooth(ii_data,ii_cfg,{'X','Y'},'Gaussian',5);
+[ii_data,ii_cfg] = ii_smooth(ii_data,ii_cfg,{'X','Y'},ii_params.smooth_type,...
+    ii_params.smooth_amt);
 
 
 % compute velocity using the smoothed data
@@ -55,27 +76,31 @@ ii_init;
 
 % look for saccades [[NOTE: potentially do this twice? once for macro, once
 % for micro?]]
-[ii_data,ii_cfg] = ii_findsaccades(ii_data,ii_cfg,'X_smooth','Y_smooth',30,.0075,0.25); 
+[ii_data,ii_cfg] = ii_findsaccades(ii_data,ii_cfg,'X_smooth','Y_smooth',...
+    ii_params.sacc_velocity_thresh,ii_params.sacc_duration_thresh,...
+    ii_params.sacc_amplitude_thresh); 
 
 
 
 % find fixation epochs (between saccades and blinks)
 % [create X_fix, Y_fix channels? these could be overlaid with 'raw' data as
 % 'stable' eye positions
-[ii_data,ii_cfg] = ii_findfixations(ii_data,ii_cfg,{'X','Y'},'mean');
+[ii_data,ii_cfg] = ii_findfixations(ii_data,ii_cfg,{'X','Y'},ii_params.fixation_mode);
 
 
+% select the fixation used for drift correction
+if ~ismember('drift',skip_steps)
 
-% select the last fixation of pre-target epochs
-[ii_data,ii_cfg] = ii_selectfixationsbytrial( ii_data, ii_cfg, 'XDAT', [1 2], 'mode' );
+    [ii_data,ii_cfg] = ii_selectfixationsbytrial( ii_data, ii_cfg, ii_params.epoch_chan,...
+        ii_params.drift_epoch, ii_params.drift_fixation_mode );
+
 
 % use those selections to drift-correct each trial (either using the
 % fixation value, which may include timepoints past end of epoch, or using
 % 'raw' or 'smoothed' data on each channel)
-%[ii_data,ii_cfg] = ii_driftcorrect(ii_data,ii_cfg,{'X','Y'},[1 2],'last_fixation',[0 0]);
-[ii_data,ii_cfg] = ii_driftcorrect(ii_data,ii_cfg,{'X','Y'},'fixation',[0 0]);
-% NOTE: in example data, trial 20 still not perfect - maybe use 'mode'
-% fixation in selectfixationsbytrial? 
+    [ii_data,ii_cfg] = ii_driftcorrect(ii_data,ii_cfg,{'X','Y'},ii_params.drift_select_mode,...
+        ii_params.drift_target);
+end
 
 
 % add trial info [not explicitly necessary if simple experiment, TarX &
@@ -84,22 +109,12 @@ ii_init;
 % trial_info should be n_trials x n_params/features - can be indexed in
 % some data processing commands below. can be cell or array. 
 
-mydata = load(mat_fn);
 
-% Col1: queried X
-% Col2: queried Y
-% Col3: non-queried X
-% Col4: non-queried Y
-% Col5: priority condition
-trial_info = horzcat(mydata.stimulus.targCoords{:});
-cond = [];
-for bb = 1:length(mydata.task{1}.block)
-    cond = [cond; mydata.task{1}.block(bb).parameter.conditionAndQueriedTarget.'];
+
+% if trialinfo is defined, otherwise skip
+if nargin>=5 && ~isempty(trialinfo)
+    [ii_data,ii_cfg] = ii_addtrialinfo(ii_data,ii_cfg,trialinfo);
 end
-trial_info = [trial_info cond];
-clear mydata;
-[ii_data,ii_cfg] = ii_addtrialinfo(ii_data,ii_cfg,trial_info);
-
 
 
 % 'target correct' or 'calibrate' (which name is better?)
@@ -108,27 +123,58 @@ clear mydata;
 % by a channel or a pair of cols in ii_cfg.trialinfo
 
 % first, select relevant epochs (should be one selection per trial)
-[ii_data,ii_cfg] = ii_selectfixationsbytrial(ii_data,ii_cfg,'XDAT',7,'last',100); % 
 
-% then, calibrate by trial
-% ii_calibratebytrial.m
-[ii_data,ii_cfg] = ii_calibratebytrial(ii_data,ii_cfg,{'X','Y'},{'TarX','TarY'},'scale');
-
+if ~ismember('calibration',skip_steps)
+    % FOR SPECIFIED TARGETS/NEAREST FIXATION SELECTION
+    [ii_data,ii_cfg] = ii_selectfixationsbytrial(ii_data,ii_cfg,ii_params.epoch_chan,...
+        ii_params.calibrate_epoch,ii_params.calibrate_select_mode,ii_params.calibrate_window,...
+        ii_params.calibrate_target,{'X_fix','Y_fix'}); %
+    
+    
+    % then, calibrate by trial
+    % FOR LAST MODE
+    % ii_calibratebytrial.m
+    [ii_data,ii_cfg] = ii_calibratebytrial(ii_data,ii_cfg,{'X','Y'},...
+        ii_params.calibrate_target,ii_params.calibrate_mode, ii_params.calibrate_limits);
+end
 
 % plot all these - make sure they're good
-f_all = ii_plotalltrials(ii_data,ii_cfg);
+f_all = ii_plotalltrials(ii_data,ii_cfg,{'X','Y'},[],[],ii_params.epoch_chan,ii_params.plot_epoch,ii_params.show_plots);
 
 % save the figures for our records
 if length(f_all)>1
     for ff = 1:lenght(f_all)
-        saveas(f_all,sprintf('%s_iEye_preproc_%02.f.png',ii_cfg.edf_file(1:end-4),ff),'png');
+        saveas(f_all,sprintf('%s_%02.f.png',preproc_fn(1:end-4),ff),'png');
     end
 else
-    saveas(f_all,sprintf('%s_iEye_preproc.png',ii_cfg.edf_file(1:end-4)),'png');
+    saveas(f_all,sprintf('%s.png',preproc_fn(1:end-4)),'png');
 end
 
-% save ii_data,ii_cfg in _preproc.mat file
-ii_savedata(ii_data,ii_cfg,sprintf('%s_iEye_preproc.mat',ii_cfg.edf_file(1:end-4)));
+% and plot the final full timeseries
+if ii_params.show_plots == 1
+    f_ts = ii_plottimeseries(ii_data,ii_cfg);
+else
+    f_ts = ii_plottimeseries(ii_data,ii_cfg,[],'nofigure');
+end
+saveas(f_ts,sprintf('%s_timeseries.png',preproc_fn(1:end-4)),'png');
 
+
+% save the preprocessing params
+ii_cfg.params = ii_params;
+
+% save this script?
+
+% save ii_data,ii_cfg in _preproc.mat file
+ii_savedata(ii_data,ii_cfg,preproc_fn);
+
+
+% get the saccades
+[ii_data,ii_cfg,ii_sacc] = ii_extractsaccades(ii_data,ii_cfg,{'X','Y'},...
+    ii_params.extract_sacc_mode_start,...
+    ii_params.extract_sacc_mode_end,...
+    ii_params.epoch_chan);
+
+% save the saccades
+ii_savesacc(ii_cfg,ii_sacc,[preproc_fn(1:end-4) '_sacc.mat']);
 
 end

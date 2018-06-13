@@ -56,6 +56,16 @@ end
 % remove blinks
 ii_cfg.sel(ii_cfg.blinkvec==1) = 0; 
 
+% remove censored timepoints
+ii_cfg.sel(ii_cfg.censorvec==1) = 0;
+
+% if smoothing done (check ii_cfg, or ii_data?), also remove periods of nan
+% (these can be expanded in smoothing...)
+% because we know saccades have been calculated, we have a velocity
+% variable in ii_cfg - so use its nans (this is often 1 off from X_smooth,
+% etc, but shouldn't be a problem...
+ii_cfg.sel(isnan(ii_cfg.velocity)) = 0;
+
 
 % turn this into cursel-type start/stop indices, save as ii_cfg.fixations
 ii_cfg = ii_updatecursel(ii_cfg);

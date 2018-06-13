@@ -23,6 +23,8 @@ function [ f_han ] = ii_plottimeseries( ii_data, ii_cfg, which_chans, varargin )
 % ii_plottimeseries(..., 'nofixations') disables plotting of fixations
 % ii_plottimeseries(..., 'YLim', [min max]) manually sets y limits (before
 % colorbar, if that's used)
+% ii_plottimeseries(..., 'nofigure') disables visible plotting of the
+% figure; useful when saving out figure from outside script
 %
 % All plot options above are automatically set based on fields in ii_cfg,
 % ii_data. 
@@ -51,7 +53,7 @@ FIG_POSITION = [[0.05 0.5-0.22*0.9]*scr_size(3) [0.9 0.9*0.22]*scr_size(3)];
 
 
 
-if nargin < 3
+if nargin < 3 || isempty(which_chans)
     which_chans = {'X','Y'};
 end
 
@@ -66,7 +68,12 @@ chan_colors = lines(length(which_chans));
 myt = (1:length(ii_data.(which_chans{1}))).' * 1/ii_cfg.hz;
 
 % draw the channels
-f_han = figure;
+
+if ismember(varargin,'nofigure')
+    f_han = figure('visible','off');
+else
+    f_han = figure;
+end
 hold on; p_han = [];
 for cc = 1:length(which_chans)
     

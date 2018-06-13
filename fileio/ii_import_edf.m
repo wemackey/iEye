@@ -238,6 +238,9 @@ if nargin >= 3 || (nargin<3 && nargout == 0)
     end
 end
 
+% maybe will help us avoid weird errors?
+fclose('all');
+
 end
 
 
