@@ -43,8 +43,8 @@ if nargin < 8
     fix_channels = {'X_fix','Y_fix'}; % where to use for alignment to calibration targets on 'nearest' mode
 end
 
-% buffer window input as ms: turn it into samples
-buffer_window = 0.001*buffer_window*ii_cfg.hz;
+% get buffer_window into ms
+buffer_window = 1000*buffer_window/ii_cfg.hz;
 
 % make sure channel exists...
 if ~ismember(epoch_chan,fieldnames(ii_data))
@@ -107,7 +107,9 @@ for tt = 1:length(tu)
     
     if strcmpi(sel_mode,'last') % used for drift correction, calibration
         
-
+        bw_samples = []; % turn buffer_window from ms into samples (hack for now)
+        % hz: 1/s bw: ms bw*0.001: s bw
+        
         
         epoch_begin = find(diff(trial_idx & epoch_idx)==1);
         epoch_end = find(diff(trial_idx & epoch_idx)==-1);
