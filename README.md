@@ -1,4 +1,4 @@
-# iEye: open-source oculomotor preprocessing and visualization toolbox for MATLAB/Octave
+# iEye: open-source oculomotor preprocessing and visualization toolbox for MATLAB
 
 
 ![Example traces](examples/exfmri_r01_preproc_timeseries.png "Example timeseries")
