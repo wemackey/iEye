@@ -19,6 +19,9 @@ function [ ii_data, ii_cfg ] = ii_selectfixationsbytrial( ii_data, ii_cfg, epoch
 % added a 'buffer window' to prevent selection of premature saccades as
 % fixations, especially for calibration (ms)
 %
+% TODO: buffer_window doesn't seem to use ms in practice - actually using
+% samples, so for 500 Hz datasets doubles window length!
+%
 % Tommy Sprague, 8/16/2017
 % - updated (TCS) 11/24/2017 to 
 
@@ -40,8 +43,8 @@ if nargin < 8
     fix_channels = {'X_fix','Y_fix'}; % where to use for alignment to calibration targets on 'nearest' mode
 end
 
-% get buffer_window into ms
-buffer_window = 1000*buffer_window/ii_cfg.hz;
+% buffer window input as ms: turn it into samples
+buffer_window = 0.001*buffer_window*ii_cfg.hz;
 
 % make sure channel exists...
 if ~ismember(epoch_chan,fieldnames(ii_data))
@@ -104,8 +107,7 @@ for tt = 1:length(tu)
     
     if strcmpi(sel_mode,'last') % used for drift correction, calibration
         
-        
-        
+
         
         epoch_begin = find(diff(trial_idx & epoch_idx)==1);
         epoch_end = find(diff(trial_idx & epoch_idx)==-1);
