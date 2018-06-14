@@ -190,7 +190,7 @@ for ee = 1:length(all_excl)
     bar(ee,100*mean(this_excl),'FaceColor',thiscolor);
     clear this_excl;
 end
-set(gca,'XTick',1:length(all_excl),'XTickLabel',excl_labels,'XTickLabelRotation',-90);
+set(gca,'XTick',1:length(all_excl),'XTickLabel',excl_labels,'XTickLabelRotation',-90,'TickLabelInterpreter','none');
 ylim([0 100]);
 ylabel('Percent trials excluded');
 
