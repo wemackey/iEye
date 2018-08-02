@@ -21,6 +21,9 @@ function [ii_data,ii_cfg] = ii_calibratebyrun(ii_data,ii_cfg, chan_names, calib_
 % 'fixation' values are set to 0,0, and so scaling doesn't substantially
 %  alter mean fixation
 %
+% Channels defined in CHAN_NAMES are ASSUMED to have a corresponding
+% fixation channel. (TODO: be robust to this...)
+%
 % Purpose of this version of calibration is to deal with somewhat
 % substantial number of trials without a corrective saccade to visual
 % target re-presentation during feedback, which previously resulted in
@@ -94,8 +97,8 @@ if nargin < 6 || isempty(fit_limit)
 end
 
 % make sure only a single number provided and it's positve (distance)
-if length(adj_limit)~=1||adj_limit<0
-    error('iEye:ii_calibratebyrun:invalidAdjLimit','Adjustment limits specified in dva distance, so one single positive number required');
+if length(fit_limit)~=1||fit_limit<0
+    error('iEye:ii_calibratebyrun:invalidFitLimit','Fit inclusion limit specified in dva distance, so one single positive number required');
 end
 
 % check calibration targets 
@@ -198,7 +201,91 @@ elseif isnumeric(calib_targets)
 end
 
 
+all_fields = fieldnames(ii_data);
+all_fields = {all_fields{~strcmpi(all_fields,'XDAT')}};
+
+% save record of how calibration was conducted
+ii_cfg.calibrate.fcn = 'ii_calibratebyrun.m';
+ii_cfg.calibrate.chan = chan_names; % channels input to ii_driftcorrect
+ii_cfg.calibrate.amt = nan(ii_cfg.numtrials,length(chan_names)); % amount of adjustment in each channel per trial (computed via polyval)
+ii_cfg.calibrate.err = nan(ii_cfg.numtrials,1); % pre-calibration distance between gaze & target
+ii_cfg.calibrate.fit_limit = fit_limit;
+ii_cfg.calibrate.adj = ones(ii_cfg.numtrials,1)==1; % whether adjustment was performed on this trial (for run-wise, all 1's!!!)
+ii_cfg.calibrate.poly_deg = poly_deg;
+ii_cfg.calibrate.poly_fun = nan(length(chan_names),poly_deg+1); % n_chans x poly_deg
+ii_cfg.calibrate.resid = nan(ii_cfg.numtrials,length(chan_names));
+
+% add indicator(s) for why a trial wasn't adjusted
+ii_cfg.calibrate.excl_info = cell(ii_cfg.numtrials,1); % fill this in with information about why a trial was excluded
+% codes:
+% - 1: no selected timepoints
+% - 2: at least one channel out of range
+
+
+% look up the gaze coordinate on each trial
+
+trial_coord = nan(ii_cfg.numtrials,length(chan_names)); % n_trials x x_chans
+
+% FIRST: compute amount to adjust
+for cc = 1:length(chan_names)
+    for tt = 1:length(tu)
+        %this_err = nan(length(chan_names),1);
+    
+        % get timepoints for this trial
+        tr_idx = ii_cfg.trialvec==tu(tt);
+        
+        % make sure there's a selection within this trial
+        if sum(ii_cfg.sel & tr_idx) > 0
+            
+            % compute gaze coord on this trial using chan_names_fix
+            trial_coord(tt,cc) = nanmean(ii_data.(sprintf('%s_fix',chan_names{cc}))(tr_idx & ii_cfg.sel) );
+
+        else
+            
+            warning('iEye:ii_calibratebytrial:noSelectedTimepoints','Trial %i: no selected timepoints; forgoing calibration\n',tu(tt));
+            %adj_by = NaN;
+            ii_cfg.calibrate.excl_info{tt}(end+1) = 1;
+        end
+        
+        
+    end
+    
+    
+end
+
+% save trial-by-trial error
+ii_cfg.calibrate.err = sqrt( sum( (trial_coord - calibrate_to).^2 ,2) ); % sqrt(sum(this_err.^2));
 
 
 % ok - now we have the calibration targets numerically defined, let's fit a
 % function to the gaze coordinate on each trial to these positions
+
+% which trials do we use to fit?
+trials_to_use = ii_cfg.calibrate.err <= fit_limit; % TODO: also binary censor?
+
+for cc = 1:length(chan_names)
+    
+    poly_coeffs = polyfit(trial_coord(trials_to_use,cc),calibrate_to(trials_to_use,cc),poly_deg);
+    
+    ii_cfg.calibrate.poly_fun(cc,:) = poly_coeffs;
+    
+    % update this (and child) channels using polyval        
+    
+    chans_to_adjust = { all_fields{ cellfun(@(x) any(x) && x(1)==1 , strfind(all_fields,chan_names{cc} )) } };
+    for chidx = 1:length(chans_to_adjust)
+        ii_data.(chans_to_adjust{chidx}) = polyval(poly_coeffs,ii_data.(chans_to_adjust{chidx}));
+    end
+
+    % to keep things consistent w/ ii_calibratebytrial, use ratio of target
+    % to orig
+    ii_cfg.calibrate.amt(:,cc) = polyval(poly_coeffs,trial_coord(:,cc))./trial_coord(:,cc);
+    
+    % also save residuals for each trial - after adjustment, how much error
+    % left?
+    ii_cfg.calibrate.resid(:,cc) = calibrate_to(:,cc) - polyval(poly_coeffs,trial_coord(:,cc));
+    
+    clear poly_coeffs chans_to_adjust;
+end
+
+
+return
