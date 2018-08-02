@@ -13,7 +13,7 @@
 % very first thing we want to do is define all parameters for processing
 % (see ii_loadparams.m for default values)
 
-ifg_fn = '/Volumes/tommy/Documents/MATLAB/toolboxes_dev/iEye_ts/examples/p_500hz.ifg';
+ifg_fn = '~/Documents/MATLAB/toolboxes_dev/iEye_ts/examples/p_500hz.ifg';
 
 
 ii_params = ii_loadparams; % load default set of analysis parameters, only change what we have to
