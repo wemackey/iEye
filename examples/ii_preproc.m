@@ -130,12 +130,15 @@ if ~ismember('calibration',skip_steps)
         ii_params.calibrate_epoch,ii_params.calibrate_select_mode,ii_params.calibrate_window,...
         ii_params.calibrate_target,{'X_fix','Y_fix'}); %
     
-    
-    % then, calibrate by trial
-    % FOR LAST MODE
-    % ii_calibratebytrial.m
-    [ii_data,ii_cfg] = ii_calibratebytrial(ii_data,ii_cfg,{'X','Y'},...
-        ii_params.calibrate_target,ii_params.calibrate_mode, ii_params.calibrate_limits);
+    if ismember(ii_params.calibrate_mode,{'scale','rotate'})
+        % then, calibrate by trial
+        [ii_data,ii_cfg] = ii_calibratebytrial(ii_data,ii_cfg,{'X','Y'},...
+            ii_params.calibrate_target,ii_params.calibrate_mode, ii_params.calibrate_limits);
+    elseif ismember(ii_params.calibrate_mode,'run')
+        % calibrate by run
+        [ii_data,ii_cfg] = ii_calibratebyrun(ii_data,ii_cfg,{'X','Y'},...
+            ii_params.calibrate_target,ii_params.calibrate_deg,ii_params.calibrate_limits);
+    end
 end
 
 % plot all these - make sure they're good
