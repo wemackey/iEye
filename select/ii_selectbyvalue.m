@@ -39,7 +39,7 @@ end
 % ensure channel exists, if it's a string, or that it matches length, if
 % it's a number
 
-if isstring(c)
+if ischar(c)
     % check the channel exists
     if ~ismember(c,fieldnames(ii_data))
         error('iEye:ii_selectbyvalue:channelNotFound', 'Channel %s does not exist in ii_data',c)
