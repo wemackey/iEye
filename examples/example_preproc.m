@@ -1,6 +1,9 @@
 % Generic script for pre-processing memory-guided saccade data using
 % updated iEye_ts.
 %
+% NOTE: see example_analysis.m and ii_preproc.m! this is DEPRECATED
+% (TCS 8/2/2018)
+%
 % For preprocessing saccade data (specifically, memory-guided saccade
 % data), we do:
 % 01. setup iEye and import our file
