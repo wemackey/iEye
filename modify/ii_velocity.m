@@ -1,53 +1,56 @@
-function ii_velocity(x,y)
-% Calculate eye-movement velocity using eye-tracker X and Y channels as
-% input. This vector is automatically saved to ii_cfg.velocity
+function [ii_data,ii_cfg] = ii_velocity(ii_data,ii_cfg,xchan,ychan)
+% ii_velocity Calculates velocity of eye position given x, y channels
+%   [ii_data,ii_cfg] = ii_velocity(ii_data,ii_cfg) computes velocity on
+%   ii_data chans X_smooth and Y_smooth, if available, or defaults to X, Y.
+%
+%   [ii_data,ii_cfg] = ii_velocity(ii_data,ii_cfg,xchan,ychan) computes on
+%   channels ii_data.(xchan) and .(ychan)
+%
+% xchan and ychan must be strings, and must be fields of ii_data
+% ii_cfg.velocity will contain the instantaneous velocity euclidean 
+% distance between paired samples) of defined channels
+% 
+% Example:
+% load('exdata1.mat'); % smooth data first
+% [ii_data,ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,{'X','Y'},'Pupil',1500,150,50);
+% [ii_data,ii_cfg] = ii_smooth(ii_data,ii_cfg,{'X','Y'},'Gaussian',5);
+% [ii_data,ii_cfg] = ii_velocity(ii_data,ii_cfg,'X_smooth','Y_smooth');
+% figure;
+% subplot(2,1,1);
+% hold on;
+% plot(ii_data.X_smooth,'-','LineWidth',1);
+% plot(ii_data.Y_smooth,'-','LineWidth',1);
+% xlabel('Samples');
+% title('Smoothed data');
+% subplot(2,1,2);
+% plot(ii_cfg.velocity,'k-','LineWidth',1);
+% xlabel('Samples');
+% title('Velocity (s^{-1})');
 
-if nargin ~= 2
+% Updated 8/14/2017 TCS - uses ii_data; velocity saved in deg/s
+
+if nargin == 2
     prompt = {'Channel 1 (X)', 'Channel 2 (Y)'};
     dlg_title = 'Velocity';
     num_lines = 1;
     answer = inputdlg(prompt,dlg_title,num_lines);
     
-    x = answer{1};
-    y = answer{2};
+    xchan = answer{1};
+    ychan = answer{2};
 end
 
-basevars = evalin('base','who');
-ii_cfg = evalin('base', 'ii_cfg');
 
-if ismember(x,basevars)
-    if ismember(y,basevars)
-        
-        xvel = evalin('base',x);
-        yvel = evalin('base',y);
-        
-        xvel = diff(xvel);
-        yvel = diff(yvel);
-        
-        xvel = abs(xvel);
-        yvel = abs(yvel);
-        
-        xvel = xvel.^2;
-        yvel = yvel.^2;
-        
-        vel = xvel + yvel;
-        vel = sqrt(vel);
-        vel = [0; vel];
-        
-        ii_cfg.velocity = vel;
-        dt = datestr(now,'mmmm dd, yyyy HH:MM:SS.FFF AM');
-        ii_cfg.history{end+1,1} = sprintf('Calculated velocity (%s,%s) on %s ', x, y, dt);
-        putvar(ii_cfg);
-        
-%         % Plot results
-%         figure('Name','Velocity Channel','NumberTitle','off');
-%         plot(vel);
-        
-    else
-        disp('Channel to does not exist in worksapce');
-    end
+if ismember(xchan,fieldnames(ii_data)) && ismember(ychan,fieldnames(ii_data))
+    
+    ii_cfg.velocity = [0; sqrt(diff(ii_data.(xchan)).^2 + diff(ii_data.(ychan)).^2) ] * ii_cfg.hz;
+    
+    ii_cfg.history{end+1} = sprintf('ii_velocity (%s,%s) - %s ', xchan, ychan, datestr(now,30));
+    
+    % added 6/13/2018 - save velocity as a channel in ii_data
+    ii_data.Velocity = ii_cfg.velocity;
+    
 else
-    disp('Channel to does not exist in worksapce');
+    error('iEye:ii_smooth:channelNotFound', 'Channel %s or %s does not exist in ii_data',xchan,ychan)
 end
 
 
