@@ -21,7 +21,7 @@ function [ ii_data, ii_cfg ] = ii_calibratebytrial( ii_data, ii_cfg, chan_names,
 % 'fixation' values are set to 0,0, and so scaling doesn't substantially
 %  alter mean fixation
 %
-% May also make a calibrateacrosstrials.m version which applies similar
+% See also ii_calibratebyrun.m version which applies similar
 % polynomial fitting/adjustment as previous versions of iEye
 % (ii_calibrateto.m). This version attempts to fix each trial individually
 % without regard for stability across positions over a run. 
