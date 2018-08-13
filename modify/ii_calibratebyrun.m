@@ -29,15 +29,14 @@ function [ii_data,ii_cfg] = ii_calibratebyrun(ii_data,ii_cfg, chan_names, calib_
 % target re-presentation during feedback, which previously resulted in
 % 0-dva MGS error metrics for some subj.
 %
+% Initial version of this function used only target points & measured
+% 'feedback' fixations to re-calibrate - but this could often result in a
+% fixation shift (undoing drift correction) applied to entire timeseries.
+% As a first pass at a solution, we'll add n_trials 0's to x & y to try to
+% stabilize the fit (this is similar to the Mackey et al version).
+%
 % NOTE: does not scale velocity!!! this may take some work...
 %
-% Updated 6/13/2018 - now uses absolute distance threshold for deciding
-% whether to calibrate or not. If distance between input fixation and
-% target is > adj_limits, do not calibrate.
-% - saves out calibrate.amt: amount of scaling applied (factor used for
-%   dividing/multiplying) to each channel
-% - also saves out calibrate.err: euclidean distance between target point
-%   and fixation (1 number)
 % 
 
 % Tommy Sprague, 8/2/2018 
@@ -265,7 +264,19 @@ trials_to_use = ii_cfg.calibrate.err <= fit_limit; % TODO: also binary censor?
 
 for cc = 1:length(chan_names)
     
-    poly_coeffs = polyfit(trial_coord(trials_to_use,cc),calibrate_to(trials_to_use,cc),poly_deg);
+    % to anchor the function to the origin (but not enforce a perfect
+    % origin), we'll add a bunch of 0,0's to the data to be fit (same # as
+    % trials used for fitting the recalibration function). This is
+    % appoximately similar to the original Mackey et al version of
+    % polynomial recalibration in the original iEye, but in this case we
+    % 'know' the eye coordinate should be 0, and aren't allowing for the
+    % pre-saccade coordinate to go into the fit function. I think this is a
+    % fair and clean assumption given that we've done drift correction
+    % already (a pre-requisite for running this function...)
+    thisx = [trial_coord(trials_to_use,cc);  zeros(sum(trials_to_use),1)];
+    thisy = [calibrate_to(trials_to_use,cc); zeros(sum(trials_to_use),1)];
+    %poly_coeffs = polyfit(trial_coord(trials_to_use,cc),calibrate_to(trials_to_use,cc),poly_deg);
+    poly_coeffs = polyfit(thisx,thisy,poly_deg);
     
     ii_cfg.calibrate.poly_fun(cc,:) = poly_coeffs;
     
@@ -284,7 +295,7 @@ for cc = 1:length(chan_names)
     % left?
     ii_cfg.calibrate.resid(:,cc) = calibrate_to(:,cc) - polyval(poly_coeffs,trial_coord(:,cc));
     
-    clear poly_coeffs chans_to_adjust;
+    clear poly_coeffs chans_to_adjust thisx thisy;
 end
 
 
