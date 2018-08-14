@@ -291,7 +291,7 @@ ii_trial.targ = targ_coords_extracted;
 % corresponding trial index
 if strcmpi(score_mode,'strict')
     which_sacc = find(ismember(ii_sacc.epoch_start,resp_epoch) & ismember(ii_sacc.epoch_end,resp_epoch));
-elseif strcmpi(score_mode','lenient')
+elseif strcmpi(score_mode,'lenient')
     % if lenient, just needs to start in this epoch
     which_sacc = find(ismember(ii_sacc.epoch_start,resp_epoch));
 end
