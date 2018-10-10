@@ -37,6 +37,10 @@ else
         % select only valid samples from each field of ii_data
         ii_data = structfun(@(f) f(valid_idx==1),ii_data,'UniformOutput',false);
         
+        % also need to update size of ii_cfg.sel, ii_cfg.tsel
+        ii_cfg.sel = ii_cfg.sel(valid_idx);
+        ii_cfg.tsel = ii_cfg.tsel(valid_idx);
+        
         valid_str = sprintf('%i,',valid_epochs);
         valid_str = valid_str(1:end-1);
         
