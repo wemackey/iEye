@@ -8,7 +8,8 @@ function [ii_data,ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,chan, pchan, pval, pr
 %
 %   ii_blinkcorrect(...,'prctile') uses a percentile-based threshold,
 %   whereby pval is assumed to be an input to prctile (0-100). Threshold is
-%   set at prctile(ii_data.(pchan)(ii_data.(pchan)~=0),pval).
+%   set at prctile(ii_data.(pchan)(ii_data.(pchan)~=0),pval) - so only
+%   detected pupil values used. ~1.5 works well.
 %
 % ii_data.(chan) at identified blinks will be NaN
 % ii_cfg.blinks is 'cursel'-style list of on/offsets of each blink
