@@ -208,7 +208,6 @@ ii_cfg.vis = vis;
 ii_cfg.nchan = nchan;
 ii_cfg.lchan = lchan;
 ii_cfg.hz = schan;
-ii_cfg.blink = [];
 ii_cfg.velocity = [];
 ii_cfg.tcursel = [];
 ii_cfg.tsel = x*0;
