@@ -21,6 +21,9 @@ if nargin < 1
     % epoch channel
     ii_params.epoch_chan = 'XDAT';
     
+    % epochs to keep
+    ii_params.valid_epochs = NaN; % if NaN, don't trim
+    
     % stimulus display information
     ii_params.resolution = [1280 1024]; % Curtis lab, behavior room
     ii_params.ppd = 34.1445;            % Curtis lab, behavior room (pix/deg)
