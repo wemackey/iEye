@@ -125,7 +125,7 @@ while trial_cnt <= ii_cfg.numtrials
 end
 
 % embiggen
-set(f_han,'Position',0.75*get(0,'Screensize'));
+set(f_han,'Position',0.75*get(0,'Screensize'),'Renderer','painters');
 
 return
 
