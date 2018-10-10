@@ -29,7 +29,7 @@ if nargin < 1
     ii_params.ppd = 34.1445;            % Curtis lab, behavior room (pix/deg)
     
     % blink correction
-    ii_params.blink_thresh = 0.025;    % PERCENTILE!!! 
+    ii_params.blink_thresh = 1.5;    % PERCENTILE!!! 
     ii_params.blink_window = [150 50]; % before and after, ms
     
     % trial definition
