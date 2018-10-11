@@ -21,12 +21,15 @@ if nargin < 1
     % epoch channel
     ii_params.epoch_chan = 'XDAT';
     
+    % epochs to keep
+    ii_params.valid_epochs = NaN; % if NaN, don't trim
+    
     % stimulus display information
     ii_params.resolution = [1280 1024]; % Curtis lab, behavior room
     ii_params.ppd = 34.1445;            % Curtis lab, behavior room (pix/deg)
     
     % blink correction
-    ii_params.blink_thresh = 0.025;    % PERCENTILE!!! 
+    ii_params.blink_thresh = 1.5;    % PERCENTILE!!! 
     ii_params.blink_window = [150 50]; % before and after, ms
     
     % trial definition

@@ -94,8 +94,10 @@ for tt = 1:length(tu)
     
     trial_idx = ii_cfg.trialvec==tu(tt);
     
+    % a discontinuous selection is one for which there is more than one
+    % onset OR more than one offset
     % quick check to make sure just one contiguous selection...
-    if sum(diff(trial_idx & epoch_idx)==1) ~= 1 || sum(diff(trial_idx & epoch_idx)==-1) ~= 1
+    if sum(diff(trial_idx & epoch_idx)==1) > 1 || sum(diff(trial_idx & epoch_idx)==-1) > 1 % this originally checked against 1, but this precludes a trial starting w/ first sample
         error('iEye:ii_selectfixationsbytrial:nonContiguousEpoch', 'On trial %i, epochs non-contiguous',tu(tt));
     end
     

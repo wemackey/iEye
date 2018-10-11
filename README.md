@@ -50,6 +50,14 @@ If data is kept in the ii_data,ii_cfg set of structs, then full runs can easily 
 
 - `ii_plotalltrials2d(ii_data,ii_cfg)` - plots traces from each trial in 2D coordinates (X,Y), along with fixations (circles) ![2d traces](examples/example_run.png)
 
+## Trial exclusion
+The automated scoring procedure (`ii_scoreMGS.m`) as applied to memory-guided saccade data will flag trials for potential reasons for exclusion. At present, we consider several possible reasons for exclusion, indicated by an integer with a first digit denoting exclusion category and a second digit denoting exclusion type:
+
+Categories:
+- 1 - trial-level exclusion (bad drift correction [11], calibration [12], or delay fixation break [13]
+- 2 - primary saccade exclusion (no primary sacc [20]; too small/short [21], large error [22])
+
+The cutoff values for flagging trials can be changing fields within `excl_criteria` variable/input to `ii_scoreMGS.m`
 
 ## Disclaimer
 
