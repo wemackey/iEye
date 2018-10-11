@@ -34,7 +34,8 @@ end
 % import data
 [ii_data,ii_cfg] = ii_import_edf(edf_fn,cfg_fn,[edf_fn(1:end-4) '_iEye.mat']);
 
-
+% truncate data to relevant XDATs
+[ii_data,ii_cfg] = ii_trim(ii_data,ii_cfg,ii_params.valid_epochs,ii_params.epoch_chan);
 
 % rescale X, Y based on screen info
 [ii_data,ii_cfg] = ii_rescale(ii_data,ii_cfg,{'X','Y'},ii_params.resolution,ii_params.ppd);
