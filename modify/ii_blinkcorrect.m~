@@ -8,7 +8,8 @@ function [ii_data,ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,chan, pchan, pval, pr
 %
 %   ii_blinkcorrect(...,'prctile') uses a percentile-based threshold,
 %   whereby pval is assumed to be an input to prctile (0-100). Threshold is
-%   set at prctile(ii_data.(pchan)(ii_data.(pchan)~=0),pval).
+%   set at prctile(ii_data.(pchan)(ii_data.(pchan)~=0),pval) - so only
+%   detected pupil values used. ~1.5 works well.
 %
 % ii_data.(chan) at identified blinks will be NaN
 % ii_cfg.blinks is 'cursel'-style list of on/offsets of each blink
@@ -40,6 +41,7 @@ function [ii_data,ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,chan, pchan, pval, pr
 
 % Updated TCS 8/11/2017 - no base space variables
 % Updated TCS 8/23/2017 - support for percentile-based thresholding
+% Updated TCS 11/21/2018 - now save a PupilZ channel as well into ii_data
 %
 % TODO: implement a pupil velocity/acceleration version of this
 
@@ -80,9 +82,6 @@ end
 if nargin < 7 || isempty(fol)
     fol = 100;
 end
-
-if ismember(varargin,'
-
 
 if ismember(varargin,'prctile')
     pval = prctile(ii_data.(pchan)(ii_data.(pchan)~=0),pval);
@@ -141,8 +140,35 @@ end
 ii_cfg.blinks = blink_window;
 ii_cfg.blinkvec = blinkvec;
 
+% save some information about how blink correction was performed
+if ismember(varargin,'prctile')
+    ii_cfg.blink.thresh_mode = 'prctile';
+else
+    ii_cfg.blink.thresh_mode = 'raw';
+end
+ii_cfg.blink.thresh = pval;
+ii_cfg.blink.mask = blink_mask; % detected blink samples; prior to censoring samples before/after
+ii_cfg.blink.window = [pri fol];
+
+
 ii_cfg.history{end+1} = sprintf('ii_blinkcorrect - corrected channels %s with pupil channel %s, threshold of %d (%d/%d) on %s ', horzcat(chan{:}), pchan, pval, pri,fol, datestr(now,30));
 
+
+% TODO: create a 'new channel' function that implements a few of the
+% bookkeeping things required below...
+
+% save a new channel into ii_data called sprintf('%sZ',pchan) that's just
+% Zscore ii_data.Pupil(ii_data.Pupil~=0); nan where Pupil==0
+
+pchanZ = sprintf('%sZ',pchan);
+ii_data.(pchanZ) = nan(size(ii_data.Pupil));
+ii_data.(pchanZ)(ii_data.(pchan)~=0) = zscore(ii_data.(pchan)(ii_data.(pchan)~=0));
+
+ii_cfg.lchan{1}{end+1} = sprintf('%s_smooth',chan_names{cc});
+
+
+% save the threshold as a Z-score too, in case we want to check it...
+ii_cfg.blink.threshZ = []; 
 
 return
 
