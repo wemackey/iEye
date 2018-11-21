@@ -156,9 +156,9 @@ end
 
 % and plot the final full timeseries
 if ii_params.show_plots == 1
-    f_ts = ii_plottimeseries(ii_data,ii_cfg);
+    f_ts = ii_plottimeseries(ii_data,ii_cfg,{'X','Y','PupilZ'});
 else
-    f_ts = ii_plottimeseries(ii_data,ii_cfg,[],'nofigure');
+    f_ts = ii_plottimeseries(ii_data,ii_cfg,{'X','Y','PupilZ'},'nofigure');
 end
 saveas(f_ts,sprintf('%s_timeseries.png',preproc_fn(1:end-4)),'png');
 

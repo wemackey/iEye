@@ -41,6 +41,7 @@ function [ii_data,ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,chan, pchan, pval, pr
 
 % Updated TCS 8/11/2017 - no base space variables
 % Updated TCS 8/23/2017 - support for percentile-based thresholding
+% Updated TCS 11/21/2018 - now save a PupilZ channel as well into ii_data
 %
 % TODO: implement a pupil velocity/acceleration version of this
 
@@ -83,6 +84,7 @@ if nargin < 7 || isempty(fol)
 end
 
 if ismember(varargin,'prctile')
+    pval_prctile = pval;
     pval = prctile(ii_data.(pchan)(ii_data.(pchan)~=0),pval);
 end
 
@@ -152,6 +154,27 @@ ii_cfg.blink.window = [pri fol];
 
 ii_cfg.history{end+1} = sprintf('ii_blinkcorrect - corrected channels %s with pupil channel %s, threshold of %d (%d/%d) on %s ', horzcat(chan{:}), pchan, pval, pri,fol, datestr(now,30));
 
+
+% TODO: create a 'new channel' function that implements a few of the
+% bookkeeping things required below...
+
+% save a new channel into ii_data called sprintf('%sZ',pchan) that's just
+% Zscore ii_data.Pupil(ii_data.Pupil~=0); nan where Pupil==0
+if ismember(varargin,'prctile')
+    pchanZ = sprintf('%sZ',pchan);
+    ii_data.(pchanZ) = nan(size(ii_data.Pupil));
+    ii_data.(pchanZ)(ii_data.(pchan)~=0) = zscore(ii_data.(pchan)(ii_data.(pchan)~=0));
+    
+    ii_cfg.lchan{1}{end+1} = pchanZ;
+    
+    % save the threshold as a Z-score too, in case we want to check it..    
+    ii_cfg.blink.threshZ = prctile(ii_data.(pchanZ)(~isnan(ii_data.(pchanZ))),pval_prctile);
+
+    % because this channel is used to look at pupil size and look for
+    % lingering, unscored blinks, we also nan-out detected blinks
+    ii_data.(pchanZ)(ii_cfg.blinkvec==1)=NaN;
+
+end
 
 return
 
