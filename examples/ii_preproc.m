@@ -40,7 +40,54 @@ function [ii_data,ii_cfg,ii_sacc] = ii_preproc(edf_fn,cfg_fn,preproc_fn,ii_param
 % skip_steps: for now, only optional steps are drift-correction ('drift') and
 % calibration ('calibration') - when it comes time to do those steps, don't
 % execute them if ismember(skip_steps,those)
+
 %
+% For preprocessing saccade data (specifically, memory-guided saccade
+% data), we do:
+% 01. setup iEye and import our file
+% 02. rescale the data given our known screen resolution, viewing distance,
+% etc (pixels per degree is required)
+% 03. invert the y-channel, which is measured in screen coords (+ is down)
+% 04. identify and remove blinks
+% 04b (not yet implemented) clean gaze channels if bad values found
+% 05. use the 'XDAT' (epoch) channel to define trials
+% 06. compute smoothed versions of gaze channels using a Gaussian kernel
+% 07. use smoothed gaze channels to compute velocity
+% 08. use velocity channel to find saccades, and filter those saccades based
+% on distance, velocity, and duration thresholds
+% 09. identify periods of stable fixation between saccades
+% 10. select stable fixations during pre-target epoch (used to drift
+% correct)
+% 11. use stable fixations to drift correct to known fixation coord (0,0)
+% to account for signal drift over runs in eyetracking data
+% 12. add behavioral data to iEye data struct (ii_cfg)
+% 13. select stable fixation at end of feedback stimulus
+% 14. use this fixation to further calibrate gaze data to known target
+% position. 
+% 15. plot all individual trials for QC purposes, save a figure
+% 16. save the data (will contain ii_data, ii_cfg - the important variables
+% containing full preprocessed time-series with appropriate labels, etc)
+%
+% At the end of this script, ii_data and ii_cfg will be ready to use for
+% scoring saccades. User will still need to identify which saccades are
+% relevant (using other iEye functions), and compare those to known
+% positions (note that, with ii_calibratebytrial, this is much easier).
+% Several new channels are created: X_smooth, Y_smooth, X_fix, Y_fix, as
+% well as a bunch of 'selection' channels in ii_cfg (trialvec, tsel,
+% saccades, blinks). This pair of data structures can/should be used with
+% the new ii_plot* functions: ii_plottrial, ii_plotalltrials, and
+% ii_plotalltrials2d (among others on their way). 
+%
+% This script is a rough approximation of what's in ii_preproc.m, which
+% applies this procedure to a given file, eventually, w/ some
+% verbose argument parsing... 
+%
+% NOTE: this is just a template, which will work for the data examples
+% included in iEye. all thresholds, epochs, and especially trialinfo will
+% need to be customized to each experiment
+
+% based off script used by GH
+% Tommy Sprague, 8/18/2017
 % Tommy Sprague, 8/20/2017
 
 
