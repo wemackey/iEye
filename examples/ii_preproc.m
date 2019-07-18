@@ -115,33 +115,30 @@ end
 % import data
 [ii_data,ii_cfg] = ii_import_edf(edf_fn,cfg_fn,[edf_fn(1:end-4) '_iEye.mat']);
 
-imported_plot = plot_data(ii_data,{'X','Y'})
 
 % truncate data to relevant XDATs
 [ii_data,ii_cfg] = ii_trim(ii_data,ii_cfg,ii_params.valid_epochs,ii_params.epoch_chan);
 
-trim_plot = plot_data(ii_data,{'X','Y'})
+
 % rescale X, Y based on screen info
 [ii_data,ii_cfg] = ii_rescale(ii_data,ii_cfg,{'X','Y'},ii_params.resolution,ii_params.ppd);
 
-rescale_plot = plot_data(ii_data,{'X','Y'})
 
 % Invert Y channel (the eye-tracker spits out flipped Y values)
 [ii_data,ii_cfg] = ii_invert(ii_data,ii_cfg,'Y');
 
-invert_plot = plot_data(ii_data,{'X','Y'})
+
 % remove extreme-valued X,Y channels (further than the screen edges)
 [ii_data,ii_cfg] = ii_censorchans(ii_data,ii_cfg,{'X','Y'},...
     {[-0.5 0.5]*ii_params.resolution(1)/ii_params.ppd,...
      [-0.5 0.5]*ii_params.resolution(2)/ii_params.ppd});
 
-censor_plot = plot_data(ii_data,{'X','Y'})
 
 % Correct for blinks
 [ii_data, ii_cfg] = ii_blinkcorrect(ii_data,ii_cfg,{'X','Y'},'Pupil', ...
       ii_params.blink_thresh,ii_params.blink_window(1),ii_params.blink_window(2),'prctile'); 
 
-blink_plot = plot_data(ii_data,{'X','Y'})
+
 % split into individual trials (so that individual-trial corrections can be
 % applied)
 [ii_data,ii_cfg] = ii_definetrial(ii_data,ii_cfg,...
@@ -153,7 +150,7 @@ blink_plot = plot_data(ii_data,{'X','Y'})
 [ii_data,ii_cfg] = ii_smooth(ii_data,ii_cfg,{'X','Y'},ii_params.smooth_type,...
     ii_params.smooth_amt);
 
-smooth_plot = plot_data(ii_data,{'X','Y','X_smooth','Y_smooth'})
+
 % compute velocity using the smoothed data
 [ii_data,ii_cfg] = ii_velocity(ii_data,ii_cfg,'X_smooth','Y_smooth');
 
@@ -166,7 +163,6 @@ smooth_plot = plot_data(ii_data,{'X','Y','X_smooth','Y_smooth'})
     ii_params.sacc_velocity_thresh,ii_params.sacc_duration_thresh,...
     ii_params.sacc_amplitude_thresh); 
 
-sacc_plot = ii_plottimeseries(ii_data,ii_cfg,{'X_smooth','Y_smooth'})
 % look for MICROsaccades %update to the above, 7/11/2019, geh
 [ii_data,ii_cfg] = ii_findmicrosaccades(ii_data,ii_cfg,'X_smooth','Y_smooth',...
     ii_params.sacc_velocity_thresh,ii_params.sacc_duration_thresh,...
@@ -178,8 +174,6 @@ sacc_plot = ii_plottimeseries(ii_data,ii_cfg,{'X_smooth','Y_smooth'})
 % 'stable' eye positions
 [ii_data,ii_cfg] = ii_findfixations(ii_data,ii_cfg,{'X','Y'},ii_params.fixation_mode);
 
-fix_plot = ii_plottimeseries(ii_data,ii_cfg,{'X','Y','X_fix','Y_fix','TarX','TarY'},'noselections')
-legend({'X','Y','X fix','Y fix'})
 % select the fixation used for drift correction
 if ~ismember('drift',skip_steps)
 
