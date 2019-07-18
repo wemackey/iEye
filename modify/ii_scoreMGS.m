@@ -221,6 +221,9 @@ ii_trial.f_sacc_rt = nan(ii_cfg.numtrials,1);
 ii_trial.i_sacc_trace = cell(ii_cfg.numtrials,1);
 ii_trial.f_sacc_trace = cell(ii_cfg.numtrials,1);
 
+ii_trial.i_sacc_peakvel = nan(ii_cfg.numtrials,1);
+ii_trial.f_sacc_peakvel = nan(ii_cfg.numtrials,1);
+
 % save some calibration, drift correction info for convenience
 if isfield(ii_cfg,'calibrate')
     ii_trial.calib_amt = ii_cfg.calibrate.amt;
@@ -342,6 +345,10 @@ for tt = 1:ii_cfg.numtrials
         ii_trial.i_sacc_rt(tt) = ii_sacc.t(this_i_sacc(1),1)-t_start;
         ii_trial.i_sacc_trace{tt} = [ii_sacc.X_trace{this_i_sacc(1)} ii_sacc.Y_trace{this_i_sacc(1)}];
         
+        % get peak velocity 
+       
+        ii_trial.i_sacc_peakvel(tt) = ii_sacc.peakvelocity(this_i_sacc(1)); 
+        
     end
     clear this_i_amp this_i_dur;
     
@@ -351,6 +358,7 @@ for tt = 1:ii_cfg.numtrials
         ii_trial.f_sacc_raw(tt,:) = [ii_sacc.X_end(this_f_sacc) ii_sacc.Y_end(this_f_sacc)];
         ii_trial.f_sacc_rt(tt) = ii_sacc.t(this_f_sacc,1)-t_start;
         ii_trial.f_sacc_trace{tt} = [ii_sacc.X_trace{this_f_sacc} ii_sacc.Y_trace{this_f_sacc}];
+        ii_trial.f_sacc_peakvel(tt) = ii_sacc.peakvelocity(this_f_sacc(1)); 
     end
     
     % count saccades in this trial during relevant epoch AFTER

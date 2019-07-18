@@ -54,7 +54,7 @@ FIG_POSITION = [[0.05 0.5-0.22*0.9]*scr_size(3) [0.9 0.9*0.22]*scr_size(3)];
 
 
 if nargin < 3 || isempty(which_chans)
-    which_chans = {'X','Y'};
+    which_chans = {'X','Y','TarX','TarY'}; %Tarx TarY added on jun17 
 end
 
 if ~iscell(which_chans), which_chans = {which_chans}; end
@@ -84,9 +84,12 @@ for cc = 1:length(which_chans)
     if ismember(sprintf('%s_fix',which_chans{cc}),fieldnames(ii_data)) && ~ismember('nofixations',varargin)
         plot(myt,ii_data.(sprintf('%s_fix',which_chans{cc})),'-','Color',FIXATION_COLOR);
     end
-    
+    if cc == 6
+     legend(which_chans)
+    else
+    end 
 end
-
+ %added jun 17 
 % hmm...this isn't working, keeps adding other elements. I just want
 % which_chans lines...
 % if ~ismember('nolegend',varargin)

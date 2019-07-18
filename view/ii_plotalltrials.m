@@ -41,7 +41,7 @@ if ~ismember('trialvec',fieldnames(ii_cfg))
 end
 
 if nargin < 3 || isempty(which_chans)
-    which_chans = {'X','Y'};
+    which_chans = {'X','Y','TarX','TarY'};
 end
 
 if ~iscell(which_chans)
@@ -104,7 +104,7 @@ while trial_cnt <= ii_cfg.numtrials
     end
     
     thisax = subplot(nrows,ncols,(rowidx-1)*ncols+colidx); 
-    ii_plottrial(ii_data,ii_cfg,trial_cnt,{'X','Y'},thisax,'condensed',epoch_chan,epoch_nums);
+    ii_plottrial(ii_data,ii_cfg,trial_cnt,{'X','Y','TarX','TarY'},thisax,'condensed',epoch_chan,epoch_nums);
     
     % TODO: add a uimenu w/ callback to plot a detailed version of selected
     % trial?

@@ -13,11 +13,13 @@
 % very first thing we want to do is define all parameters for processing
 % (see ii_loadparams.m for default values)
 
-ifg_fn = '~/Documents/MATLAB/toolboxes_dev/iEye_ts/examples/p_500hz.ifg';
+
+
+ifg_fn = '/Volumes/home/grace/examples/p_500hz.ifg';
 
 
 ii_params = ii_loadparams; % load default set of analysis parameters, only change what we have to
-
+ii_params.valid_epochs =[1 2 3 4 5 6];
 ii_params.trial_end_value = 6;   % XDAT value for trial end
 ii_params.drift_epoch = [1 2 3]; % XDAT values for drift correction
 ii_params.calibrate_epoch = 5;   % XDAT value for when we calibrate (feedback stim)
@@ -47,7 +49,7 @@ for ff = 1:length(edf_files)
     
     
     % run preprocessing!
-    [ii_data, ii_cfg, ii_sacc] = ii_preproc(fullfile(edf_files(ff).folder,edf_files(ff).name),ifg_fn,preproc_fn,ii_params);
+     [ii_data, ii_cfg, ii_sacc] = ii_preproc(fullfile(edf_files(ff).folder,edf_files(ff).name),ifg_fn,preproc_fn,ii_params);
     
     if ff == 1
         % plot some features of the data
@@ -71,7 +73,7 @@ ii_sess = ii_combineruns(ii_trial);
 %% look at the processed data, make sure it looks ok
 
 % based on what criteria shoudl we exclude trials?
-which_excl = [11 13 20 21];
+which_excl = [11 13 20 21 22];
 
 % first, plot an exclusion report over all runs
 % - this will open a few figures. first one will be a 'dot plot', which

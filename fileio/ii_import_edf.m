@@ -217,6 +217,9 @@ ii_cfg.history{1} = ['EDF imported ', dt];
 
 ii_cfg.edf_file = edf_file;
 
+ii_cfg.microsacc =[]; 
+
+
 ii_data = eyedata;
 
 % SAVE FILE
